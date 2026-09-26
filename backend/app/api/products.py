@@ -35,6 +35,16 @@ def list_products(
                                         category_id=category_id, search=search)
 
 
+@router.get("/search", response_model=list[ProductResponse])
+def search_products(
+    q: Optional[str] = Query("", description="SKU or product search query"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(100, ge=1, le=500),
+    conn=Depends(get_db),
+):
+    return ProductService.list_products(conn, skip=skip, limit=limit, search=q)
+
+
 @router.get("/{product_id}", response_model=ProductResponse)
 def get_product(
     product_id: str,

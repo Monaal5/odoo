@@ -1,82 +1,58 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 
 from app.db.database import get_db
-from app.api.deps import get_current_user
 from app.schemas.dashboard import (
     KPIsResponse,
     ActivityResponse,
     FilterResponse,
     DashboardKPIsResponse,
+    ActivityItem,
+    DashboardFilterResponse,
 )
 from app.services.dashboard_service import DashboardService
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
 
-@router.get("/kpis", response_model=KPIsResponse)
-def get_kpis(
-    conn=Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    """
-    All KPI cards for the dashboard header.
-
-    Returns counts for:
-    - total active products
-    - low-stock and out-of-stock products (derived from the ledger)
-    - pending receipts, deliveries, and internal transfers
-    """
+@router.get("/kpis")
+def get_kpis(conn=Depends(get_db)):
+    """All KPI cards for the dashboard header."""
     return DashboardService.get_kpis(conn)
 
 
-@router.get("/activity", response_model=ActivityResponse)
+@router.get("/activity")
 def get_activity(
-    skip: int = Query(0, ge=0, description="Pagination offset"),
-    limit: int = Query(20, ge=1, le=200, description="Max entries to return"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=200),
     conn=Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
-    """
-    Recent stock movements for the dashboard activity feed.
-
-    Returns ledger entries in descending chronological order, enriched
-    with product name and warehouse name for direct display.
-    """
+    """Recent stock movements for the dashboard activity feed."""
     return DashboardService.get_activity(conn, limit=limit, skip=skip)
 
 
-@router.get("/filter", response_model=FilterResponse)
+@router.get("/filter")
 def get_filtered_movements(
-    doc_type: Optional[str] = Query(
-        None,
-        description="Document type: RECEIPT | DELIVERY | TRANSFER_IN | TRANSFER_OUT | ADJUSTMENT",
-    ),
-    status: Optional[str] = Query(
-        None,
-        description="Document status: Draft | Waiting | Ready | Done | Cancelled",
-    ),
-    warehouse_id: Optional[str] = Query(None, description="Filter by warehouse UUID"),
-    category_id: Optional[str] = Query(None, description="Filter by product category UUID"),
-    product_id: Optional[str] = Query(None, description="Filter by product UUID"),
+    doc_type: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    warehouse_id: Optional[str] = Query(None),
+    location_id: Optional[int] = Query(None),
+    category_id: Optional[str] = Query(None),
+    category: Optional[str] = Query(None),
+    product_id: Optional[str] = Query(None),
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=500),
     conn=Depends(get_db),
-    current_user: dict = Depends(get_current_user),
 ):
-    """
-    Filterable stock movement table.
-
-    All filters are optional and combinable.  Results include the resolved
-    source document number and status so the frontend can display full context
-    without additional round-trips.
-    """
+    """Filterable stock movement table and dashboard metrics."""
+    target_wh = str(location_id) if location_id is not None else warehouse_id
+    target_cat = category_id or category
     return DashboardService.get_filtered(
         conn,
         doc_type=doc_type,
         status=status,
-        warehouse_id=warehouse_id,
-        category_id=category_id,
+        warehouse_id=target_wh,
+        category_id=target_cat,
         product_id=product_id,
         skip=skip,
         limit=limit,
