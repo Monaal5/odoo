@@ -102,3 +102,31 @@ CREATE TABLE IF NOT EXISTS stock_ledger (
 CREATE INDEX IF NOT EXISTS idx_ledger_product ON stock_ledger(product_id);
 CREATE INDEX IF NOT EXISTS idx_ledger_location ON stock_ledger(location_id);
 CREATE INDEX IF NOT EXISTS idx_ledger_doc_type ON stock_ledger(source_doc_type);
+
+-- 8. Reorder Rules Table (Min/Max Thresholds)
+CREATE TABLE IF NOT EXISTS reorder_rules (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    location_id INTEGER NOT NULL,
+    min_qty INTEGER NOT NULL DEFAULT 5,
+    max_qty INTEGER NOT NULL DEFAULT 50,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT _reorder_rule_uc UNIQUE (product_id, location_id)
+);
+
+-- 9. Generated Low-Stock Alerts Table
+CREATE TABLE IF NOT EXISTS alerts (
+    id SERIAL PRIMARY KEY,
+    product_id INTEGER NOT NULL,
+    location_id INTEGER NOT NULL,
+    current_stock INTEGER NOT NULL,
+    min_stock INTEGER NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'ACTIVE',
+    message VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_alerts_product ON alerts(product_id);
+CREATE INDEX IF NOT EXISTS idx_alerts_status ON alerts(status);

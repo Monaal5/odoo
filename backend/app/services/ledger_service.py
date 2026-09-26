@@ -43,6 +43,11 @@ class LedgerService:
             stock_level.quantity += qty_delta
 
         db.flush()
+
+        # 3. Automatic Low Stock Alert evaluation
+        from app.services.alert_service import AlertService
+        AlertService.check_and_trigger_alerts(db, product_id, location_id, stock_level.quantity)
+
         return entry
 
     @staticmethod
