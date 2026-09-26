@@ -137,10 +137,10 @@ function renderSidebar(activeKey) {
 
     const navItems = [
         { key: "dashboard", href: "dashboard.html", icon: "📊", label: "Dashboard" },
-        { key: "products", href: "products.html", icon: "📦", label: "Real-Time Inventory", pill: "48,210" },
-        { key: "warehouses", href: "warehouses.html", icon: "🏢", label: "Warehouses & Racks", pill: "3 DC" },
-        { key: "ledger", href: "ledger.html", icon: "📜", label: "Stock Ledger", pill: "14,892 logs" },
-        { key: "ai-copilot", href: "ai-copilot.html", icon: "✨", label: "AI Copilot", pill: "GEN-3", badgeClass: "badge-gen3" },
+        { key: "products", href: "products.html", icon: "📦", label: "Real-Time Inventory" },
+        { key: "warehouses", href: "warehouses.html", icon: "🏢", label: "Warehouses & Racks" },
+        { key: "ledger", href: "ledger.html", icon: "📜", label: "Stock Ledger" },
+        { key: "ai-copilot", href: "ai-copilot.html", icon: "✨", label: "AI Copilot" },
         { key: "receipts", href: "receipts.html", icon: "🛒", label: "Purchase Orders" },
         { key: "reports", href: "reports.html", icon: "📈", label: "Analytics & Reports" }
     ];
@@ -159,7 +159,6 @@ function renderSidebar(activeKey) {
                         </svg>
                         StockSense
                     </span>
-                    <span class="brand-tag">PROD HUB v2.4</span>
                 </a>
                 <button class="sidebar-close-btn" id="mobile-sidebar-close" aria-label="Close Sidebar">&times;</button>
             </div>
@@ -171,7 +170,6 @@ function renderSidebar(activeKey) {
                             <a href="${item.href}" class="nav-link ${item.key === activeKey ? 'active' : ''}">
                                 <span class="nav-icon">${item.icon}</span>
                                 <span class="nav-label">${item.label}</span>
-                                ${item.pill ? `<span class="nav-pill ${item.badgeClass || ''}">${item.pill}</span>` : ''}
                             </a>
                         </li>
                     `).join('')}
@@ -182,9 +180,9 @@ function renderSidebar(activeKey) {
                 <div class="telemetry-card">
                     <div class="telemetry-header">
                         <span>TELEMETRY FEED</span>
-                        <span class="telemetry-sync"><span class="telemetry-sync-dot"></span> 99.8% Sync</span>
+                        <span class="telemetry-sync"><span class="telemetry-sync-dot"></span> Live Sync</span>
                     </div>
-                    <div class="telemetry-details">12 Nodes Online &bull; Austin DC</div>
+                    <div class="telemetry-details">API Connected &bull; Austin DC</div>
                 </div>
 
                 <div class="user-profile-badge">
