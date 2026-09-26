@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <!-- Design & Stylesheets -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body class="auth-page">
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <!-- Brand Logo -->
+            <div class="auth-brand">
+                <a href="index.html">
+                    <img src="assets/logo/logo.svg" alt="StockSense IMS Logo" class="auth-logo" onerror="this.src='assets/icons/favicon.svg'">
+                </a>
+                <h1 class="auth-heading">Welcome to StockSense</h1>
+                <p class="auth-subheading">Sign in to manage warehouse operations & inventory</p>
+            </div>
+
+            <!-- Tabs: Login / Sign Up / Forgot -->
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="tab-login">Login</button>
+                <button type="button" class="auth-tab-btn" id="tab-signup">Register</button>
+                <button type="button" class="auth-tab-btn" id="tab-forgot">Reset</button>
+            </div>
+
+            <!-- 1. LOGIN FORM -->
+            <form id="form-login" class="auth-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="name@company.com" required autocomplete="email">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+
+                <div class="auth-options">
+                    <label class="remember-label">
+                        <input type="checkbox" id="remember-me" checked> Remember me
+                    </label>
+                    <a href="#" class="auth-link" data-switch-tab="forgot">Forgot password?</a>
+                </div>
+
+                <button type="submit" id="login-submit-btn" class="btn btn-primary auth-submit-btn">
+                    <span>Sign In</span>
+                </button>
+
+                <p class="auth-switch-text">
+                    Don't have an account? <a href="#" class="auth-link" data-switch-tab="signup">Create account</a>
+                </p>
+            </form>
+
+            <!-- 2. SIGNUP FORM -->
+            <form id="form-signup" class="auth-form hidden">
+                <div class="form-group">
+                    <label class="form-label" for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" class="form-input" placeholder="e.g. Alex Morgan" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signup-email">Work Email</label>
+                    <input type="email" id="signup-email" class="form-input" placeholder="alex@stocksense.io" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signup-password">Password</label>
+                    <input type="password" id="signup-password" class="form-input" placeholder="Minimum 6 characters" minlength="6" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="signup-role">Designated Role</label>
+                    <select id="signup-role" class="form-select">
+                        <option value="staff">Warehouse Staff</option>
+                        <option value="manager" selected>Inventory Manager</option>
+                        <option value="admin">System Admin</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="signup-submit-btn" class="btn btn-primary auth-submit-btn">
+                    <span>Create Account</span>
+                </button>
+
+                <p class="auth-switch-text">
+                    Already registered? <a href="#" class="auth-link" data-switch-tab="login">Sign in here</a>
+                </p>
+            </form>
+
+            <!-- 3. FORGOT PASSWORD FORM -->
+            <form id="form-forgot" class="auth-form hidden">
+                <div class="form-group">
+                    <label class="form-label" for="forgot-email">Account Email</label>
+                    <input type="email" id="forgot-email" class="form-input" placeholder="Enter your registered email" required>
+                </div>
+
+                <button type="submit" id="forgot-submit-btn" class="btn btn-primary auth-submit-btn">
+                    <span>Send Reset Instructions</span>
+                </button>
+
+                <p class="auth-switch-text">
+                    Remember your password? <a href="#" class="auth-link" data-switch-tab="login">Back to Sign In</a>
+                </p>
+            </form>
+
+            <!-- Demo helper card -->
+            <div class="demo-creds-banner">
+                <div class="demo-title">
+                    <span>Developer Demo Access</span>
+                    <button type="button" class="demo-btn-fill" id="demo-fill-btn">Auto-Fill</button>
+                </div>
+                <div>Demo User: <strong>admin@stocksense.io</strong> / <strong>admin123</strong></div>
+                <div style="margin-top:4px;">
+                    <a href="dashboard.html" class="auth-link" style="font-size:11px;">⚡ Skip straight to Dashboard (Demo Preview)</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
