@@ -1,29 +1,30 @@
-import os
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Odoo Hackathon Boilerplate API"
+    PROJECT_NAME: str = "StockSense IMS API"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     DEBUG: bool = True
-    
-    # Security Configuration
-    SECRET_KEY: str = "super-secret-odoo-hackathon-key-change-in-production"
-    
-    # Database Configuration (Defaults to SQLite for instant out-of-box hackathon setup)
-    DATABASE_URL: str = "sqlite:///./hackathon.db"
-    
-    # Odoo XML-RPC / JSON-RPC Connection Settings
-    ODOO_URL: Optional[str] = "http://localhost:8069"
-    ODOO_DB: Optional[str] = "odoo_db"
-    ODOO_USER: Optional[str] = "admin"
-    ODOO_PASSWORD: Optional[str] = "admin"
-    
+
+    # JWT Security
+    SECRET_KEY: str = "change-me-in-production-use-a-long-random-string"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
+    # PostgreSQL — raw connection params (used by psycopg2)
+    DB_HOST: str = "localhost"
+    DB_PORT: int = 5432
+    DB_NAME: str = "stocksense"
+    DB_USER: str = "postgres"
+    DB_PASSWORD: str = "postgres"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore"
     )
+
 
 settings = Settings()

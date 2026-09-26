@@ -1,24 +1,33 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+import psycopg2
+import psycopg2.extras
+from contextlib import contextmanager
 from app.core.config import settings
 
-# Configure SQLite thread handling if SQLite is used
-connect_args = {"check_same_thread": False} if settings.DATABASE_URL.startswith("sqlite") else {}
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    connect_args=connect_args,
-    echo=settings.DEBUG
-)
+def get_connection():
+    """Create and return a raw psycopg2 connection."""
+    conn = psycopg2.connect(
+        host=settings.DB_HOST,
+        port=settings.DB_PORT,
+        dbname=settings.DB_NAME,
+        user=settings.DB_USER,
+        password=settings.DB_PASSWORD,
+    )
+    conn.autocommit = True
+    return conn
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
 
 def get_db():
-    """Dependency generator to get database session per request."""
-    db = SessionLocal()
+    """
+    FastAPI dependency: yields a psycopg2 connection with autocommit enabled.
+    """
+    conn = get_connection()
     try:
-        yield db
+        yield conn
     finally:
-        db.close()
+        conn.close()
+
+
+def dict_cursor(conn):
+    """Return a cursor that produces rows as dicts (RealDictRow)."""
+    return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
