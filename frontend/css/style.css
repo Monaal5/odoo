@@ -469,6 +469,11 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  position: relative;
+}
+
+.filter-select-wrapper {
+  position: relative;
 }
 
 .filter-select-pill {
@@ -489,6 +494,111 @@ body {
 
 .filter-select-pill:hover {
   background: var(--bg-hover);
+}
+
+.period-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(18, 24, 38, 0.12);
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  min-width: 150px;
+  z-index: 200;
+  display: none;
+}
+
+.period-dropdown-menu.active {
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.period-menu-item {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.period-menu-item:hover {
+  background: var(--bg-hover);
+  color: var(--primary);
+}
+
+.period-menu-item.active {
+  background: #f0f4ff;
+  color: var(--primary);
+}
+
+.recent-movements-section {
+  margin-top: 1.5rem;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+}
+
+.recent-movements-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.recent-movements-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.recent-movements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.movement-mini-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: var(--transition);
+}
+
+.movement-mini-card:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.movement-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.movement-prod-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.movement-meta-text {
+  font-size: 0.76rem;
+  color: var(--text-muted);
 }
 
 .calendar-pill-btn {

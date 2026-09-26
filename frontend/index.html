@@ -185,7 +185,7 @@
       <div class="content-area">
 
         <!-- ================================================================== -->
-        <!-- VIEW 1: DASHBOARD (MATCHES IMAGE 1 + LIVE BACKEND KPIS)            -->
+        <!-- VIEW 1: DASHBOARD (MATCHES IMAGE 1 + LIVE DYNAMIC APIS)            -->
         <!-- ================================================================== -->
         <section id="view-dashboard" class="view-section active">
           
@@ -193,19 +193,27 @@
           <div class="dashboard-greeting-bar">
             <div class="greeting-text-box">
               <h1 id="dashboard-welcome-heading">Hello, Barbara! 👋</h1>
-              <p>This is what's happening in your store & warehouse this month.</p>
+              <p id="dashboard-welcome-sub">This is what's happening in your store & warehouse this month.</p>
             </div>
             <div class="greeting-actions">
-              <!-- Period Dropdown -->
-              <div class="filter-select-pill" id="dashboard-period-filter">
-                <span>This month</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
+              <!-- Period Dropdown Wrapper -->
+              <div class="filter-select-wrapper">
+                <div class="filter-select-pill" id="dashboard-period-filter" title="Select Time Period">
+                  <span id="current-period-text">This month</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                  </svg>
+                </div>
+                <div class="period-dropdown-menu" id="period-dropdown-options">
+                  <div class="period-menu-item" data-period="week">This week</div>
+                  <div class="period-menu-item active" data-period="month">This month</div>
+                  <div class="period-menu-item" data-period="quarter">This quarter</div>
+                  <div class="period-menu-item" data-period="year">This year</div>
+                </div>
               </div>
 
               <!-- Calendar Pill Button -->
-              <button class="calendar-pill-btn" title="Pick Date">
+              <button class="calendar-pill-btn" id="dashboard-refresh-btn" title="Refresh Live Data">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
                   <line x1="16" y1="2" x2="16" y2="6"/>
@@ -222,11 +230,11 @@
             <!-- 2x2 KPIs Grid -->
             <div class="kpi-quad-grid">
               
-              <!-- KPI 1: Total revenue (Violet Card) -->
-              <div class="kpi-card purple-card">
+              <!-- KPI 1: Total Valuation / Revenue (Violet Card) -->
+              <div class="kpi-card purple-card" id="card-total-revenue">
                 <div class="kpi-card-header">
-                  <span>Total revenue</span>
-                  <button class="card-arrow-btn" title="View Revenue">
+                  <span id="kpi-revenue-title">Total revenue</span>
+                  <button class="card-arrow-btn" onclick="toggleMetricMode()" title="Toggle Valuation / Volume">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="7" y1="17" x2="17" y2="7"/>
                       <polyline points="7 7 17 7 17 17"/>
@@ -235,7 +243,7 @@
                 </div>
                 <div class="kpi-val-row">
                   <div class="kpi-number" id="kpi-total-revenue">$ 99.560</div>
-                  <span class="stat-badge green">
+                  <span class="stat-badge green" id="kpi-revenue-badge">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                       <line x1="12" y1="19" x2="12" y2="5"/>
                       <polyline points="5 12 12 5 19 12"/>
@@ -243,14 +251,14 @@
                     2,67%
                   </span>
                 </div>
-                <div class="kpi-card-footer">This month vs last</div>
+                <div class="kpi-card-footer" id="kpi-revenue-sub">This month vs last</div>
               </div>
 
-              <!-- KPI 2: Total orders (White Card) -->
-              <div class="kpi-card">
+              <!-- KPI 2: Total Orders / Deliveries (White Card) -->
+              <div class="kpi-card" id="card-total-orders">
                 <div class="kpi-card-header">
-                  <span>Total orders</span>
-                  <button class="card-arrow-btn" onclick="navigateToView('view-orders')" title="View Orders">
+                  <span id="kpi-orders-title">Total orders</span>
+                  <button class="card-arrow-btn" onclick="navigateToView('view-orders')" title="View Deliveries">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="7" y1="17" x2="17" y2="7"/>
                       <polyline points="7 7 17 7 17 17"/>
@@ -259,7 +267,7 @@
                 </div>
                 <div class="kpi-val-row">
                   <div class="kpi-number" id="kpi-total-orders">35</div>
-                  <span class="stat-badge red">
+                  <span class="stat-badge red" id="kpi-orders-badge">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                       <line x1="12" y1="5" x2="12" y2="19"/>
                       <polyline points="19 12 12 19 5 12"/>
@@ -267,14 +275,14 @@
                     2,67%
                   </span>
                 </div>
-                <div class="kpi-card-footer">This month vs last</div>
+                <div class="kpi-card-footer" id="kpi-orders-sub">This month vs last</div>
               </div>
 
-              <!-- KPI 3: Total visitors (White Card) -->
-              <div class="kpi-card">
+              <!-- KPI 3: Units in Stock / Health (White Card) -->
+              <div class="kpi-card" id="card-total-visitors">
                 <div class="kpi-card-header">
-                  <span>Total visitors</span>
-                  <button class="card-arrow-btn" title="View Visitors">
+                  <span id="kpi-visitors-title">Total visitors</span>
+                  <button class="card-arrow-btn" onclick="navigateToView('view-products')" title="View Inventory">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="7" y1="17" x2="17" y2="7"/>
                       <polyline points="7 7 17 7 17 17"/>
@@ -283,7 +291,7 @@
                 </div>
                 <div class="kpi-val-row">
                   <div class="kpi-number" id="kpi-total-visitors">45.600</div>
-                  <span class="stat-badge red">
+                  <span class="stat-badge red" id="kpi-visitors-badge">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                       <line x1="12" y1="5" x2="12" y2="19"/>
                       <polyline points="19 12 12 19 5 12"/>
@@ -291,14 +299,14 @@
                     2,67%
                   </span>
                 </div>
-                <div class="kpi-card-footer">This month vs last</div>
+                <div class="kpi-card-footer" id="kpi-visitors-sub">This month vs last</div>
               </div>
 
-              <!-- KPI 4: Net profit (White Card) -->
-              <div class="kpi-card">
+              <!-- KPI 4: Net Profit / Products (White Card) -->
+              <div class="kpi-card" id="card-net-profit">
                 <div class="kpi-card-header">
-                  <span>Net profit</span>
-                  <button class="card-arrow-btn" title="View Profit">
+                  <span id="kpi-profit-title">Net profit</span>
+                  <button class="card-arrow-btn" onclick="navigateToView('view-products')" title="View Products">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                       <line x1="7" y1="17" x2="17" y2="7"/>
                       <polyline points="7 7 17 7 17 17"/>
@@ -307,7 +315,7 @@
                 </div>
                 <div class="kpi-val-row">
                   <div class="kpi-number" id="kpi-net-profit">$ 60.450</div>
-                  <span class="stat-badge green">
+                  <span class="stat-badge green" id="kpi-profit-badge">
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                       <line x1="12" y1="19" x2="12" y2="5"/>
                       <polyline points="5 12 12 5 19 12"/>
@@ -315,19 +323,19 @@
                     5,67%
                   </span>
                 </div>
-                <div class="kpi-card-footer">This month vs last</div>
+                <div class="kpi-card-footer" id="kpi-profit-sub">This month vs last</div>
               </div>
 
             </div>
 
-            <!-- Revenue Bar Chart Card -->
+            <!-- Revenue / Velocity Bar Chart Card -->
             <div class="revenue-chart-card">
               <div class="chart-card-header">
                 <div class="chart-title-group">
-                  <h3>Revenue</h3>
-                  <span class="chart-subtitle">This month vs last</span>
+                  <h3 id="chart-main-title">Revenue</h3>
+                  <span class="chart-subtitle" id="chart-date-subtitle">This month vs last</span>
                 </div>
-                <button class="chart-dark-arrow-btn" title="Expand Revenue Details">
+                <button class="chart-dark-arrow-btn" onclick="toggleChartMetric()" title="Switch Revenue / Stock Units">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="7" y1="17" x2="17" y2="7"/>
                     <polyline points="7 7 17 7 17 17"/>
@@ -338,7 +346,7 @@
               <!-- Chart Canvas & Axes -->
               <div class="chart-container-flex">
                 <!-- Y-Axis Ticks -->
-                <div class="chart-y-axis">
+                <div class="chart-y-axis" id="chart-y-axis-labels">
                   <span>$ 25,000</span>
                   <span>$ 20,000</span>
                   <span>$ 15,000</span>
@@ -348,51 +356,9 @@
                   <span>$ 0</span>
                 </div>
 
-                <!-- 8 Interactive Bars matching Image 1 -->
-                <div class="chart-bars-wrap">
-                  
-                  <div class="bar-column" data-val="$ 21,450" data-label="1 AUG">
-                    <div class="bar-fill" style="height: 82%;"></div>
-                    <span class="bar-x-label">1 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 9,800" data-label="2 AUG">
-                    <div class="bar-fill" style="height: 40%;"></div>
-                    <span class="bar-x-label">2 AUG</span>
-                  </div>
-
-                  <!-- Highlighted 3 AUG Bar with Tooltip -->
-                  <div class="bar-column" data-val="$ 14,867" data-label="3 AUG">
-                    <div class="chart-floating-tooltip">$ 14,867</div>
-                    <div class="bar-fill" style="height: 60%;"></div>
-                    <span class="bar-x-label">3 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 13,200" data-label="4 AUG">
-                    <div class="bar-fill" style="height: 52%;"></div>
-                    <span class="bar-x-label">4 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 17,900" data-label="5 AUG">
-                    <div class="bar-fill" style="height: 72%;"></div>
-                    <span class="bar-x-label">5 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 21,100" data-label="6 AUG">
-                    <div class="bar-fill" style="height: 84%;"></div>
-                    <span class="bar-x-label">6 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 24,950" data-label="7 AUG">
-                    <div class="bar-fill" style="height: 98%;"></div>
-                    <span class="bar-x-label">7 AUG</span>
-                  </div>
-
-                  <div class="bar-column" data-val="$ 20,800" data-label="8 AUG">
-                    <div class="bar-fill" style="height: 82%;"></div>
-                    <span class="bar-x-label">8 AUG</span>
-                  </div>
-
+                <!-- Interactive Dynamic Bars -->
+                <div class="chart-bars-wrap" id="dashboard-bars-container">
+                  <!-- Generated dynamically in JavaScript -->
                 </div>
               </div>
 
@@ -407,7 +373,7 @@
             <div class="bottom-two-cards">
               
               <!-- Status Card 1: 98 Orders -->
-              <div class="status-mini-card">
+              <div class="status-mini-card" onclick="navigateToView('view-orders')" style="cursor: pointer;">
                 <div class="mini-icon-circle">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
@@ -418,7 +384,7 @@
                     <span class="num" id="status-orders-count">98</span>
                     <span class="label">orders</span>
                   </div>
-                  <p class="status-card-sub">
+                  <p class="status-card-sub" id="status-orders-sub-wrap">
                     <span id="status-orders-sub">12 orders</span> <span class="highlight-coral">are awaiting</span> confirmation.
                   </p>
                 </div>
@@ -432,8 +398,8 @@
                 </svg>
               </button>
 
-              <!-- Status Card 2: 17 Customers with Wave Graphic -->
-              <div class="status-mini-card">
+              <!-- Status Card 2: 17 Customers / Shipments with Wave Graphic -->
+              <div class="status-mini-card" onclick="navigateToView('view-receipts')" style="cursor: pointer;">
                 <div class="mini-icon-circle">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -445,7 +411,7 @@
                     <span class="num" id="status-customers-count">17</span>
                     <span class="label">customers</span>
                   </div>
-                  <p class="status-card-sub">
+                  <p class="status-card-sub" id="status-customers-sub-wrap">
                     <span id="status-customers-sub">17 customers</span> <span class="highlight-coral">are waiting</span> for response.
                   </p>
                 </div>
@@ -476,60 +442,31 @@
               </div>
 
               <div class="donut-content-layout">
-                <div class="donut-chart-wrapper">
-                  <svg class="donut-svg" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="35" fill="none" stroke="#f1f5f9" stroke-width="24"/>
-                    
-                    <g transform="rotate(-90 50 50)">
-                      <circle id="donut-seg-1" class="donut-segment" cx="50" cy="50" r="35" stroke="#f97316" stroke-dasharray="55 165" stroke-dashoffset="0"/>
-                      <circle id="donut-seg-2" class="donut-segment" cx="50" cy="50" r="35" stroke="#3b82f6" stroke-dasharray="55 165" stroke-dashoffset="-55"/>
-                      <circle id="donut-seg-3" class="donut-segment" cx="50" cy="50" r="35" stroke="#facc15" stroke-dasharray="55 165" stroke-dashoffset="-110"/>
-                      <circle id="donut-seg-4" class="donut-segment" cx="50" cy="50" r="35" stroke="#fb7185" stroke-dasharray="28.6 191.4" stroke-dashoffset="-165"/>
-                      <circle id="donut-seg-5" class="donut-segment" cx="50" cy="50" r="35" stroke="#34d399" stroke-dasharray="26.4 193.6" stroke-dashoffset="-193.6"/>
-                    </g>
-                    
-                    <g font-family="'Plus Jakarta Sans', sans-serif" font-size="4.2" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">
-                      <text x="74" y="26">25%</text>
-                      <text x="26" y="26">25%</text>
-                      <text x="26" y="74">25%</text>
-                      <text x="50" y="86">13%</text>
-                      <text x="76" y="66">12%</text>
-                    </g>
-                  </svg>
-
-                  <div class="donut-center-info">
-                    <span class="center-val">100%</span>
-                    <span class="center-sub">Total Share</span>
-                  </div>
+                <div class="donut-chart-wrapper" id="dynamic-donut-wrapper">
+                  <!-- Rendered dynamically in JavaScript -->
                 </div>
 
                 <ul class="category-legend-list" id="category-legend-container">
-                  <li class="category-legend-item" data-segment="1">
-                    <span class="legend-dot" style="background: #f97316;"></span>
-                    <span>Apple MacBook Air M2</span>
-                  </li>
-                  <li class="category-legend-item" data-segment="2">
-                    <span class="legend-dot" style="background: #3b82f6;"></span>
-                    <span>Apple Watch Series 9</span>
-                  </li>
-                  <li class="category-legend-item" data-segment="3">
-                    <span class="legend-dot" style="background: #facc15;"></span>
-                    <span>Acoustics JBL Charge 5</span>
-                  </li>
-                  <li class="category-legend-item" data-segment="4">
-                    <span class="legend-dot" style="background: #fb7185;"></span>
-                    <span>Acoustics Divoom SongBird-HQ</span>
-                  </li>
-                  <li class="category-legend-item" data-segment="5">
-                    <span class="legend-dot" style="background: #34d399;"></span>
-                    <span>Apple AirPods Pro 2</span>
-                  </li>
+                  <!-- Rendered dynamically in JavaScript -->
                 </ul>
 
               </div>
 
             </div>
 
+          </div>
+
+          <!-- Dynamic Live Recent Movements Strip (from /ledger API) -->
+          <div class="recent-movements-section">
+            <div class="recent-movements-header">
+              <h3>Live Stock Movements</h3>
+              <button class="btn-white-pill" style="font-size: 0.78rem; padding: 0.35rem 0.8rem;" onclick="navigateToView('view-ledger')">
+                View Full Audit Ledger ↗
+              </button>
+            </div>
+            <div class="recent-movements-grid" id="dashboard-recent-movements-grid">
+              <!-- Rendered dynamically from /ledger/history -->
+            </div>
           </div>
 
         </section>
