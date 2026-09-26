@@ -46,9 +46,12 @@ def get_raw_db():
     return get_db()
 
 
+from contextlib import contextmanager
+
+@contextmanager
 def dict_cursor(conn):
     """
-    Return a cursor that produces dict-like rows for psycopg2, sqlite3, or SQLAlchemy Session objects.
+    Return a context-managed cursor that produces dict-like rows for psycopg2, sqlite3, or SQLAlchemy Session objects.
     """
     # If a SQLAlchemy Session was passed instead of a raw connection, unwrap the DBAPI connection
     if hasattr(conn, "connection"):
@@ -60,13 +63,24 @@ def dict_cursor(conn):
             pass
 
     if hasattr(conn, "cursor_factory"):
-        return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-
-    if hasattr(conn, "row_factory"):
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        try:
+            yield cur
+        finally:
+            cur.close()
+    elif hasattr(conn, "row_factory"):
         conn.row_factory = sqlite3.Row
-        return conn.cursor()
-
-    return conn.cursor()
+        cur = conn.cursor()
+        try:
+            yield cur
+        finally:
+            cur.close()
+    else:
+        cur = conn.cursor()
+        try:
+            yield cur
+        finally:
+            cur.close()
 
 
 # ─── SQLAlchemy Setup (for Dev 2 compatibility) ──────────────
