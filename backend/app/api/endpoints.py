@@ -8,33 +8,24 @@ from app.db.database import get_db
 from app.schemas.health import HealthCheck
 from app.schemas.item import ItemCreate, ItemResponse, ItemUpdate
 from app.services.item_service import ItemService
-from app.services.odoo_service import OdooService
 from app.core.config import settings
 
 router = APIRouter()
 
 @router.get("/health", response_model=HealthCheck, tags=["System"])
 def health_check(db: Session = Depends(get_db)):
-    """Health check endpoint validating application, database, and Odoo connectivity."""
+    """Health check endpoint validating application & database connectivity."""
     db_status = "Healthy"
     try:
         db.execute(text("SELECT 1"))
     except Exception as e:
         db_status = f"Unhealthy ({str(e)})"
         
-    odoo_res = OdooService.check_connection()
-    odoo_status = (
-        f"Connected (v{odoo_res.get('server_version')})" 
-        if odoo_res.get("connected") 
-        else f"Disconnected ({odoo_res.get('error', 'Target server unreachable')})"
-    )
-    
     return HealthCheck(
         status="OK",
         app_name=settings.PROJECT_NAME,
         version=settings.VERSION,
         database=db_status,
-        odoo_connection=odoo_status,
         timestamp=datetime.now(timezone.utc).isoformat()
     )
 
@@ -71,13 +62,3 @@ def delete_item(item_id: int, db: Session = Depends(get_db)):
     if not success:
         raise HTTPException(status_code=404, detail=f"Item with ID {item_id} not found")
     return None
-
-@router.get("/odoo/status", tags=["Odoo Integration"])
-def odoo_status():
-    """Check connectivity to target Odoo instance."""
-    return OdooService.check_connection()
-
-@router.get("/odoo/fetch-partners", tags=["Odoo Integration"])
-def fetch_odoo_partners(limit: int = 10):
-    """Fetch contacts/partners (res.partner) directly from Odoo via XML-RPC."""
-    return OdooService.search_read_records("res.partner", domain=[], fields=["id", "name", "email", "phone"], limit=limit)

@@ -7,7 +7,6 @@ class ItemBase(BaseModel):
     description: Optional[str] = None
     category: str = "General"
     is_active: bool = True
-    odoo_ref_id: Optional[int] = None
 
 class ItemCreate(ItemBase):
     pass
@@ -17,7 +16,6 @@ class ItemUpdate(BaseModel):
     description: Optional[str] = None
     category: Optional[str] = None
     is_active: Optional[bool] = None
-    odoo_ref_id: Optional[int] = None
 
 class ItemResponse(ItemBase):
     id: int

@@ -22,7 +22,6 @@ def test_health_check():
     data = response.json()
     assert data["status"] == "OK"
     assert "database" in data
-    assert "odoo_connection" in data
 
 def test_item_crud_flow():
     # 1. Create Item
@@ -30,8 +29,7 @@ def test_item_crud_flow():
         "title": "Hackathon Demo Product",
         "description": "A sample item created for testing API flow",
         "category": "Integration",
-        "is_active": True,
-        "odoo_ref_id": 42
+        "is_active": True
     }
     create_res = client.post(f"{settings.API_V1_STR}/items", json=payload)
     assert create_res.status_code == 201

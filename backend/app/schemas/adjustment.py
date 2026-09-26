@@ -16,7 +16,7 @@ class AdjustmentResponse(BaseModel):
     counted_qty: int
     system_qty: int
     delta_qty: int
-    reason: Optional[str]
-    created_at: datetime
+    reason: Optional[str] = None
+    created_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)

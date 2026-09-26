@@ -1,9 +1,16 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.config import settings
-from app.db.database import engine, Base
-import app.models  # Ensures all ORM models are registered with Base metadata
 
+from app.core.config import settings
+
+# Developer 1 Routers (Auth & Master Data)
+from app.api.auth import router as auth_router
+from app.api.users import router as users_router
+from app.api.products import router as products_router
+from app.api.categories import router as categories_router
+from app.api.warehouses import router as warehouses_router
+
+# Developer 2 Routers (Stock Operations & Intelligence)
 from app.api.endpoints import router as system_router
 from app.api.receipts import router as receipts_router
 from app.api.deliveries import router as deliveries_router
@@ -12,16 +19,13 @@ from app.api.adjustments import router as adjustments_router
 from app.api.ledger import router as ledger_router
 from app.api.dashboard import router as dashboard_router
 
-# Auto-create tables on launch for fast development
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="StockSense Real-Time Inventory Management System (IMS) API.",
+    description="StockSense Real-Time Inventory Management System (IMS) API",
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
 )
 
 # Open CORS policy for frontend client integration
@@ -33,14 +37,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Routers
-app.include_router(system_router, prefix=settings.API_V1_STR)
-app.include_router(receipts_router, prefix=settings.API_V1_STR)
-app.include_router(deliveries_router, prefix=settings.API_V1_STR)
-app.include_router(transfers_router, prefix=settings.API_V1_STR)
-app.include_router(adjustments_router, prefix=settings.API_V1_STR)
-app.include_router(ledger_router, prefix=settings.API_V1_STR)
-app.include_router(dashboard_router, prefix=settings.API_V1_STR)
+# ── Register all API Routers ─────────────────────────────────
+PREFIX = settings.API_V1_STR
+
+# Auth & Master Data
+app.include_router(auth_router,       prefix=PREFIX)
+app.include_router(users_router,      prefix=PREFIX)
+app.include_router(products_router,   prefix=PREFIX)
+app.include_router(categories_router, prefix=PREFIX)
+app.include_router(warehouses_router, prefix=PREFIX)
+
+# Stock Operations & Intelligence
+app.include_router(system_router,      prefix=PREFIX)
+app.include_router(receipts_router,    prefix=PREFIX)
+app.include_router(deliveries_router,  prefix=PREFIX)
+app.include_router(transfers_router,   prefix=PREFIX)
+app.include_router(adjustments_router, prefix=PREFIX)
+app.include_router(ledger_router,      prefix=PREFIX)
+app.include_router(dashboard_router,   prefix=PREFIX)
+
 
 @app.get("/", tags=["System"])
 def root():
@@ -48,5 +63,11 @@ def root():
         "app": settings.PROJECT_NAME,
         "version": settings.VERSION,
         "docs": "/docs",
-        "health_check": f"{settings.API_V1_STR}/health"
+        "health_check": f"{PREFIX}/health"
     }
+
+
+@app.get(f"{PREFIX}/health", tags=["System"])
+def health():
+    """Quick liveness check — no DB call needed for container orchestration."""
+    return {"status": "ok", "version": settings.VERSION}

@@ -20,8 +20,7 @@ class ItemService:
             title=item_in.title,
             description=item_in.description,
             category=item_in.category,
-            is_active=item_in.is_active,
-            odoo_ref_id=item_in.odoo_ref_id
+            is_active=item_in.is_active
         )
         db.add(db_item)
         db.commit()
