@@ -103,8 +103,11 @@ class DeliveryService:
                 on_hand = float(stock_row["on_hand"]) if stock_row else 0.0
 
                 if on_hand < requested_qty:
+                    cur.execute("SELECT name FROM products WHERE id = %s", (prod_id,))
+                    p_row = cur.fetchone()
+                    prod_name = p_row["name"] if p_row else prod_id
                     raise ValueError(
-                        f"Insufficient stock for Product '{prod_id}'. Available: {on_hand}, Requested: {requested_qty}"
+                        f"Insufficient stock for Product '{prod_name}'. Available: {on_hand}, Requested: {requested_qty}"
                     )
 
             # Update status to Done

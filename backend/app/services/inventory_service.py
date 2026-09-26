@@ -197,6 +197,9 @@ class InventoryService:
     # --------------------------------------------------------------------------
     @staticmethod
     def create_adjustment(db: Session, data: AdjustmentCreate) -> StockAdjustment:
+        if data.counted_qty < 0:
+            raise HTTPException(status_code=400, detail="Counted physical quantity cannot be negative")
+
         adj_no = f"ADJ-{uuid.uuid4().hex[:8].upper()}"
         system_qty = LedgerService.get_current_stock(db, data.product_id, data.location_id)
         delta_qty = data.counted_qty - system_qty

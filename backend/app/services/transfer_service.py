@@ -81,8 +81,11 @@ class TransferService:
             on_hand = float(stock_row["on_hand"]) if stock_row else 0.0
 
             if on_hand < qty:
+                cur.execute("SELECT name FROM products WHERE id = %s", (prod_id,))
+                p_row = cur.fetchone()
+                prod_name = p_row["name"] if p_row else prod_id
                 raise ValueError(
-                    f"Insufficient stock at source location. Available: {on_hand}, Requested: {qty}"
+                    f"Insufficient stock for Product '{prod_name}' at source location. Available: {on_hand}, Requested: {qty}"
                 )
 
             # 2. Update status to Done

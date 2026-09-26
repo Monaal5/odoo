@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS stock_levels (
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     product_id   UUID NOT NULL REFERENCES products(id),
     warehouse_id UUID REFERENCES warehouses(id),
-    quantity     NUMERIC(12,3) NOT NULL DEFAULT 0,
+    quantity     NUMERIC(12,3) NOT NULL DEFAULT 0 CHECK (quantity >= 0),
     CONSTRAINT unq_product_warehouse UNIQUE (product_id, warehouse_id)
 );
 
