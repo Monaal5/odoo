@@ -8,9 +8,7 @@
 const typewriterPhrases = [
   "Smarter Inventory.",
   "Faster Decisions.",
-  "Zero Stock Chaos.",
-  "Autonomous Replenishment.",
-  "Real-Time Telemetry."
+  "Zero Stock Chaos."
 ];
 
 let phraseIndex = 0;
@@ -457,15 +455,15 @@ function initPricingToggle() {
   monthlyBtn.addEventListener("click", () => {
     monthlyBtn.classList.add("active");
     yearlyBtn.classList.remove("active");
-    if (priceBusiness) priceBusiness.textContent = "$29";
+    if (priceBusiness) priceBusiness.textContent = "₹2,499";
     if (periodBusiness) periodBusiness.textContent = "/ month";
   });
 
   yearlyBtn.addEventListener("click", () => {
     yearlyBtn.classList.add("active");
     monthlyBtn.classList.remove("active");
-    if (priceBusiness) priceBusiness.textContent = "$23";
-    if (periodBusiness) periodBusiness.textContent = "/ month (billed annually)";
+    if (priceBusiness) priceBusiness.textContent = "₹1,999";
+    if (periodBusiness) periodBusiness.textContent = "/ month (billed annually, save 20%)";
   });
 }
 
@@ -481,8 +479,42 @@ function initHeroBarAnimations() {
   }, 2800);
 }
 
+// ── 8. Background Ambient Video Auto-Play Safeguard ───────
+function initBackgroundVideo() {
+  const bgVideo = document.querySelector(".landing-video-bg");
+  if (!bgVideo) return;
+  bgVideo.muted = true;
+  bgVideo.defaultMuted = true;
+  bgVideo.playsInline = true;
+
+  const startPlay = () => {
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        const playOnUserGesture = () => {
+          bgVideo.play();
+          window.removeEventListener("scroll", playOnUserGesture);
+          window.removeEventListener("click", playOnUserGesture);
+          window.removeEventListener("touchstart", playOnUserGesture);
+        };
+        window.addEventListener("scroll", playOnUserGesture, { once: true, passive: true });
+        window.addEventListener("click", playOnUserGesture, { once: true });
+        window.addEventListener("touchstart", playOnUserGesture, { once: true, passive: true });
+      });
+    }
+  };
+
+  if (bgVideo.readyState >= 2) {
+    startPlay();
+  } else {
+    bgVideo.addEventListener("loadeddata", startPlay, { once: true });
+    startPlay();
+  }
+}
+
 // ── Initialize All Capabilities on Load ───────────────────
 document.addEventListener("DOMContentLoaded", () => {
+  initBackgroundVideo();
   initTypewriter();
   initScrollReveal();
   initLiveEventToast();

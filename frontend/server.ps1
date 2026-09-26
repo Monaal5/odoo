@@ -33,6 +33,8 @@ while ($listener.IsListening) {
                 ".png"  { "image/png" }
                 ".svg"  { "image/svg+xml" }
                 ".json" { "application/json; charset=utf-8" }
+                ".mp4"  { "video/mp4" }
+                ".webm" { "video/webm" }
                 default { "application/octet-stream" }
             }
             $response.ContentType = $contentType

@@ -15,6 +15,15 @@
 </head>
 <body class="landing-body">
 
+    <!-- ── Ambient Background Video Loop (Vibrant Colors & High Visibility) ── -->
+    <div class="landing-video-bg-wrap" aria-hidden="true">
+        <video class="landing-video-bg" src="assets/WhatsApp%20Video%202026-09-26%20at%204.56.39%20PM.mp4" autoplay loop muted playsinline preload="auto">
+            <source src="assets/WhatsApp%20Video%202026-09-26%20at%204.56.39%20PM.mp4" type="video/mp4">
+            <source src="assets/WhatsApp Video 2026-09-26 at 4.56.39 PM.mp4" type="video/mp4">
+        </video>
+        <div class="landing-video-overlay"></div>
+    </div>
+
     <!-- ── 1. Top Navbar ──────────────────────────────────────── -->
     <header class="landing-nav">
         <div class="landing-nav-container">
@@ -49,7 +58,6 @@
 
             <!-- Typewriter Headline (Smarter Inventory -> Faster Decisions -> Zero Stock Chaos) -->
             <h1 class="hero-headline">
-                <span class="hero-headline-static">Next-Gen Intelligence.</span>
                 <span class="typewriter-box">
                     <span id="typewriter-output" class="typewriter-text">Smarter Inventory.</span><span class="typewriter-cursor">|</span>
                 </span>
@@ -137,15 +145,32 @@
         </div>
     </section>
 
-    <!-- ── 3. Logos Strip ─────────────────────────────────────── -->
+    <!-- ── 3. Logos Strip (Infinite Moving Ribbon Marquee) ───── -->
     <section class="logos-strip reveal-item">
         <h3 class="logos-heading">TRUSTED BY LEADING LOGISTICS, WHOLESALE & MANUFACTURING TEAMS</h3>
-        <div class="logos-grid">
-            <div class="logo-item">❖ NEXA</div>
-            <div class="logo-item">❖ WIREX</div>
-            <div class="logo-item">❖ LOGISTEX</div>
-            <div class="logo-item">❖ METRO HUB</div>
-            <div class="logo-item">❖ INVENTRA</div>
+        <div class="logos-ribbon-wrap">
+            <div class="logos-ribbon-track">
+                <!-- Group 1 -->
+                <div class="logos-ribbon-group">
+                    <div class="logo-item"><span class="logo-gem">❖</span> NEXA LOGISTICS</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> WIREX SUPPLY</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> LOGISTEX GLOBAL</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> METRO HUB</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> INVENTRA AI</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> APEX FREIGHT</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> VANGUARD DEPOT</div>
+                </div>
+                <!-- Group 2 (Duplicate for infinite seamless loop) -->
+                <div class="logos-ribbon-group" aria-hidden="true">
+                    <div class="logo-item"><span class="logo-gem">❖</span> NEXA LOGISTICS</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> WIREX SUPPLY</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> LOGISTEX GLOBAL</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> METRO HUB</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> INVENTRA AI</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> APEX FREIGHT</div>
+                    <div class="logo-item"><span class="logo-gem">❖</span> VANGUARD DEPOT</div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -446,7 +471,7 @@
                 <div class="pricing-tier-sub">For small businesses</div>
                 
                 <div class="pricing-price-row">
-                    <span class="pricing-amount">$0</span>
+                    <span class="pricing-amount">₹0</span>
                     <span class="pricing-period">/ month</span>
                 </div>
 
@@ -467,7 +492,7 @@
                 <div class="pricing-tier-sub">Fast-growing warehouses</div>
                 
                 <div class="pricing-price-row">
-                    <span class="pricing-amount" id="price-business-val" style="color:var(--primary);">$29</span>
+                    <span class="pricing-amount" id="price-business-val" style="color:var(--primary);">₹2,499</span>
                     <span class="pricing-period" id="price-business-period">/ month</span>
                 </div>
 
