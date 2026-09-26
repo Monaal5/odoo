@@ -42,15 +42,17 @@
 
     <!-- ── 2. Hero Section ────────────────────────────────────── -->
     <section class="hero-section" id="hero">
-        <div class="hero-content">
+        <div class="hero-content reveal-left">
             <div class="hero-pill">
                 <span>⚡ ALL-POWERFUL INVENTORY PLATFORM</span>
             </div>
 
+            <!-- Typewriter Headline (Smarter Inventory -> Faster Decisions -> Zero Stock Chaos) -->
             <h1 class="hero-headline">
-                Smarter Inventory.<br>
-                <span class="hero-headline-gradient">Faster Decisions.</span><br>
-                Zero Stock Chaos.
+                <span class="hero-headline-static">Next-Gen Intelligence.</span>
+                <span class="typewriter-box">
+                    <span id="typewriter-output" class="typewriter-text">Smarter Inventory.</span><span class="typewriter-cursor">|</span>
+                </span>
             </h1>
 
             <p class="hero-description">
@@ -73,21 +75,21 @@
             </div>
         </div>
 
-        <!-- Hero Right Preview Window -->
-        <div class="hero-visual-wrap">
+        <!-- Hero Right Preview Window ("Occurring" with 3D Float) -->
+        <div class="hero-visual-wrap reveal-right delay-1">
             <div class="hero-dashboard-preview">
-                <!-- Top 3 Metrics -->
+                <!-- Top 3 Metrics (Animated Counters) -->
                 <div class="preview-top-metrics">
                     <div class="preview-metric-box">
-                        <div class="preview-metric-val" style="color:var(--primary);">145,019</div>
+                        <div class="preview-metric-val" style="color:var(--primary);" data-count-target="145019">145,019</div>
                         <div class="preview-metric-lbl">Total Stock Count</div>
                     </div>
                     <div class="preview-metric-box">
-                        <div class="preview-metric-val" style="color:var(--success);">54.2%</div>
+                        <div class="preview-metric-val" style="color:var(--success);" data-count-target="54.2" data-suffix="%">54.2%</div>
                         <div class="preview-metric-lbl">Rotation Velocity</div>
                     </div>
                     <div class="preview-metric-box">
-                        <div class="preview-metric-val" style="color:#0284C7;">99.8%</div>
+                        <div class="preview-metric-val" style="color:#0284C7;" data-count-target="99.8" data-suffix="%">99.8%</div>
                         <div class="preview-metric-lbl">Fulfillment Rate</div>
                     </div>
                 </div>
@@ -136,7 +138,7 @@
     </section>
 
     <!-- ── 3. Logos Strip ─────────────────────────────────────── -->
-    <section class="logos-strip">
+    <section class="logos-strip reveal-item">
         <h3 class="logos-heading">TRUSTED BY LEADING LOGISTICS, WHOLESALE & MANUFACTURING TEAMS</h3>
         <div class="logos-grid">
             <div class="logo-item">❖ NEXA</div>
@@ -147,19 +149,19 @@
         </div>
     </section>
 
-    <!-- ── 4. Capabilities (6 Feature Cards) ─────────────────── -->
+    <!-- ── 4. Capabilities (6 Feature Cards Occurring on Scroll) ─ -->
     <section class="section-capabilities" id="features">
-        <div class="section-tag-center">
+        <div class="section-tag-center reveal-item">
             <span class="hero-pill" style="font-size: 11px;">CAPABILITIES</span>
         </div>
-        <h2 class="section-title-center">Everything you need to manage inventory</h2>
-        <p class="section-subtitle-center">
+        <h2 class="section-title-center reveal-item delay-1">Everything you need to manage inventory</h2>
+        <p class="section-subtitle-center reveal-item delay-2">
             Eliminate stock discrepancies and streamline multi-facility operations with zero friction.
         </p>
 
         <div class="features-grid-6">
             <!-- 1. Real-Time Inventory -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-1">
                 <div class="feature-icon-bubble">📦</div>
                 <h3 class="feature-box-title">Real-Time Inventory</h3>
                 <p class="feature-box-desc">Monitor every product with live stock quantities across multiple warehouses.</p>
@@ -167,7 +169,7 @@
             </div>
 
             <!-- 2. Warehouse Management -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-2">
                 <div class="feature-icon-bubble">🏢</div>
                 <h3 class="feature-box-title">Warehouse Management</h3>
                 <p class="feature-box-desc">Organize products by warehouse, rack, shelf, and storage location effortlessly.</p>
@@ -175,7 +177,7 @@
             </div>
 
             <!-- 3. Stock Ledger -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-3">
                 <div class="feature-icon-bubble">📜</div>
                 <h3 class="feature-box-title">Stock Ledger</h3>
                 <p class="feature-box-desc">Every movement is recorded with complete audit history and traceability.</p>
@@ -183,7 +185,7 @@
             </div>
 
             <!-- 4. AI Low Stock Alerts -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-1">
                 <div class="feature-icon-bubble">🔔</div>
                 <h3 class="feature-box-title">AI Low Stock Alerts</h3>
                 <p class="feature-box-desc">Receive intelligent notifications before products run out of stock.</p>
@@ -191,7 +193,7 @@
             </div>
 
             <!-- 5. Internal Transfers -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-2">
                 <div class="feature-icon-bubble">🔄</div>
                 <h3 class="feature-box-title">Internal Transfers</h3>
                 <p class="feature-box-desc">Move inventory between warehouses without losing stock visibility.</p>
@@ -199,7 +201,7 @@
             </div>
 
             <!-- 6. Smart Reports -->
-            <div class="feature-box">
+            <div class="feature-box reveal-item delay-3">
                 <div class="feature-icon-bubble">📊</div>
                 <h3 class="feature-box-title">Smart Reports</h3>
                 <p class="feature-box-desc">Export professional CSV & PDF reports with one click.</p>
@@ -211,26 +213,26 @@
     <!-- ── 5. Interactive Slideshow / Dynamic Dashboard Showcase ── -->
     <section class="section-slideshow" id="dashboard-showcase">
         <div class="slideshow-inner">
-            <div class="section-tag-center">
+            <div class="section-tag-center reveal-item">
                 <span class="hero-pill" style="font-size: 11px;">OPERATIONAL INTELLIGENCE</span>
             </div>
-            <h2 class="section-title-center">A dashboard built for modern operations</h2>
-            <p class="section-subtitle-center" id="showcase-headline">
+            <h2 class="section-title-center reveal-item delay-1">A dashboard built for modern operations</h2>
+            <p class="section-subtitle-center reveal-item delay-2" id="showcase-headline">
                 Consolidated warehouse telemetry, automated stock records metrics, and instantaneous adjustments in one unified view.
             </p>
 
             <!-- Moving Slide Switcher Buttons -->
-            <div class="slides-nav-bar" id="slides-tabs-bar">
+            <div class="slides-nav-bar reveal-item delay-2" id="slides-tabs-bar">
                 <!-- Dynamically generated via landing.js -->
             </div>
 
             <!-- Animated Auto-play Progress Bar -->
-            <div class="slide-progress-bar-wrap">
+            <div class="slide-progress-bar-wrap reveal-item delay-2">
                 <div class="slide-progress-bar" id="slide-progress-bar"></div>
             </div>
 
-            <!-- Interactive Live Display Board -->
-            <div class="interactive-showcase-board" id="interactive-showcase-board">
+            <!-- Interactive Live Display Board (Occurring with smooth zoom entrance) -->
+            <div class="interactive-showcase-board reveal-item delay-3" id="interactive-showcase-board">
                 <!-- Header Toolbar -->
                 <div class="showcase-header-bar">
                     <div style="display:flex; align-items:center; gap:16px;">
@@ -302,19 +304,19 @@
         </div>
     </section>
 
-    <!-- ── 6. 3-Step Setup Flow ───────────────────────────────── -->
+    <!-- ── 6. 3-Step Setup Flow (Occurring on Scroll) ─────────── -->
     <section class="section-3steps">
-        <div class="section-tag-center">
+        <div class="section-tag-center reveal-item">
             <span class="hero-pill" style="font-size: 11px;">SIMPLE 3-STEP SETUP</span>
         </div>
-        <h2 class="section-title-center">From onboarding to autonomous inventory intelligence</h2>
-        <p class="section-subtitle-center">
+        <h2 class="section-title-center reveal-item delay-1">From onboarding to autonomous inventory intelligence</h2>
+        <p class="section-subtitle-center reveal-item delay-2">
             Deploy in minutes with seamless imports and zero steep learning curves for warehouse staff.
         </p>
 
         <div class="steps-grid">
             <!-- Step 1 -->
-            <div class="step-card">
+            <div class="step-card reveal-item delay-1">
                 <div class="step-number-badge">1</div>
                 <h3 class="step-card-title">Add Products</h3>
                 <p class="step-card-desc">Create products, categories, and warehouse locations within minutes.</p>
@@ -324,7 +326,7 @@
             </div>
 
             <!-- Step 2 -->
-            <div class="step-card">
+            <div class="step-card reveal-item delay-2">
                 <div class="step-number-badge">2</div>
                 <h3 class="step-card-title">Track Every Movement</h3>
                 <p class="step-card-desc">Record receipts, deliveries, transfers, and adjustments dynamically.</p>
@@ -334,7 +336,7 @@
             </div>
 
             <!-- Step 3 -->
-            <div class="step-card">
+            <div class="step-card reveal-item delay-3">
                 <div class="step-number-badge">3</div>
                 <h3 class="step-card-title">Gain AI Insights</h3>
                 <p class="step-card-desc">Predict stock shortages and optimize inventory with intelligent analytics.</p>
@@ -349,7 +351,7 @@
     <section class="section-ai-copilot" id="ai-assistant">
         <div class="ai-copilot-inner">
             <!-- Left Info -->
-            <div>
+            <div class="reveal-left">
                 <div class="ai-pill">
                     <span>✨ ARTIFICIAL INTELLIGENCE</span>
                 </div>
@@ -378,8 +380,8 @@
                 </a>
             </div>
 
-            <!-- Right Interactive Chat Window -->
-            <div>
+            <!-- Right Interactive Chat Window (Occurring Slide from Right) -->
+            <div class="reveal-right delay-2">
                 <div class="ai-chat-console">
                     <div class="chat-console-header">
                         <div style="display:flex; align-items:center; gap:8px;">
@@ -421,15 +423,15 @@
         </div>
     </section>
 
-    <!-- ── 8. Simple Pricing ──────────────────────────────────── -->
+    <!-- ── 8. Simple Pricing (Occurring on Scroll) ────────────── -->
     <section class="section-pricing" id="pricing">
-        <div class="section-tag-center">
+        <div class="section-tag-center reveal-item">
             <span class="hero-pill" style="font-size: 11px;">PLANS</span>
         </div>
-        <h2 class="section-title-center">Simple pricing for every business</h2>
+        <h2 class="section-title-center reveal-item delay-1">Simple pricing for every business</h2>
 
         <!-- Monthly / Yearly Toggle -->
-        <div class="pricing-toggle-wrap">
+        <div class="pricing-toggle-wrap reveal-item delay-2">
             <button type="button" class="pricing-switch-btn active" id="pricing-monthly">Monthly</button>
             <button type="button" class="pricing-switch-btn" id="pricing-yearly">
                 <span>Yearly</span>
@@ -439,7 +441,7 @@
 
         <div class="pricing-grid">
             <!-- 1. Starter -->
-            <div class="pricing-card">
+            <div class="pricing-card reveal-item delay-1">
                 <div class="pricing-tier-name">Starter</div>
                 <div class="pricing-tier-sub">For small businesses</div>
                 
@@ -459,7 +461,7 @@
             </div>
 
             <!-- 2. Business (POPULAR) -->
-            <div class="pricing-card popular">
+            <div class="pricing-card popular reveal-item delay-2">
                 <div class="popular-ribbon">POPULAR</div>
                 <div class="pricing-tier-name">Business</div>
                 <div class="pricing-tier-sub">Fast-growing warehouses</div>
@@ -481,7 +483,7 @@
             </div>
 
             <!-- 3. Enterprise -->
-            <div class="pricing-card">
+            <div class="pricing-card reveal-item delay-3">
                 <div class="pricing-tier-name">Enterprise</div>
                 <div class="pricing-tier-sub">Tailored for large organizations</div>
                 
@@ -504,17 +506,17 @@
 
     <!-- ── 9. Loved by warehouse teams ────────────────────────── -->
     <section class="section-testimonials">
-        <div class="section-tag-center">
+        <div class="section-tag-center reveal-item">
             <span class="hero-pill" style="font-size: 11px;">TESTIMONIALS</span>
         </div>
-        <h2 class="section-title-center">Loved by warehouse teams</h2>
-        <p class="section-subtitle-center">
+        <h2 class="section-title-center reveal-item delay-1">Loved by warehouse teams</h2>
+        <p class="section-subtitle-center reveal-item delay-2">
             Real feedback from procurement managers and operations leaders worldwide.
         </p>
 
         <div class="testimonials-grid">
             <!-- Review 1 -->
-            <div class="testimonial-card">
+            <div class="testimonial-card reveal-item delay-1">
                 <div>
                     <div class="test-stars">★★★★★</div>
                     <p class="test-quote">
@@ -531,7 +533,7 @@
             </div>
 
             <!-- Review 2 -->
-            <div class="testimonial-card">
+            <div class="testimonial-card reveal-item delay-2">
                 <div>
                     <div class="test-stars">★★★★★</div>
                     <p class="test-quote">
@@ -548,7 +550,7 @@
             </div>
 
             <!-- Review 3 -->
-            <div class="testimonial-card">
+            <div class="testimonial-card reveal-item delay-3">
                 <div>
                     <div class="test-stars">★★★★★</div>
                     <p class="test-quote">
@@ -568,7 +570,7 @@
 
     <!-- ── 10. CTA Purple Banner ──────────────────────────────── -->
     <section class="section-cta-banner" id="contact">
-        <div class="cta-banner-box">
+        <div class="cta-banner-box reveal-item">
             <h2 class="cta-banner-title">Ready to Transform Your Inventory Operations?</h2>
             <p class="cta-banner-subtitle">
                 Join 1400+ businesses using StockSense to automate warehouses and gain real-time inventory intelligence.
@@ -625,6 +627,12 @@
             </div>
         </div>
     </footer>
+
+    <!-- ── Live Real-Time Inventory Event Toast ("Occurring in real-time") ── -->
+    <div class="live-inventory-event-toast" id="live-inventory-toast">
+        <span class="live-event-dot"></span>
+        <div id="live-toast-msg">🟢 PO-8821 verified: +50 Steel Rods at Bay 2</div>
+    </div>
 
     <!-- Scripts -->
     <script src="js/api.js"></script>

@@ -1,9 +1,147 @@
 /**
  * StockSense IMS — Dynamic Landing Page Controller (landing.js)
- * Slideshow animations, dynamic dashboard switcher, AI Copilot simulation, and moving buttons.
+ * Typewriter headline animation, scroll-reveal image/card occurrences,
+ * dynamic slideshow, live inventory event toaster, AI Copilot, and interactive pricing.
  */
 
-// Slide Data Collections
+// ── 1. Typewriter Animation Engine ────────────────────────
+const typewriterPhrases = [
+  "Smarter Inventory.",
+  "Faster Decisions.",
+  "Zero Stock Chaos.",
+  "Autonomous Replenishment.",
+  "Real-Time Telemetry."
+];
+
+let phraseIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+const TYPE_SPEED = 75;      // Typing speed (ms per char)
+const DELETE_SPEED = 38;    // Cutting/deleting speed (ms per char)
+const PAUSE_END = 1800;     // Pause after completing phrase
+const PAUSE_START = 350;    // Pause before typing next phrase
+
+function initTypewriter() {
+  const el = document.getElementById("typewriter-output");
+  if (!el) return;
+
+  function typeTick() {
+    const currentPhrase = typewriterPhrases[phraseIndex];
+
+    if (isDeleting) {
+      // Cutting / Deleting characters
+      charIndex--;
+      el.textContent = currentPhrase.substring(0, charIndex);
+    } else {
+      // Typing characters
+      charIndex++;
+      el.textContent = currentPhrase.substring(0, charIndex);
+    }
+
+    let nextDelay = isDeleting ? DELETE_SPEED : TYPE_SPEED;
+
+    if (!isDeleting && charIndex === currentPhrase.length) {
+      // Finished typing phrase, hold for a moment
+      nextDelay = PAUSE_END;
+      isDeleting = true;
+    } else if (isDeleting && charIndex === 0) {
+      // Finished cutting phrase, move to next phrase
+      isDeleting = false;
+      phraseIndex = (phraseIndex + 1) % typewriterPhrases.length;
+      nextDelay = PAUSE_START;
+    }
+
+    setTimeout(typeTick, nextDelay);
+  }
+
+  typeTick();
+}
+
+// ── 2. Scroll Reveal Animations ("Images and Cards Occurring") ──
+function initScrollReveal() {
+  const reveals = document.querySelectorAll(".reveal-item, .reveal-left, .reveal-right");
+  if (!reveals.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        
+        // Trigger count-up animation for numbers if present
+        const counter = entry.target.querySelector("[data-count-target]");
+        if (counter && !counter.dataset.animated) {
+          animateCounter(counter);
+        }
+      }
+    });
+  }, {
+    threshold: 0.12,
+    rootMargin: "0px 0px -40px 0px"
+  });
+
+  reveals.forEach(el => observer.observe(el));
+}
+
+function animateCounter(el) {
+  el.dataset.animated = "true";
+  const target = parseFloat(el.getAttribute("data-count-target"));
+  const prefix = el.getAttribute("data-prefix") || "";
+  const suffix = el.getAttribute("data-suffix") || "";
+  const isFloat = target % 1 !== 0;
+  
+  let current = 0;
+  const duration = 1600;
+  const stepTime = 30;
+  const steps = duration / stepTime;
+  const increment = target / steps;
+
+  const timer = setInterval(() => {
+    current += increment;
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+    el.textContent = prefix + (isFloat ? current.toFixed(1) : Math.round(current).toLocaleString()) + suffix;
+  }, stepTime);
+}
+
+// ── 3. Live Inventory Event Toaster ("Occurring in Real-Time") ─
+const liveEventsPool = [
+  { icon: "🟢", text: "PO-8821 verified: +50 Steel Rods received at Bay 2", time: "Just now" },
+  { icon: "📦", text: "Dispatch DEL-101: 10 Hex Bolts shipped to Matrix Infra", time: "1m ago" },
+  { icon: "🔄", text: "Transfer TR-001 completed: 25 Rebars moved to WH-02", time: "3m ago" },
+  { icon: "✨", text: "StockSense Copilot auto-generated Reorder PO #8824", time: "4m ago" },
+  { icon: "🛡️", text: "Physical cycle count verified: 100% ledger alignment", time: "6m ago" },
+  { icon: "🚚", text: "Consignment delivery from Apex Steel entered intake bay", time: "Just now" }
+];
+
+let eventIdx = 0;
+
+function initLiveEventToast() {
+  const toast = document.getElementById("live-inventory-toast");
+  const msgEl = document.getElementById("live-toast-msg");
+  if (!toast || !msgEl) return;
+
+  function showNextEvent() {
+    const item = liveEventsPool[eventIdx];
+    eventIdx = (eventIdx + 1) % liveEventsPool.length;
+
+    msgEl.innerHTML = `${item.icon} <span>${item.text}</span>`;
+    toast.classList.add("show");
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+    }, 4200);
+  }
+
+  // First occurrence after 3 seconds, then every 8.5 seconds
+  setTimeout(() => {
+    showNextEvent();
+    setInterval(showNextEvent, 8500);
+  }, 3000);
+}
+
+// ── 4. Slideshow & Dynamic Dashboard Controller ───────────
 const slidesData = [
   {
     tabTitle: "📊 Live Inventory & KPIs",
@@ -120,19 +258,10 @@ const slidesData = [
 ];
 
 let currentSlideIndex = 0;
-let slideInterval = null;
 let progressVal = 0;
 let progressTimer = null;
-const SLIDE_DURATION = 4500; // 4.5 seconds per slide
+const SLIDE_DURATION = 4500; // 4.5s per slide
 
-document.addEventListener("DOMContentLoaded", () => {
-  initSlideshow();
-  initAIChat();
-  initPricingToggle();
-  initHeroBarAnimations();
-});
-
-/* ── 1. Slideshow & Dynamic Dashboard Controller ────────── */
 function initSlideshow() {
   const tabsContainer = document.getElementById("slides-tabs-bar");
   if (!tabsContainer) return;
@@ -167,7 +296,6 @@ function initSlideshow() {
 function switchSlide(index) {
   currentSlideIndex = index;
   
-  // Update active tab buttons
   document.querySelectorAll(".slide-tab-btn").forEach((btn, idx) => {
     btn.classList.toggle("active", idx === index);
   });
@@ -181,16 +309,13 @@ function renderSlideContent(index) {
   const board = document.getElementById("interactive-showcase-board");
   if (!board || !data) return;
 
-  // Add subtle fade animation
-  board.style.opacity = "0.75";
+  board.style.opacity = "0.7";
   board.style.transform = "scale(0.995)";
 
   setTimeout(() => {
-    // 1. Header info
     document.getElementById("showcase-live-badge").textContent = data.badgeText;
     document.getElementById("showcase-headline").textContent = data.headline;
 
-    // 2. Metrics
     const metricsGrid = document.getElementById("showcase-metrics-grid");
     metricsGrid.innerHTML = data.metrics.map(m => `
       <div class="showcase-metric-card">
@@ -200,7 +325,6 @@ function renderSlideContent(index) {
       </div>
     `).join('');
 
-    // 3. Table Rows
     const tbody = document.getElementById("showcase-table-body");
     tbody.innerHTML = data.tableRows.map(r => `
       <tr>
@@ -212,12 +336,10 @@ function renderSlideContent(index) {
       </tr>
     `).join('');
 
-    // 4. Alert Box
     document.getElementById("showcase-alert-title").textContent = data.alertBox.title;
     document.getElementById("showcase-alert-desc").textContent = data.alertBox.desc;
     document.getElementById("showcase-alert-btn").textContent = data.alertBox.btnText;
 
-    // 5. Live Feed
     const feedList = document.getElementById("showcase-live-feed");
     feedList.innerHTML = data.liveFeed.map(f => `
       <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid #F1F5F9; font-size:12.5px;">
@@ -226,8 +348,7 @@ function renderSlideContent(index) {
       </div>
     `).join('');
 
-    // 6. Update chart bars heights
-    const barCols = document.querySelectorAll(".hero-chart-bar");
+    const barCols = document.querySelectorAll(".hero-chart-bar-live");
     barCols.forEach((bar, i) => {
       const h = data.chartBars[i] || 60;
       bar.style.height = `${h}%`;
@@ -247,7 +368,7 @@ function resetProgressTimer() {
   progressVal = 0;
   const progressBar = document.getElementById("slide-progress-bar");
   
-  const step = 50; // update every 50ms
+  const step = 50;
   const increment = (step / SLIDE_DURATION) * 100;
 
   progressTimer = setInterval(() => {
@@ -270,7 +391,7 @@ function resumeAutoPlay() {
   resetProgressTimer();
 }
 
-/* ── 2. Interactive AI Assistant Copilot ─────────────────── */
+// ── 5. Interactive AI Assistant Copilot ───────────────────
 function initAIChat() {
   const sendBtn = document.getElementById("ai-chat-send");
   const input = document.getElementById("ai-chat-input");
@@ -281,7 +402,6 @@ function initAIChat() {
   function sendQuery(text) {
     if (!text.trim()) return;
     
-    // Animate user message
     const userBubble = document.getElementById("ai-user-query");
     if (userBubble) {
       userBubble.textContent = text;
@@ -290,7 +410,7 @@ function initAIChat() {
     }
 
     input.value = "";
-    botBubble.innerHTML = `<span style="color:#A855F7;">⚡ StockSense AI thinking...</span>`;
+    botBubble.innerHTML = `<span style="color:#A855F7;">⚡ StockSense AI computing answer...</span>`;
 
     setTimeout(() => {
       let reply = "";
@@ -310,7 +430,7 @@ function initAIChat() {
         <div style="font-weight:700; color:#D8B4FE; margin-bottom:4px;">✨ StockSense Intelligence:</div>
         <div>${reply}</div>
       `;
-    }, 600);
+    }, 550);
   }
 
   sendBtn.addEventListener("click", () => sendQuery(input.value));
@@ -318,7 +438,6 @@ function initAIChat() {
     if (e.key === "Enter") sendQuery(input.value);
   });
 
-  // Action chips click
   document.querySelectorAll(".chat-chip-btn").forEach(chip => {
     chip.addEventListener("click", () => {
       sendQuery(chip.textContent.trim());
@@ -326,7 +445,7 @@ function initAIChat() {
   });
 }
 
-/* ── 3. Pricing Period Toggle ────────────────────────────── */
+// ── 6. Pricing Period Toggle ──────────────────────────────
 function initPricingToggle() {
   const monthlyBtn = document.getElementById("pricing-monthly");
   const yearlyBtn = document.getElementById("pricing-yearly");
@@ -350,14 +469,25 @@ function initPricingToggle() {
   });
 }
 
-/* ── 4. Hero Live Charts & Floating Animations ───────────── */
+// ── 7. Hero Live Bar Fluctuations ─────────────────────────
 function initHeroBarAnimations() {
   setInterval(() => {
     const bars = document.querySelectorAll(".hero-chart-bar-live");
     bars.forEach(b => {
       const currentH = parseInt(b.style.height || "60", 10);
-      const randomH = Math.max(30, Math.min(100, currentH + (Math.floor(Math.random() * 20) - 10)));
+      const randomH = Math.max(30, Math.min(100, currentH + (Math.floor(Math.random() * 24) - 12)));
       b.style.height = `${randomH}%`;
     });
-  }, 3000);
+  }, 2800);
 }
+
+// ── Initialize All Capabilities on Load ───────────────────
+document.addEventListener("DOMContentLoaded", () => {
+  initTypewriter();
+  initScrollReveal();
+  initLiveEventToast();
+  initSlideshow();
+  initAIChat();
+  initPricingToggle();
+  initHeroBarAnimations();
+});
