@@ -1,10 +1,12 @@
 from datetime import datetime
 from typing import List, Optional, Union
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ReceiptItemCreate(BaseModel):
     product_id: Union[str, int]
+    location_id: Optional[Union[str, int]] = None
+    warehouse_id: Optional[Union[str, int]] = None
     quantity: float = Field(..., gt=0, description="Quantity received")
 
 
@@ -12,7 +14,10 @@ class ReceiptItemResponse(BaseModel):
     id: Union[str, int]
     receipt_id: Union[str, int]
     product_id: Union[str, int]
+    location_id: Optional[Union[str, int]] = 1
     quantity: float
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class ReceiptCreate(BaseModel):
@@ -20,8 +25,7 @@ class ReceiptCreate(BaseModel):
     warehouse_id: Optional[Union[str, int]] = None
     items: List[ReceiptItemCreate]
 
-    class Config:
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class ReceiptResponse(BaseModel):
@@ -31,5 +35,8 @@ class ReceiptResponse(BaseModel):
     warehouse_id: Optional[Union[str, int]] = None
     status: str
     items: List[ReceiptItemResponse]
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
