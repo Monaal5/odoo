@@ -18,6 +18,7 @@ from app.api.transfers import router as transfers_router
 from app.api.adjustments import router as adjustments_router
 from app.api.ledger import router as ledger_router
 from app.api.dashboard import router as dashboard_router
+from app.api.search import router as search_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -55,6 +56,7 @@ app.include_router(transfers_router,   prefix=PREFIX)
 app.include_router(adjustments_router, prefix=PREFIX)
 app.include_router(ledger_router,      prefix=PREFIX)
 app.include_router(dashboard_router,   prefix=PREFIX)
+app.include_router(search_router,      prefix=PREFIX)
 
 
 @app.get("/", tags=["System"])
