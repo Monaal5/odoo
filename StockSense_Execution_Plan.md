@@ -48,7 +48,7 @@ StockSense replaces paper registers, spreadsheets, and ad-hoc tracking with a si
 
 ## 📅 Phased Implementation Roadmap
 
-### Phase 1 — MVP Foundation (Weeks 1–3)
+### Phase 1 — MVP Foundation
 **Goal**: Usable single-warehouse system covering identity and product catalog.
 - **Auth**: Sign up / Login, OTP password reset, session & role management.
 - **Product Management**: CRUD for products (Name, SKU/Code, Category, Unit of Measure, Initial Stock).
@@ -56,26 +56,26 @@ StockSense replaces paper registers, spreadsheets, and ad-hoc tracking with a si
 - **Single-Warehouse Stock Table**: Derived stock per product.
 - **Core Shell Dashboard**: Left sidebar navigation (Products, Operations, Settings, Profile) & baseline KPIs.
 
-### Phase 2 — Core Stock Operations (Weeks 4–6)
+### Phase 2 — Core Stock Operations 
 **Goal**: Inbound and outbound stock flows with full event logging.
 - **Receipts (Incoming)**: Supplier, products, quantities (`Draft` → `Waiting` → `Ready` → `Done`). Validating auto-increases stock & appends to ledger.
 - **Delivery Orders (Outgoing)**: Sales order / manual creation (`Pick` → `Pack` → `Validate`). Validating auto-decreases stock & appends to ledger.
 - **Stock Ledger / Move History**: Filterable, read-only audit log by product, document type, status, and date.
 
-### Phase 3 — Internal Transfers & Adjustments (Weeks 7–8)
+### Phase 3 — Internal Transfers & Adjustments 
 **Goal**: Multi-location movements and physical count reconciliations.
 - **Internal Transfers**: Move stock between warehouses/racks (`Main Warehouse` → `Production Floor`). Total stock unchanged; location updated.
 - **Stock Adjustments**: Counted qty input vs recorded stock. System computes delta, writes ledger entry, and records reason/notes (damage, loss, count error).
 - **Multi-Warehouse Support**: Nested location entity modeling (`Warehouse` → `Zone` → `Rack`).
 
-### Phase 4 — Intelligence & Alerts (Weeks 9–10)
+### Phase 4 — Intelligence & Alerts 
 **Goal**: Transform dashboard into a real-time operations control center.
 - **Dashboard KPIs**: Total products in stock, low-stock/out-of-stock count, pending receipts, pending deliveries, scheduled transfers.
 - **Dynamic Filters**: By document type (`Receipt`, `Delivery`, `Transfer`, `Adjustment`), status, location, and category.
 - **Low-Stock Alerts**: Reordering rules based on per-product min/max thresholds.
 - **SKU Search**: Smart full-text search across catalog.
 
-### Phase 5 — Scale & Polish (Weeks 11–13)
+### Phase 5 — Scale & Polish 
 **Goal**: Production-ready, multi-warehouse setup with audit readiness.
 - **Settings Module**: Warehouse management (Add/Edit/Deactivate), User & Role permissions.
 - **Profile & Security**: Password/OTP settings, My Profile, Session logout.
@@ -85,7 +85,7 @@ StockSense replaces paper registers, spreadsheets, and ad-hoc tracking with a si
 - **Mobile/Tablet Views**: Minimalist staff views for picking, packing, and counting.
 - **QA & Edge Cases**: Negative stock prevention, concurrent adjustment handling, document cancellation reversing via compensating entries.
 
-### Phase 6 — AI-Powered Features (Weeks 14–16, Post-Launch)
+### Phase 6 — AI-Powered Features 
 **Goal**: Predictive and assisted operations using clean ledger history.
 - **Demand Forecasting & Smart Reorder**: Predict future consumption based on historical ledger velocity; auto-suggest receipts before hitting min threshold.
 - **Anomaly Detection**: Flag unusual shrinkage, abnormal delivery sizes, or repeated damage adjustments.
