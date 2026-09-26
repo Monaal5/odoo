@@ -30,9 +30,15 @@
                         <h2 class="section-title">Inbound Receipts</h2>
                         <p class="section-subtitle">Receive purchase orders & validate intake to increase stock</p>
                     </div>
-                    <button class="btn btn-primary" id="btn-new-receipt">
-                        <span>📥 Create Receipt</span>
-                    </button>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <input type="file" id="ocr-file-input" accept="image/*,.pdf,.txt" style="display:none;">
+                        <button class="btn btn-outline" id="btn-ocr-scan" style="display:inline-flex; align-items:center; gap:8px; font-weight:700;">
+                            <span>📄 Scan Invoice (OCR)</span>
+                        </button>
+                        <button class="btn btn-primary" id="btn-new-receipt">
+                            <span>📥 Create Receipt</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Table Search & Filter -->

@@ -27,8 +27,12 @@
                 <!-- Section Header -->
                 <div class="section-header-bar">
                     <div>
-                        <h2 class="section-title">Stock Ledger Audit Trail</h2>
+                        <h2 class="section-title">Stock Ledger & Audit Trail</h2>
                         <p class="section-subtitle" id="ledger-count">Cryptographically signed, append-only record of all stock transactions</p>
+                    </div>
+                    <div style="display:flex; background:#EDE7F6; padding:4px; border-radius:var(--radius-full); gap:4px;">
+                        <button type="button" class="btn btn-sm btn-primary" id="btn-view-ledger" style="border-radius:var(--radius-full); padding:6px 16px; font-weight:700;">Stock Movements</button>
+                        <button type="button" class="btn btn-sm" id="btn-view-audit" style="border-radius:var(--radius-full); padding:6px 16px; font-weight:700; background:transparent; color:var(--primary); border:none;">System Audit Trail</button>
                     </div>
                 </div>
 
@@ -72,7 +76,7 @@
                 <!-- Ledger Table -->
                 <div class="table-responsive" style="margin-top:20px;">
                     <table class="data-table">
-                        <thead>
+                        <thead id="ledger-table-head">
                             <tr>
                                 <th style="width: 120px;">Date</th>
                                 <th>Product Item</th>

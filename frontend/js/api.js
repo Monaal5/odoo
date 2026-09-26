@@ -445,6 +445,87 @@ function handleOfflineSimulation(endpoint, method, body) {
                 is_active: true
             };
         }
+    // 16. AI ASSISTANT: /ai/chat
+    if (cleanPath.startsWith("/ai")) {
+        const q = (body && body.query) ? body.query.toLowerCase() : "";
+        let ans = "Analyzed warehouse telemetry across all bays. Inventory is healthy and operating within safety margins.";
+        if (q.includes("steel") || q.includes("rebar")) {
+            ans = "Central Hub (WH-01) currently has 82 Steel Rods 12mm on hand across Rack A-1 and Rack B-2. Consumption velocity: 20 units/week.";
+        } else if (q.includes("po") || q.includes("receipt") || q.includes("order")) {
+            ans = "Purchase Order #PO-8822 drafted for 50 units of Steel Rods from Apex Steel. Expected delivery tomorrow morning.";
+        } else if (q.includes("bolt") || q.includes("fastener")) {
+            ans = "Hex Bolts M8x40 on hand: 450 boxes in Rack A-2, Bin 14. Stock is healthy and requires no replenishment.";
+        } else if (q.includes("low") || q.includes("alert")) {
+            ans = "Currently 2 active low stock alerts: Titanium Fasteners (BLT-044) and 10mm Steel Rebar. Automated purchase orders recommended.";
+        }
+        return { answer: ans, context: { model: "StockSense-AI-v2", timestamp: new Date().toISOString() } };
+    }
+
+    // 17. DEMAND FORECASTING: /forecast
+    if (cleanPath.startsWith("/forecast")) {
+        return {
+            items: [
+                { product: "Steel Rod 12mm", days_to_stockout: 6, recommended_order: 120, current_stock: 82, daily_consumption_rate: 13.6 },
+                { product: "Hex Bolt M8x40", days_to_stockout: 32, recommended_order: 0, current_stock: 450, daily_consumption_rate: 14.0 },
+                { product: "Aluminum Sheet 2mm", days_to_stockout: 4, recommended_order: 60, current_stock: 12, daily_consumption_rate: 3.0 },
+                { product: "Copper Wire Spool 50m", days_to_stockout: 9, recommended_order: 25, current_stock: 18, daily_consumption_rate: 2.0 }
+            ],
+            total: 4
+        };
+    }
+
+    // 18. ANALYTICS & ANOMALY DETECTION: /analytics
+    if (cleanPath.startsWith("/analytics/anomalies")) {
+        return {
+            anomalies: [
+                { severity: "High", message: "Outbound delivery spike detected: Hex Bolts volume is 3.2× higher than 30-day average.", anomaly_type: "UNUSUAL_DELIVERY", product_name: "Hex Bolt M8x40" },
+                { severity: "Medium", message: "Aluminum Sheet 2mm has 2 repeated damage write-offs in the last 7 days.", anomaly_type: "REPEATED_DAMAGE", product_name: "Aluminum Sheet 2mm" }
+            ],
+            total_anomalies: 2
+        };
+    }
+    if (cleanPath.startsWith("/analytics/summary")) {
+        return {
+            total_consumption_30d: 1420,
+            total_shrinkage_30d: 18,
+            high_velocity_products_count: 5,
+            anomalies_count: 2
+        };
+    }
+
+    // 19. AUDIT TRAIL: /audit
+    if (cleanPath.startsWith("/audit")) {
+        return [
+            { id: "aud-1", user_id: "Monaal", action: "VALIDATE", entity: "Receipt", entity_id: "RCP-2026-001", details: "Intake of 50 Steel Rods approved", timestamp: new Date(Date.now() - 3600000).toISOString() },
+            { id: "aud-2", user_id: "Alex", action: "CREATE", entity: "Product", entity_id: "p-5", details: "Added Brass Ball Valve 1/2\"", timestamp: new Date(Date.now() - 7200000).toISOString() },
+            { id: "aud-3", user_id: "Rahul", action: "ADJUST", entity: "Stock", entity_id: "ADJ-001", details: "Count reconciliation delta: -2 units", timestamp: new Date(Date.now() - 14400000).toISOString() }
+        ];
+    }
+
+    // 20. DOCUMENT OCR: /ocr
+    if (cleanPath.startsWith("/ocr/scan")) {
+        return {
+            supplier_name: "Apex Steel Global Ltd",
+            document_number: "INV-8821",
+            confidence: 0.98,
+            items: [
+                { product_name: "Steel Rod 12mm", sku: "STL001", quantity: 50, unit_price: 124.0 },
+                { product_name: "Hex Bolt M8x40", sku: "BLT044", quantity: 200, unit_price: 24.0 }
+            ]
+        };
+    }
+    if (cleanPath.startsWith("/ocr/receipt")) {
+        return {
+            receipt_id: "rcpt-" + Date.now().toString().slice(-4),
+            receipt_number: "RCP-OCR-" + Math.floor(100 + Math.random() * 900),
+            supplier: "Apex Steel Global Ltd",
+            status: "draft",
+            items_count: 2,
+            detected_items: [
+                { product_name: "Steel Rod 12mm", sku: "STL001", quantity: 50, unit_price: 124.0 },
+                { product_name: "Hex Bolt M8x40", sku: "BLT044", quantity: 200, unit_price: 24.0 }
+            ]
+        };
     }
 
     // Default fallback

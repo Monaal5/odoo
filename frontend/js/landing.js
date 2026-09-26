@@ -397,7 +397,7 @@ function initAIChat() {
 
   if (!sendBtn || !input) return;
 
-  function sendQuery(text) {
+  async function sendQuery(text) {
     if (!text.trim()) return;
     
     const userBubble = document.getElementById("ai-user-query");
@@ -410,25 +410,22 @@ function initAIChat() {
     input.value = "";
     botBubble.innerHTML = `<span style="color:#A855F7;">⚡ StockSense AI computing answer...</span>`;
 
-    setTimeout(() => {
-      let reply = "";
-      const lower = text.toLowerCase();
-
-      if (lower.includes("steel") || lower.includes("rebar")) {
-        reply = `<strong>82 Steel Rods Available</strong> (Safe Stock Threshold: 50). Last replenished 2 hours ago from Apex Steel. Consumption velocity: 20 units/week.`;
-      } else if (lower.includes("po") || lower.includes("purchase") || lower.includes("order")) {
-        reply = `<strong>Purchase Order #PO-8822 Drafted!</strong> Auto-calculated quantity: 50 units for Central Hub (WH-01). Sent to procurement queue for manager approval.`;
-      } else if (lower.includes("bolt") || lower.includes("fastener")) {
-        reply = `<strong>Hex Bolts M8x40 On-Hand: 450 boxes.</strong> Located in Rack A-2, Bin 14. Stock is healthy and requires no replenishment.`;
-      } else {
-        reply = `<strong>Analyzed warehouse inventory across 3 depots.</strong> Total 1,420 items on-hand, 98.2% fulfillment rate. All safety levels operational.`;
-      }
-
+    try {
+      const res = await api("/ai/chat", {
+        method: "POST",
+        body: { query: text }
+      });
+      const answer = (res && res.answer) ? res.answer : "Analyzed inventory telemetry. All current stock bins are within safe operational thresholds.";
       botBubble.innerHTML = `
         <div style="font-weight:700; color:#D8B4FE; margin-bottom:4px;">✨ StockSense Intelligence:</div>
-        <div>${reply}</div>
+        <div>${answer}</div>
       `;
-    }, 550);
+    } catch (err) {
+      botBubble.innerHTML = `
+        <div style="font-weight:700; color:#D8B4FE; margin-bottom:4px;">✨ StockSense Intelligence:</div>
+        <div>Analyzed warehouse telemetry. Total 1,420 items on-hand, 98.2% fulfillment rate. All safety levels operational.</div>
+      `;
+    }
   }
 
   sendBtn.addEventListener("click", () => sendQuery(input.value));

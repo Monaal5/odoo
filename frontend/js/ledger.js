@@ -21,6 +21,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function setupLedgerEventListeners() {
+    const btnLedger = document.getElementById("btn-view-ledger");
+    const btnAudit = document.getElementById("btn-view-audit");
+
+    btnLedger?.addEventListener("click", () => {
+        btnLedger.className = "btn btn-sm btn-primary";
+        btnLedger.style.background = "";
+        btnLedger.style.color = "";
+        btnAudit.className = "btn btn-sm";
+        btnAudit.style.background = "transparent";
+        btnAudit.style.color = "var(--primary)";
+        loadLedger();
+    });
+
+    btnAudit?.addEventListener("click", () => {
+        btnAudit.className = "btn btn-sm btn-primary";
+        btnAudit.style.background = "";
+        btnAudit.style.color = "";
+        btnLedger.className = "btn btn-sm";
+        btnLedger.style.background = "transparent";
+        btnLedger.style.color = "var(--primary)";
+        loadAuditLogs();
+    });
+
     // Filter controls change listeners
     const prodFilter = document.getElementById("ledger-filter-product");
     const whFilter = document.getElementById("ledger-filter-warehouse");
@@ -89,8 +112,24 @@ async function loadFilterDropdowns() {
  * Fetch Stock Ledger: GET /ledger
  */
 async function loadLedger() {
+    const thead = document.getElementById("ledger-table-head");
     const tbody = document.getElementById("ledger-table-body");
+    const countEl = document.getElementById("ledger-count");
     if (!tbody) return;
+
+    if (thead) {
+        thead.innerHTML = `
+            <tr>
+                <th style="width: 120px;">Date</th>
+                <th>Product Item</th>
+                <th style="width: 130px;">Document Type</th>
+                <th style="width: 120px;">Delta Qty</th>
+                <th>Warehouse Location</th>
+                <th style="width: 140px;">Document Ref</th>
+            </tr>
+        `;
+    }
+    if (countEl) countEl.textContent = "Cryptographically signed, append-only record of all stock transactions";
 
     const prodId = document.getElementById("ledger-filter-product")?.value;
     const whId = document.getElementById("ledger-filter-warehouse")?.value;
@@ -245,4 +284,55 @@ function renderLedgerTable(items) {
             </tr>
         `;
     }).join('');
+}
+
+async function loadAuditLogs() {
+    const thead = document.getElementById("ledger-table-head");
+    const tbody = document.getElementById("ledger-table-body");
+    const countEl = document.getElementById("ledger-count");
+    if (!tbody || !thead) return;
+
+    thead.innerHTML = `
+        <tr>
+            <th style="width: 150px;">Timestamp</th>
+            <th style="width: 130px;">Operator</th>
+            <th style="width: 110px;">Action</th>
+            <th style="width: 120px;">Entity</th>
+            <th style="width: 130px;">Entity Ref</th>
+            <th>Audit Operation Details</th>
+        </tr>
+    `;
+
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">Fetching system audit records from backend...</td></tr>`;
+
+    try {
+        const logs = await api("/audit");
+        const list = Array.isArray(logs) ? logs : [];
+        if (countEl) countEl.textContent = `Showing ${list.length} system audit operations logged by backend`;
+        if (!list.length) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">No system audit entries found.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = list.map(l => {
+            const timeStr = l.timestamp ? new Date(l.timestamp).toLocaleString() : 'Recent';
+            let actionBadge = 'badge-done';
+            if (l.action === 'CREATE') actionBadge = 'badge-done';
+            else if (l.action === 'VALIDATE') actionBadge = 'badge-waiting';
+            else if (l.action === 'ADJUST') actionBadge = 'badge-draft';
+
+            return `
+                <tr>
+                    <td style="font-weight:600; color:var(--text-muted); font-size:12px;">${timeStr}</td>
+                    <td><strong>👤 ${l.user_id || 'System Admin'}</strong></td>
+                    <td><span class="badge ${actionBadge}">${l.action}</span></td>
+                    <td><span style="font-weight:700;">${l.entity}</span></td>
+                    <td><code>${l.entity_id || 'N/A'}</code></td>
+                    <td style="color:var(--text-main); font-size:13px;">${l.details || 'Operation completed successfully'}</td>
+                </tr>
+            `;
+        }).join('');
+    } catch {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--text-muted);">Unable to load system audit trail.</td></tr>`;
+    }
 }

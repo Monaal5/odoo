@@ -112,6 +112,53 @@
                     </div>
                 </div>
 
+                <!-- AI Demand Forecasting & Operational Anomaly Intelligence -->
+                <div style="margin-top: 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 24px;">
+                    <!-- Left: Demand Forecasting Table -->
+                    <div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-card);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <div>
+                                <h3 style="font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                                    <span>📈</span> AI Demand Forecasting & Stockout Predictor
+                                </h3>
+                                <p style="font-size:12px; color:var(--text-muted);">Endpoint: GET /api/v1/forecast</p>
+                            </div>
+                            <span class="badge badge-done" style="font-size:11px;">Machine Learning</span>
+                        </div>
+                        <div class="table-responsive" style="border:none;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Days to Stockout</th>
+                                        <th>Daily Burn</th>
+                                        <th>Recommended Reorder</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="forecast-table-body">
+                                    <!-- Populated dynamically via reports.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right: Operational Anomalies Feed -->
+                    <div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:24px; box-shadow:var(--shadow-card);">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                            <div>
+                                <h3 style="font-size:16px; font-weight:800; display:flex; align-items:center; gap:8px;">
+                                    <span>⚡</span> Operational Anomaly Detector
+                                </h3>
+                                <p style="font-size:12px; color:var(--text-muted);">Endpoint: GET /api/v1/analytics/anomalies</p>
+                            </div>
+                            <span class="badge badge-waiting" style="font-size:11px;">Real-Time</span>
+                        </div>
+                        <div id="anomalies-list" style="display:flex; flex-direction:column; gap:12px;">
+                            <!-- Populated dynamically via reports.js -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </main>
     </div>
