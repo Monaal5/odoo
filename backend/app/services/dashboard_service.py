@@ -88,13 +88,7 @@ class DashboardService:
 
     @staticmethod
     def get_activity(conn, limit: int = 20, skip: int = 0) -> dict:
-        """
-        Most-recent stock ledger entries enriched with product and warehouse names.
-        """
-        with dict_cursor(conn) as cur:
-            cur.execute(
-                """
-                SELECT
+                        SELECT
                     sle.id,
                     sle.product_id,
                     p.name  AS product_name,
@@ -103,11 +97,11 @@ class DashboardService:
                     sle.qty_delta,
                     sle.source_document_type,
                     sle.source_document_id,
-                    sle.created_at
+                    sle.timestamp AS created_at
                 FROM stock_ledger_entries sle
                 LEFT JOIN products   p ON p.id = sle.product_id
                 LEFT JOIN warehouses w ON w.id = sle.warehouse_id
-                ORDER BY sle.created_at DESC
+                ORDER BY sle.timestamp DESC
                 LIMIT %s OFFSET %s
                 """,
                 (limit, skip),
@@ -181,7 +175,7 @@ class DashboardService:
                         w.name                    AS warehouse_name,
                         sle.qty_delta,
                         COALESCE(r.status, d.status, t.status) AS status,
-                        sle.created_at
+                        sle.timestamp AS created_at
                     FROM stock_ledger_entries sle
                     LEFT JOIN products   p ON p.id = sle.product_id
                     LEFT JOIN warehouses w ON w.id = sle.warehouse_id
@@ -190,7 +184,7 @@ class DashboardService:
                     LEFT JOIN transfers  t ON t.id = sle.source_document_id AND sle.source_document_type IN ('TRANSFER_IN','TRANSFER_OUT')
                     WHERE {where_clause}
                       AND COALESCE(r.status, d.status, t.status) = %s
-                    ORDER BY sle.created_at DESC
+                    ORDER BY sle.timestamp DESC
                     LIMIT %s OFFSET %s
                 """
                 cur.execute(sql, params_with_status + [limit, skip])
@@ -220,13 +214,17 @@ class DashboardService:
                         w.name                    AS warehouse_name,
                         sle.qty_delta,
                         COALESCE(r.status, d.status, t.status) AS status,
-                        sle.created_at
+                        sle.timestamp AS created_at
                     FROM stock_ledger_entries sle
                     LEFT JOIN products   p ON p.id = sle.product_id
                     LEFT JOIN warehouses w ON w.id = sle.warehouse_id
                     LEFT JOIN receipts   r ON r.id = sle.source_document_id AND sle.source_document_type = 'RECEIPT'
                     LEFT JOIN deliveries d ON d.id = sle.source_document_id AND sle.source_document_type = 'DELIVERY'
                     LEFT JOIN transfers  t ON t.id = sle.source_document_id AND sle.source_document_type IN ('TRANSFER_IN','TRANSFER_OUT')
+                    WHERE {where_clause}
+                    ORDER BY sle.timestamp DESC
+                    LIMIT %s OFFSET %s
+                """IN transfers  t ON t.id = sle.source_document_id AND sle.source_document_type IN ('TRANSFER_IN','TRANSFER_OUT')
                     WHERE {where_clause}
                     ORDER BY sle.created_at DESC
                     LIMIT %s OFFSET %s
