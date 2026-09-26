@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
-from app.db.database import get_db
+from app.db.database import get_sqlalchemy_db as get_db
 from app.schemas.alert import AlertResponse
 from app.schemas.reorder_rule import ReorderRuleCreate, ReorderRuleResponse
 from app.services.alert_service import AlertService

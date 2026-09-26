@@ -51,6 +51,7 @@ class AuthService:
     @staticmethod
     def signup(conn, name: str, email: str, password: str, role: str) -> dict:
         """Create a new user. Raises ValueError if email already taken."""
+        import uuid
         with dict_cursor(conn) as cur:
             cur.execute("SELECT id FROM users WHERE email = %s", (email,))
             if cur.fetchone():
@@ -60,13 +61,17 @@ class AuthService:
                 raise ValueError("Invalid role")
 
             hashed = hash_password(password)
+            user_id = str(uuid.uuid4())
             cur.execute(
                 """
-                INSERT INTO users (name, email, password_hash, role)
-                VALUES (%s, %s, %s, %s)
-                RETURNING id, name, email, role, is_active, created_at, updated_at
+                INSERT INTO users (id, name, email, password_hash, role)
+                VALUES (%s, %s, %s, %s, %s)
                 """,
-                (name, email, hashed, role),
+                (user_id, name, email, hashed, role),
+            )
+            cur.execute(
+                "SELECT id, name, email, role, is_active, created_at, updated_at FROM users WHERE id = %s",
+                (user_id,),
             )
             return dict(cur.fetchone())
 
@@ -147,7 +152,8 @@ class AuthService:
             cur.execute(
                 """UPDATE users
                    SET password_hash = %s, otp_code = NULL, otp_expires_at = NULL,
-                       updated_at = NOW()
+                       updated_at = CURRENT_TIMESTAMP
                    WHERE email = %s""",
                 (hashed, email),
             )
+

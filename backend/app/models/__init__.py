@@ -7,6 +7,7 @@ from app.models.stock_level import StockLevel
 from app.models.stock_ledger import StockLedgerEntry
 from app.models.reorder_rule import ReorderRule
 from app.models.alert import Alert
+from app.models.audit_log import AuditLog
 
 __all__ = [
     "Item",
@@ -20,4 +21,6 @@ __all__ = [
     "StockLedgerEntry",
     "ReorderRule",
     "Alert",
+    "AuditLog",
 ]
+

@@ -10,11 +10,16 @@ class Delivery(Base):
     id = Column(Integer, primary_key=True, index=True)
     delivery_number = Column(String(100), unique=True, nullable=False, index=True)
     customer_name = Column(String(255), nullable=False)
+    warehouse_id = Column(String(100), nullable=True)
     status = Column(String(50), nullable=False, default="Draft")  # Draft, Pick, Pack, Done, Canceled
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     items = relationship("DeliveryItem", back_populates="delivery", cascade="all, delete-orphan")
+
+    @property
+    def customer(self):
+        return self.customer_name
 
 
 class DeliveryItem(Base):

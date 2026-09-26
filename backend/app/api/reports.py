@@ -1,10 +1,12 @@
 import io
+from typing import Optional
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse, Response
 
+
 from app.db.database import get_db
 from app.services.report_service import ReportService
-from app.api.deps import get_current_user
+from app.api.deps import get_optional_user
 
 router = APIRouter(prefix="/reports", tags=["Reports & Exports"])
 
@@ -20,7 +22,7 @@ router = APIRouter(prefix="/reports", tags=["Reports & Exports"])
 )
 def export_stock_csv(
     conn=Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: Optional[dict] = Depends(get_optional_user),
 ):
     """
     Export current stock on-hand as a downloadable CSV file.
@@ -46,8 +48,9 @@ def export_stock_csv(
 )
 def export_stock_pdf(
     conn=Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: Optional[dict] = Depends(get_optional_user),
 ):
+
     """
     Generate and download a professional PDF stock audit report using ReportLab.
     Includes Company branding, Summary KPIs, Low Stock table, and Signature footer.
