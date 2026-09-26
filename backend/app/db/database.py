@@ -11,20 +11,28 @@ logger = logging.getLogger(__name__)
 # ─── Raw PostgreSQL Connection (psycopg2 for Dev 1) ──────────
 
 def get_connection():
-    """Create and return a raw psycopg2 connection with autocommit enabled."""
-    conn = psycopg2.connect(
-        host=settings.DB_HOST,
-        port=settings.DB_PORT,
-        dbname=settings.DB_NAME,
-        user=settings.DB_USER,
-        password=settings.DB_PASSWORD,
-    )
-    conn.autocommit = True
-    return conn
+    """Create and return a DB connection with autocommit enabled, falling back to SQLite if PostgreSQL is unreachable."""
+    try:
+        conn = psycopg2.connect(
+            host=settings.DB_HOST,
+            port=settings.DB_PORT,
+            dbname=settings.DB_NAME,
+            user=settings.DB_USER,
+            password=settings.DB_PASSWORD,
+            connect_timeout=3
+        )
+        conn.autocommit = True
+        return conn
+    except Exception as e:
+        logger.warning(f"PostgreSQL raw connection failed ({e}); falling back to local SQLite database.")
+        import sqlite3
+        conn = sqlite3.connect("./hackathon.db", check_same_thread=False)
+        conn.isolation_level = None
+        return conn
 
 
-def get_db():
-    """FastAPI dependency: yields a psycopg2 connection with autocommit enabled."""
+def get_raw_db():
+    """FastAPI dependency: yields a raw DB connection with autocommit enabled."""
     conn = get_connection()
     try:
         yield conn
@@ -33,8 +41,12 @@ def get_db():
 
 
 def dict_cursor(conn):
-    """Return a cursor that produces rows as dicts (RealDictRow)."""
-    return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    """Return a cursor that produces rows as dicts for both psycopg2 and sqlite3."""
+    if hasattr(conn, "cursor_factory"):
+        return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    import sqlite3
+    conn.row_factory = sqlite3.Row
+    return conn.cursor()
 
 
 # ─── SQLAlchemy Setup (for Dev 2 compatibility) ──────────────
@@ -69,11 +81,16 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_sqlalchemy_db():
+def get_db():
     """Dependency generator to yield SQLAlchemy database sessions per request."""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+def get_sqlalchemy_db():
+    """Alias for get_db."""
+    return get_db()
 

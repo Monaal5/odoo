@@ -3,237 +3,934 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Odoo Hackathon Boilerplate Developer Suite</title>
+  <title>Barbara's Store – Inventory & E-Commerce Dashboard</title>
+  
+  <!-- Modern Geometric Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="logo-group">
-        <div class="logo-badge">O</div>
-        <div class="title-area">
-          <h1>Odoo Hackathon Developer Suite</h1>
-          <p>Full-Stack Boilerplate • FastAPI • SQLite/PostgreSQL • Odoo XML-RPC</p>
-        </div>
+  <div class="app-container">
+
+    <!-- ==================================================================== -->
+    <!-- LEFT SIDEBAR                                                         -->
+    <!-- ==================================================================== -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <!-- Logo Button with Swirl Graphic -->
+        <button class="brand-logo-btn" id="brand-logo-toggle" title="Barbara Store">
+          <svg class="brand-logo-svg" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 3C9.71573 3 3 9.71573 3 18C3 26.2843 9.71573 33 18 33C26.2843 33 33 26.2843 33 18C33 9.71573 26.2843 3 18 3Z" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M10 13C12.5 11 16 11 19 12.5C22 14 24.5 13.5 26 12" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 18C11.5 15.5 16 15.5 20 17.5C24 19.5 27 18.5 28 17" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 23C13 21 16.5 21 19.5 22.5C22.5 24 25 23 26 22" stroke="#111827" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <span class="sidebar-collapse-chevron">»</span>
+        </button>
+
+        <!-- Navigation Menu Icons -->
+        <ul class="sidebar-menu">
+          <!-- 1. Dashboard (Clock / Dial) -->
+          <li class="nav-item">
+            <button class="nav-btn active" data-target="view-dashboard" title="Dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <polyline points="12 6 12 12 15 15"/>
+              </svg>
+              <span class="nav-tooltip">Dashboard</span>
+            </button>
+          </li>
+
+          <!-- 2. Order List (Clipboard) -->
+          <li class="nav-item">
+            <button class="nav-btn" data-target="view-orders" title="Order List">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                <line x1="9" y1="11" x2="15" y2="11"/>
+                <line x1="9" y1="15" x2="13" y2="15"/>
+              </svg>
+              <span class="nav-tooltip">Order List</span>
+            </button>
+          </li>
+
+          <!-- 3. Products / Inventory (4 Squares) -->
+          <li class="nav-item">
+            <button class="nav-btn" data-target="view-products" title="Inventory Products">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="2"/>
+                <rect x="14" y="3" width="7" height="7" rx="2"/>
+                <rect x="14" y="14" width="7" height="7" rx="2"/>
+                <rect x="3" y="14" width="7" height="7" rx="2"/>
+              </svg>
+              <span class="nav-tooltip">Products & Catalog</span>
+            </button>
+          </li>
+
+          <!-- 4. Customers (Users) -->
+          <li class="nav-item">
+            <button class="nav-btn" data-target="view-customers" title="Customers">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              <span class="nav-tooltip">Customers</span>
+            </button>
+          </li>
+
+          <!-- 5. Analytics (Presentation Chart) -->
+          <li class="nav-item">
+            <button class="nav-btn" data-target="view-analytics" title="Analytics">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+                <path d="M7 11l3-3 2 2 4-4"/>
+              </svg>
+              <span class="nav-tooltip">Analytics</span>
+            </button>
+          </li>
+
+          <!-- 6. Chat / Messages -->
+          <li class="nav-item">
+            <button class="nav-btn" data-target="view-chat" title="Messages">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+              </svg>
+              <span class="nav-tooltip">Messages</span>
+            </button>
+          </li>
+        </ul>
       </div>
-      <div class="status-pills">
-        <div class="pill">
-          <span id="api-status-dot" class="dot offline"></span>
-          <span id="api-status-text">FastAPI: Checking...</span>
-        </div>
-        <div class="pill">
-          <span id="odoo-status-dot" class="dot offline"></span>
-          <span id="odoo-status-text">Odoo: Checking...</span>
-        </div>
+
+      <!-- Sidebar Bottom (Logout) -->
+      <div class="sidebar-bottom">
+        <button class="nav-btn" id="logout-btn" title="Sign Out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span class="nav-tooltip">Log Out</span>
+        </button>
       </div>
-    </header>
+    </aside>
 
-    <!-- Tabs Navigation -->
-    <nav class="tabs-nav">
-      <button class="tab-btn active" data-tab="tab-tester">⚡ API Quick Tester</button>
-      <button class="tab-btn" data-tab="tab-items">📦 Items CRUD Workspace</button>
-      <button class="tab-btn" data-tab="tab-odoo">🔌 Odoo ERP Integration</button>
-      <button class="tab-btn" data-tab="tab-schema">📐 Architecture & Schema</button>
-    </nav>
-
-    <!-- TAB 1: API Quick Tester -->
-    <div id="tab-tester" class="tab-content">
-      <div class="dashboard-grid">
-        
-        <!-- Left: Quick Buttons -->
-        <div class="card">
-          <div class="card-title">Endpoint Triggers</div>
-          <div class="endpoint-grid">
-            <button class="ep-btn" onclick="runApiCall('/health')">
-              <span class="ep-badge get">GET</span>
-              <span class="ep-title">/health</span>
-            </button>
-
-            <button class="ep-btn" onclick="runApiCall('/items')">
-              <span class="ep-badge get">GET</span>
-              <span class="ep-title">/items</span>
-            </button>
-
-            <button class="ep-btn" onclick="runApiCall('/items', 'POST', {title:'Hackathon Smart Item', category:'AI', description:'Created from frontend suite'})">
-              <span class="ep-badge post">POST</span>
-              <span class="ep-title">/items (Create)</span>
-            </button>
-
-            <button class="ep-btn" onclick="runApiCall('/odoo/status')">
-              <span class="ep-badge get">GET</span>
-              <span class="ep-title">/odoo/status</span>
-            </button>
-
-            <button class="ep-btn" onclick="runApiCall('/odoo/fetch-partners?limit=5')">
-              <span class="ep-badge get">GET</span>
-              <span class="ep-title">/odoo/fetch-partners</span>
-            </button>
+    <!-- ==================================================================== -->
+    <!-- MAIN WORKSPACE CONTENT                                               -->
+    <!-- ==================================================================== -->
+    <main class="main-wrapper">
+      
+      <!-- Top Application Header -->
+      <header class="top-header">
+        <div class="header-left">
+          <!-- Global Search Pill -->
+          <div class="search-pill-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="global-search-input" placeholder="Search">
           </div>
 
-          <div style="margin-top: 1rem; padding: 1rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">💡 Hackathon Quick Tip</h4>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">
-              Backend documentation is interactive! Open <a href="http://localhost:8000/docs" target="_blank" style="color: var(--primary);">http://localhost:8000/docs</a> to test directly using Swagger UI.
-            </p>
+          <!-- Date Pill -->
+          <div class="date-pill-indicator" id="header-date-pill">
+            Today, Mon 22 Nov
           </div>
         </div>
 
-        <!-- Right: Console Inspector -->
-        <div class="card">
-          <div class="card-title">
-            <span>Response Inspector</span>
-            <span id="console-time" style="font-size: 0.8rem; font-family: var(--font-mono); color: var(--text-muted);">0ms</span>
-          </div>
-          <div class="console-container">
-            <div class="console-header">
-              <span>Status: <span id="console-status" class="status-tag status-200">READY</span></span>
-              <span>JSON Payload</span>
-            </div>
-            <pre id="console-output" class="json-viewer">// Response output will appear here after clicking an endpoint trigger</pre>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- TAB 2: Items CRUD Workspace -->
-    <div id="tab-items" class="tab-content" style="display: none;">
-      <div class="card">
-        <div class="card-title">
-          <span>Database Items Manager</span>
-          <button class="btn" onclick="openModal()">+ Add New Item</button>
-        </div>
-
-        <div class="table-responsive">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Odoo Ref</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="items-table-body">
-              <tr><td colspan="6" style="text-align: center;">Loading database items...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: Odoo ERP Hub -->
-    <div id="tab-odoo" class="tab-content" style="display: none;">
-      <div class="dashboard-grid">
-        
-        <div class="card">
-          <div class="card-title">Odoo Connection Configuration</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-            These credentials are loaded automatically from the backend <code>.env</code> file.
-          </p>
-          <div class="form-group">
-            <label>Odoo Instance URL</label>
-            <input type="text" class="form-control" value="http://localhost:8069" readonly>
-          </div>
-          <div class="form-group">
-            <label>Database Name</label>
-            <input type="text" class="form-control" value="odoo_db" readonly>
-          </div>
-          <div class="form-group">
-            <label>RPC Protocol</label>
-            <input type="text" class="form-control" value="XML-RPC (common / object services)" readonly>
-          </div>
-          <button class="btn" onclick="runApiCall('/odoo/status')">Check Connection Status</button>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Odoo Partner Explorer (res.partner)</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-            Test reading Odoo ORM models directly into your custom hackathon solution.
-          </p>
-          <button class="btn btn-secondary" onclick="runApiCall('/odoo/fetch-partners?limit=10')">
-            Fetch Odoo Contacts via XML-RPC
+        <div class="header-right">
+          <!-- Backend & Odoo Dev Suite Settings Button -->
+          <button class="icon-btn-pill" id="open-dev-suite-btn" title="System Settings & Odoo Hub">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
           </button>
+
+          <!-- Notification Bell -->
+          <button class="icon-btn-pill" id="notification-btn" title="Notifications">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="notification-dot"></span>
+          </button>
+
+          <!-- User Avatar -->
+          <div class="user-avatar-wrap" id="user-profile-btn" title="Barbara's Profile">
+            <img src="assets/avatar.jpg" alt="Barbara" class="user-avatar-img" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'">
+            <span class="avatar-online-dot"></span>
+          </div>
         </div>
+      </header>
+
+      <!-- Content Views Section -->
+      <div class="content-area">
+
+        <!-- ================================================================== -->
+        <!-- VIEW 1: DASHBOARD (MATCHES IMAGE 1)                                -->
+        <!-- ================================================================== -->
+        <section id="view-dashboard" class="view-section active">
+          
+          <!-- Greeting Header -->
+          <div class="dashboard-greeting-bar">
+            <div class="greeting-text-box">
+              <h1>Hello, Barbara! 👋</h1>
+              <p>This is what's happening in your store this month.</p>
+            </div>
+            <div class="greeting-actions">
+              <!-- Period Dropdown -->
+              <div class="filter-select-pill" id="dashboard-period-filter">
+                <span>This month</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </div>
+
+              <!-- Calendar Pill Button -->
+              <button class="calendar-pill-btn" title="Pick Date">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Top Grid: 2x2 Metrics on Left, Revenue Bar Chart on Right -->
+          <div class="dashboard-top-grid">
+            
+            <!-- 2x2 KPIs Grid -->
+            <div class="kpi-quad-grid">
+              
+              <!-- KPI 1: Total revenue (Violet Card) -->
+              <div class="kpi-card purple-card">
+                <div class="kpi-card-header">
+                  <span>Total revenue</span>
+                  <button class="card-arrow-btn" title="View Revenue">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/>
+                      <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="kpi-val-row">
+                  <div class="kpi-number" id="kpi-total-revenue">$ 99.560</div>
+                  <span class="stat-badge green">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="19" x2="12" y2="5"/>
+                      <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    2,67%
+                  </span>
+                </div>
+                <div class="kpi-card-footer">This month vs last</div>
+              </div>
+
+              <!-- KPI 2: Total orders (White Card) -->
+              <div class="kpi-card">
+                <div class="kpi-card-header">
+                  <span>Total orders</span>
+                  <button class="card-arrow-btn" onclick="navigateToView('view-orders')" title="View Orders">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/>
+                      <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="kpi-val-row">
+                  <div class="kpi-number" id="kpi-total-orders">35</div>
+                  <span class="stat-badge red">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    2,67%
+                  </span>
+                </div>
+                <div class="kpi-card-footer">This month vs last</div>
+              </div>
+
+              <!-- KPI 3: Total visitors (White Card) -->
+              <div class="kpi-card">
+                <div class="kpi-card-header">
+                  <span>Total visitors</span>
+                  <button class="card-arrow-btn" title="View Visitors">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/>
+                      <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="kpi-val-row">
+                  <div class="kpi-number" id="kpi-total-visitors">45.600</div>
+                  <span class="stat-badge red">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    2,67%
+                  </span>
+                </div>
+                <div class="kpi-card-footer">This month vs last</div>
+              </div>
+
+              <!-- KPI 4: Net profit (White Card) -->
+              <div class="kpi-card">
+                <div class="kpi-card-header">
+                  <span>Net profit</span>
+                  <button class="card-arrow-btn" title="View Profit">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="7" y1="17" x2="17" y2="7"/>
+                      <polyline points="7 7 17 7 17 17"/>
+                    </svg>
+                  </button>
+                </div>
+                <div class="kpi-val-row">
+                  <div class="kpi-number" id="kpi-net-profit">$ 60.450</div>
+                  <span class="stat-badge green">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="19" x2="12" y2="5"/>
+                      <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    5,67%
+                  </span>
+                </div>
+                <div class="kpi-card-footer">This month vs last</div>
+              </div>
+
+            </div>
+
+            <!-- Revenue Bar Chart Card -->
+            <div class="revenue-chart-card">
+              <div class="chart-card-header">
+                <div class="chart-title-group">
+                  <h3>Revenue</h3>
+                  <span class="chart-subtitle">This month vs last</span>
+                </div>
+                <button class="chart-dark-arrow-btn" title="Expand Revenue Details">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7"/>
+                    <polyline points="7 7 17 7 17 17"/>
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Chart Canvas & Axes -->
+              <div class="chart-container-flex">
+                <!-- Y-Axis Ticks -->
+                <div class="chart-y-axis">
+                  <span>$ 25,000</span>
+                  <span>$ 20,000</span>
+                  <span>$ 15,000</span>
+                  <span>$ 10,000</span>
+                  <span>$ 5,000</span>
+                  <span>$ 1,000</span>
+                  <span>$ 0</span>
+                </div>
+
+                <!-- 8 Interactive Bars matching Image 1 -->
+                <div class="chart-bars-wrap">
+                  
+                  <!-- Bar 1: 1 AUG -->
+                  <div class="bar-column" data-val="$ 21,450" data-label="1 AUG">
+                    <div class="bar-fill" style="height: 82%;"></div>
+                    <span class="bar-x-label">1 AUG</span>
+                  </div>
+
+                  <!-- Bar 2: 2 AUG -->
+                  <div class="bar-column" data-val="$ 9,800" data-label="2 AUG">
+                    <div class="bar-fill" style="height: 40%;"></div>
+                    <span class="bar-x-label">2 AUG</span>
+                  </div>
+
+                  <!-- Bar 3: 3 AUG (Highlighted with Tooltip $ 14,867) -->
+                  <div class="bar-column" data-val="$ 14,867" data-label="3 AUG">
+                    <div class="chart-floating-tooltip">$ 14,867</div>
+                    <div class="bar-fill" style="height: 60%;"></div>
+                    <span class="bar-x-label">3 AUG</span>
+                  </div>
+
+                  <!-- Bar 4: 4 AUG -->
+                  <div class="bar-column" data-val="$ 13,200" data-label="4 AUG">
+                    <div class="bar-fill" style="height: 52%;"></div>
+                    <span class="bar-x-label">4 AUG</span>
+                  </div>
+
+                  <!-- Bar 5: 5 AUG -->
+                  <div class="bar-column" data-val="$ 17,900" data-label="5 AUG">
+                    <div class="bar-fill" style="height: 72%;"></div>
+                    <span class="bar-x-label">5 AUG</span>
+                  </div>
+
+                  <!-- Bar 6: 6 AUG -->
+                  <div class="bar-column" data-val="$ 21,100" data-label="6 AUG">
+                    <div class="bar-fill" style="height: 84%;"></div>
+                    <span class="bar-x-label">6 AUG</span>
+                  </div>
+
+                  <!-- Bar 7: 7 AUG (Peak) -->
+                  <div class="bar-column" data-val="$ 24,950" data-label="7 AUG">
+                    <div class="bar-fill" style="height: 98%;"></div>
+                    <span class="bar-x-label">7 AUG</span>
+                  </div>
+
+                  <!-- Bar 8: 8 AUG -->
+                  <div class="bar-column" data-val="$ 20,800" data-label="8 AUG">
+                    <div class="bar-fill" style="height: 82%;"></div>
+                    <span class="bar-x-label">8 AUG</span>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Bottom Grid: Two Mini Status Cards + Category Donut Chart -->
+          <div class="dashboard-bottom-grid">
+            
+            <!-- Left Side: Two Mini Status Cards -->
+            <div class="bottom-two-cards">
+              
+              <!-- Status Card 1: 98 Orders -->
+              <div class="status-mini-card">
+                <div class="mini-icon-circle">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="status-card-big-text">
+                    <span class="num">98</span>
+                    <span class="label">orders</span>
+                  </div>
+                  <p class="status-card-sub">
+                    12 orders <span class="highlight-coral">are awaiting</span> confirmation.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Overlapping Arrow Button on Boundary -->
+              <button class="overlapping-edge-arrow" onclick="navigateToView('view-orders')" title="Open Orders">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="7" y1="17" x2="17" y2="7"/>
+                  <polyline points="7 7 17 7 17 17"/>
+                </svg>
+              </button>
+
+              <!-- Status Card 2: 17 Customers with Wave Graphic -->
+              <div class="status-mini-card">
+                <div class="mini-icon-circle">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="status-card-big-text">
+                    <span class="num">17</span>
+                    <span class="label">customers</span>
+                  </div>
+                  <p class="status-card-sub">
+                    17 customers <span class="highlight-coral">are waiting</span> for response.
+                  </p>
+                </div>
+
+                <!-- Abstract Soft Blue Wave Art -->
+                <svg class="wave-art-svg" viewBox="0 0 140 140" fill="none">
+                  <path d="M10 130 C40 100, 70 140, 110 80 C130 50, 140 20, 150 10" stroke="#93c5fd" stroke-width="1.5" fill="none"/>
+                  <path d="M20 135 C50 105, 80 135, 120 75 C135 45, 145 15, 155 5" stroke="#bfdbfe" stroke-width="1.2" fill="none"/>
+                  <path d="M5 125 C35 95, 65 145, 105 85 C125 55, 138 25, 148 15" stroke="#dbeafe" stroke-width="1" fill="none"/>
+                </svg>
+              </div>
+
+            </div>
+
+            <!-- Right Side: Sales by Category Donut Card -->
+            <div class="category-donut-card">
+              <div class="chart-card-header">
+                <div class="chart-title-group">
+                  <h3>Sales by Category</h3>
+                  <span class="chart-subtitle">This month vs last</span>
+                </div>
+                <button class="chart-dark-arrow-btn" title="Category Breakdown">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="7" y1="17" x2="17" y2="7"/>
+                    <polyline points="7 7 17 7 17 17"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="donut-content-layout">
+                <!-- SVG Donut Chart with Segment Labels -->
+                <div class="donut-chart-wrapper">
+                  <svg class="donut-svg" viewBox="0 0 100 100">
+                    <!-- Base Track -->
+                    <circle cx="50" cy="50" r="35" fill="none" stroke="#f1f5f9" stroke-width="24"/>
+                    
+                    <g transform="rotate(-90 50 50)">
+                      <!-- Segment 1: Orange 25% (Apple MacBook Air M2) -->
+                      <circle id="donut-seg-1" class="donut-segment" cx="50" cy="50" r="35"
+                              stroke="#f97316" stroke-dasharray="55 165" stroke-dashoffset="0"/>
+                      
+                      <!-- Segment 2: Blue 25% (Apple Watch Series 9) -->
+                      <circle id="donut-seg-2" class="donut-segment" cx="50" cy="50" r="35"
+                              stroke="#3b82f6" stroke-dasharray="55 165" stroke-dashoffset="-55"/>
+
+                      <!-- Segment 3: Yellow 25% (Acoustics JBL Charge 5) -->
+                      <circle id="donut-seg-3" class="donut-segment" cx="50" cy="50" r="35"
+                              stroke="#facc15" stroke-dasharray="55 165" stroke-dashoffset="-110"/>
+
+                      <!-- Segment 4: Coral/Pink 13% (Acoustics Divoom SongBird-HQ) -->
+                      <circle id="donut-seg-4" class="donut-segment" cx="50" cy="50" r="35"
+                              stroke="#fb7185" stroke-dasharray="28.6 191.4" stroke-dashoffset="-165"/>
+
+                      <!-- Segment 5: Mint Green 12% (Apple AirPods Pro 2) -->
+                      <circle id="donut-seg-5" class="donut-segment" cx="50" cy="50" r="35"
+                              stroke="#34d399" stroke-dasharray="26.4 193.6" stroke-dashoffset="-193.6"/>
+                    </g>
+                    
+                    <!-- Text labels on segments matching screenshot -->
+                    <g font-family="'Plus Jakarta Sans', sans-serif" font-size="4.2" font-weight="700" fill="#ffffff" text-anchor="middle" dominant-baseline="central">
+                      <!-- Orange 25% -->
+                      <text x="74" y="26">25%</text>
+                      <!-- Blue 25% -->
+                      <text x="26" y="26">25%</text>
+                      <!-- Yellow 25% -->
+                      <text x="26" y="74">25%</text>
+                      <!-- Coral 13% -->
+                      <text x="50" y="86">13%</text>
+                      <!-- Green 12% -->
+                      <text x="76" y="66">12%</text>
+                    </g>
+                  </svg>
+
+                  <div class="donut-center-info">
+                    <span class="center-val">100%</span>
+                    <span class="center-sub">Total Share</span>
+                  </div>
+                </div>
+
+                <!-- Product Categories Legend List matching Image 1 -->
+                <ul class="category-legend-list">
+                  <li class="category-legend-item" data-segment="1">
+                    <span class="legend-dot" style="background: #f97316;"></span>
+                    <span>Apple MacBook Air M2</span>
+                  </li>
+                  <li class="category-legend-item" data-segment="2">
+                    <span class="legend-dot" style="background: #3b82f6;"></span>
+                    <span>Apple Watch Series 9</span>
+                  </li>
+                  <li class="category-legend-item" data-segment="3">
+                    <span class="legend-dot" style="background: #facc15;"></span>
+                    <span>Acoustics JBL Charge 5</span>
+                  </li>
+                  <li class="category-legend-item" data-segment="4">
+                    <span class="legend-dot" style="background: #fb7185;"></span>
+                    <span>Acoustics Divoom SongBird-HQ</span>
+                  </li>
+                  <li class="category-legend-item" data-segment="5">
+                    <span class="legend-dot" style="background: #34d399;"></span>
+                    <span>Apple AirPods Pro 2</span>
+                  </li>
+                </ul>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================== -->
+        <!-- VIEW 2: ORDER LIST (MATCHES IMAGE 2)                               -->
+        <!-- ================================================================== -->
+        <section id="view-orders" class="view-section">
+          
+          <!-- Page Header -->
+          <div class="orderlist-title-bar">
+            <h1>Order list</h1>
+          </div>
+
+          <!-- 4 Status Summary Banner Cards -->
+          <div class="order-status-banners-grid">
+            
+            <!-- Card 1: New orders -->
+            <div class="order-banner-card new-orders">
+              <div class="banner-head">New orders</div>
+              <div class="banner-body">
+                <div class="banner-val-row">
+                  <div class="banner-number" id="banner-new-count">12</div>
+                  <span class="stat-badge red">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    2,67%
+                  </span>
+                </div>
+                <div class="banner-subtext">Than last week</div>
+                <!-- Decorative blue wave art -->
+                <svg class="banner-wave-art" viewBox="0 0 90 60" fill="none">
+                  <path d="M0 45 C30 20, 60 55, 90 30" stroke="#93c5fd" stroke-width="1.8"/>
+                  <path d="M0 52 C30 27, 60 62, 90 37" stroke="#bfdbfe" stroke-width="1.2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Card 2: Await accepting orders -->
+            <div class="order-banner-card await-orders">
+              <div class="banner-head">Await accepting orders</div>
+              <div class="banner-body">
+                <div class="banner-val-row">
+                  <div class="banner-number" id="banner-await-count">20</div>
+                  <span class="stat-badge green">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="19" x2="12" y2="5"/>
+                      <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    2,67%
+                  </span>
+                </div>
+                <div class="banner-subtext">Than last week</div>
+              </div>
+            </div>
+
+            <!-- Card 3: On way orders -->
+            <div class="order-banner-card onway-orders">
+              <div class="banner-head">On way orders</div>
+              <div class="banner-body">
+                <div class="banner-val-row">
+                  <div class="banner-number" id="banner-onway-count">57</div>
+                  <span class="stat-badge red">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <polyline points="19 12 12 19 5 12"/>
+                    </svg>
+                    0,67%
+                  </span>
+                </div>
+                <div class="banner-subtext">Than last week</div>
+                <!-- Decorative gold wave art -->
+                <svg class="banner-wave-art" viewBox="0 0 90 60" fill="none">
+                  <path d="M0 45 C30 20, 60 55, 90 30" stroke="#fcd34d" stroke-width="1.8"/>
+                  <path d="M0 52 C30 27, 60 62, 90 37" stroke="#fde68a" stroke-width="1.2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Card 4: Delivered orders -->
+            <div class="order-banner-card delivered-orders">
+              <div class="banner-head">Delivered orders</div>
+              <div class="banner-body">
+                <div class="banner-val-row">
+                  <div class="banner-number" id="banner-delivered-count">98</div>
+                  <span class="stat-badge green">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <line x1="12" y1="19" x2="12" y2="5"/>
+                      <polyline points="5 12 12 5 19 12"/>
+                    </svg>
+                    2,87%
+                  </span>
+                </div>
+                <div class="banner-subtext">Than last week</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Controls Toolbar -->
+          <div class="order-toolbar">
+            
+            <div class="toolbar-left">
+              <div class="table-search-pill">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="order-search-input" placeholder="Search">
+              </div>
+              <span class="order-count-text" id="order-total-counter">180 orders</span>
+            </div>
+
+            <div class="toolbar-right">
+              <!-- Export Button -->
+              <button class="btn-white-pill" id="export-orders-btn" title="Export CSV">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Export</span>
+              </button>
+
+              <!-- Sort Dropdown -->
+              <button class="btn-white-pill" id="sort-orders-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+                <span>Sort: default</span>
+              </button>
+
+              <!-- Add Order Black Pill Button -->
+              <button class="btn-dark-pill" id="open-add-order-modal">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Add order</span>
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Filter Chips Bar -->
+          <div class="filter-chips-bar">
+            <div class="filter-chips-left">
+              <svg class="funnel-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+              </svg>
+
+              <!-- Active Filter Chips -->
+              <span class="chip-pill" id="chip-category">
+                <span id="chip-category-text">Laptops</span>
+                <span class="chip-close-btn" onclick="removeFilter('category')">&times;</span>
+              </span>
+
+              <span class="chip-pill" id="chip-payment">
+                <span id="chip-payment-text">PayPal</span>
+                <span class="chip-close-btn" onclick="removeFilter('payment')">&times;</span>
+              </span>
+
+              <span class="clear-all-link" id="clear-all-filters-btn" onclick="clearAllFilters()">Clear all (2)</span>
+            </div>
+
+            <!-- Table Pagination -->
+            <div class="pagination-controls">
+              <span id="pagination-page-label">1 of 18</span>
+              <button class="page-arrow-btn" id="prev-page-btn" title="Previous Page">&lt;</button>
+              <button class="page-arrow-btn" id="next-page-btn" title="Next Page">&gt;</button>
+            </div>
+          </div>
+
+          <!-- Orders Table Container -->
+          <div class="orders-table-card">
+            <div class="table-responsive-box">
+              <table class="custom-orders-table">
+                <thead>
+                  <tr>
+                    <th style="width: 40px;">
+                      <input type="checkbox" id="select-all-orders" class="table-checkbox">
+                    </th>
+                    <th>ORDER NUMBER</th>
+                    <th>CUSTOMER</th>
+                    <th>CATEGORY</th>
+                    <th>PRICE</th>
+                    <th>DATE</th>
+                    <th>PAYMENT</th>
+                    <th>STATUS</th>
+                    <th style="width: 40px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- Generated dynamically in JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ================================================================== -->
+        <!-- VIEW 3: INVENTORY / PRODUCTS MASTER                                -->
+        <!-- ================================================================== -->
+        <section id="view-products" class="view-section">
+          
+          <div class="orderlist-title-bar" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h1>Inventory Products</h1>
+              <p style="color: var(--text-muted); font-size: 0.95rem; margin-top: 4px;">
+                Manage warehouse stock catalog & connected database items.
+              </p>
+            </div>
+            <button class="btn-dark-pill" id="open-add-product-modal">
+              + Add New Product
+            </button>
+          </div>
+
+          <div class="orders-table-card" style="margin-top: 1.5rem;">
+            <div class="table-responsive-box">
+              <table class="custom-orders-table">
+                <thead>
+                  <tr>
+                    <th>ITEM ID</th>
+                    <th>TITLE & MODEL</th>
+                    <th>DESCRIPTION</th>
+                    <th>CATEGORY</th>
+                    <th>ODOO ERP REF</th>
+                    <th>ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading inventory database...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
 
       </div>
-    </div>
-
-    <!-- TAB 4: Architecture & Schema -->
-    <div id="tab-schema" class="tab-content" style="display: none;">
-      <div class="card">
-        <div class="card-title">Database Schema Architecture</div>
-        
-        <div class="schema-box">
-          <div class="schema-title">Table: items</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • title (VARCHAR) • description (TEXT) • category (VARCHAR) • is_active (BOOLEAN) • odoo_ref_id (INTEGER FK) • created_at (TIMESTAMP)
-          </p>
-        </div>
-
-        <div class="schema-box">
-          <div class="schema-title">Table: hackathon_teams</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • team_name (VARCHAR) • track (VARCHAR) • project_title (VARCHAR) • odoo_partner_id (INTEGER)
-          </p>
-        </div>
-
-        <div class="schema-box">
-          <div class="schema-title">Table: odoo_sync_logs</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • sync_action (VARCHAR) • status (VARCHAR) • records_processed (INT) • details (TEXT)
-          </p>
-        </div>
-      </div>
-    </div>
+    </main>
 
   </div>
 
-  <!-- Create Item Modal -->
-  <div id="item-modal" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 style="color: var(--text-main);">Create Hackathon Item</h3>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+  <!-- ==================================================================== -->
+  <!-- MODAL: ADD ORDER                                                     -->
+  <!-- ==================================================================== -->
+  <div id="add-order-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header-row">
+        <h3>Create New Order</h3>
+        <button class="modal-close-btn" onclick="closeModal('add-order-modal')">&times;</button>
       </div>
-      <form id="create-item-form">
-        <div class="form-group">
-          <label>Title</label>
-          <input type="text" id="item-title" class="form-control" placeholder="e.g. Smart Order Processor" required>
+      <form id="create-order-form">
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Customer Name</label>
+            <input type="text" id="order-cust-name" class="form-input-control" placeholder="e.g. Kris Payer" required>
+          </div>
+          <div class="form-group-item">
+            <label>Customer Phone</label>
+            <input type="text" id="order-cust-phone" class="form-input-control" placeholder="e.g. 099 758 9092" required>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Description</label>
-          <textarea id="item-desc" class="form-control" rows="3" placeholder="Brief project item description"></textarea>
+
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Category</label>
+            <select id="order-category-select" class="form-input-control">
+              <option value="Laptops">Laptops</option>
+              <option value="Smartphones">Smartphones</option>
+              <option value="Audio">Audio</option>
+              <option value="Watches">Watches</option>
+              <option value="Accessories">Accessories</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Price ($ USD)</label>
+            <input type="text" id="order-price-input" class="form-input-control" placeholder="1302.38" required>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="item-category" class="form-control">
-            <option value="Integration">Integration</option>
-            <option value="AI / ML">AI / ML</option>
-            <option value="Frontend">Frontend</option>
-            <option value="Automation">Automation</option>
-            <option value="General">General</option>
-          </select>
+
+        <div class="form-grid-2">
+          <div class="form-group-item">
+            <label>Payment Method</label>
+            <select id="order-payment-select" class="form-input-control">
+              <option value="PayPal">PayPal</option>
+              <option value="Apple Pay">Apple Pay</option>
+              <option value="Credit Card">Credit Card</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+          </div>
+          <div class="form-group-item">
+            <label>Order Status</label>
+            <select id="order-status-select" class="form-input-control">
+              <option value="onway">on way</option>
+              <option value="delivered">delivered</option>
+              <option value="await">await</option>
+            </select>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Odoo Reference ID (Optional)</label>
-          <input type="number" id="item-odoo-ref" class="form-control" placeholder="e.g. 1001">
-        </div>
-        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn">Save Item</button>
+
+        <div class="modal-btn-row">
+          <button type="button" class="btn-white-pill" onclick="closeModal('add-order-modal')">Cancel</button>
+          <button type="submit" class="btn-dark-pill">Confirm Order</button>
         </div>
       </form>
     </div>
   </div>
 
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: DEVELOPER SUITE & ODOO ERP HUB                                -->
+  <!-- ==================================================================== -->
+  <div id="dev-suite-modal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header-row">
+        <div>
+          <h3>System & Odoo ERP Hub</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+            FastAPI Backend • Database ORM • XML-RPC Integration
+          </p>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('dev-suite-modal')">&times;</button>
+      </div>
+
+      <div style="display: flex; gap: 1rem; margin-bottom: 1.25rem;">
+        <div class="dev-status-badge online" id="modal-api-badge">
+          <span>●</span> <span id="modal-api-status-text">FastAPI: Checking...</span>
+        </div>
+        <div class="dev-status-badge offline" id="modal-odoo-badge">
+          <span>●</span> <span id="modal-odoo-status-text">Odoo ERP: Checking...</span>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+        <button class="btn-white-pill" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="runApiCall('/health')">
+          ⚡ GET /health
+        </button>
+        <button class="btn-white-pill" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="runApiCall('/items')">
+          📦 GET /items
+        </button>
+        <button class="btn-white-pill" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="runApiCall('/odoo/status')">
+          🔌 GET /odoo/status
+        </button>
+        <button class="btn-white-pill" style="font-size: 0.78rem; padding: 0.4rem 0.8rem;" onclick="runApiCall('/dashboard/kpis')">
+          📊 GET /dashboard/kpis
+        </button>
+      </div>
+
+      <div style="background: #0f172a; border-radius: 12px; padding: 1rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; font-family: var(--font-mono); margin-bottom: 0.5rem;">
+          <span>HTTP STATUS: <span id="console-status" style="color: #4ade80;">200 OK</span></span>
+          <span id="console-time">0ms</span>
+        </div>
+        <pre id="console-output" class="console-output-pre">// Backend JSON payload will appear here...</pre>
+      </div>
+
+      <div class="modal-btn-row">
+        <a href="http://localhost:8000/docs" target="_blank" class="btn-white-pill" style="text-decoration: none;">
+          Open Swagger Docs ↗
+        </a>
+        <button type="button" class="btn-dark-pill" onclick="closeModal('dev-suite-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript Logic -->
   <script src="js/app.js"></script>
 </body>
 </html>
