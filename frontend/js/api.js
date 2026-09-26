@@ -445,7 +445,10 @@ function handleOfflineSimulation(endpoint, method, body) {
                 is_active: true
             };
         }
+    }
+
     // 16. AI ASSISTANT: /ai/chat
+
     if (cleanPath.startsWith("/ai")) {
         const q = (body && body.query) ? body.query.toLowerCase() : "";
         let ans = "Analyzed warehouse telemetry across all bays. Inventory is healthy and operating within safety margins.";
