@@ -1,5 +1,5 @@
 /**
- * Odoo Hackathon Boilerplate - Frontend Application Logic
+ * StockSense IMS - Frontend Application Logic
  */
 
 const API_BASE_URL = 'http://localhost:8000/api/v1';
@@ -39,8 +39,8 @@ function initTabs() {
 async function checkHealth() {
   const apiDot = document.getElementById('api-status-dot');
   const apiText = document.getElementById('api-status-text');
-  const odooDot = document.getElementById('odoo-status-dot');
-  const odooText = document.getElementById('odoo-status-text');
+  const dbDot = document.getElementById('db-status-dot');
+  const dbText = document.getElementById('db-status-text');
 
   try {
     const res = await fetch(`${API_BASE_URL}/health`);
@@ -49,12 +49,12 @@ async function checkHealth() {
       apiDot.className = 'dot online';
       apiText.textContent = 'FastAPI: Online';
 
-      if (data.odoo_connection.includes('Connected')) {
-        odooDot.className = 'dot online';
-        odooText.textContent = 'Odoo: Connected';
+      if (data.database === 'Healthy') {
+        dbDot.className = 'dot online';
+        dbText.textContent = 'Database: Healthy';
       } else {
-        odooDot.className = 'dot warning';
-        odooText.textContent = 'Odoo: Disconnected';
+        dbDot.className = 'dot warning';
+        dbText.textContent = 'Database: Warning';
       }
     } else {
       throw new Error('API Unreachable');
@@ -62,8 +62,8 @@ async function checkHealth() {
   } catch (err) {
     apiDot.className = 'dot offline';
     apiText.textContent = 'FastAPI: Offline';
-    odooDot.className = 'dot offline';
-    odooText.textContent = 'Odoo: Offline';
+    dbDot.className = 'dot offline';
+    dbText.textContent = 'Database: Offline';
   }
 }
 
@@ -114,21 +114,21 @@ async function runApiCall(endpoint, method = 'GET', body = null) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Items Management (CRUD)                                                   */
+/* Product Catalog Management (CRUD)                                         */
 /* -------------------------------------------------------------------------- */
 async function loadItems() {
   const tableBody = document.getElementById('items-table-body');
   if (!tableBody) return;
 
-  tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading items...</td></tr>';
+  tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Loading products...</td></tr>';
 
   try {
     const res = await fetch(`${API_BASE_URL}/items`);
-    if (!res.ok) throw new Error('Failed to fetch items');
+    if (!res.ok) throw new Error('Failed to fetch catalog products');
     const items = await res.json();
 
     if (items.length === 0) {
-      tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No items found in database. Click "Add Item" to create one.</td></tr>';
+      tableBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">No products found in catalog. Click "Add New Product" to create one.</td></tr>';
       return;
     }
 
@@ -138,14 +138,14 @@ async function loadItems() {
         <td><strong>${escapeHtml(item.title)}</strong></td>
         <td>${escapeHtml(item.description || 'N/A')}</td>
         <td><span class="badge badge-cyan">${escapeHtml(item.category)}</span></td>
-        <td>${item.odoo_ref_id ? `<span class="badge badge-primary">Odoo #${item.odoo_ref_id}</span>` : '<span style="color:var(--text-subtle);">None</span>'}</td>
+        <td>${item.is_active ? '<span class="badge badge-primary">Active</span>' : '<span style="color:var(--text-subtle);">Inactive</span>'}</td>
         <td>
           <button class="btn btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;" onclick="deleteItemById(${item.id})">Delete</button>
         </td>
       </tr>
     `).join('');
   } catch (err) {
-    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--accent-rose);">Error loading items: ${err.message}</td></tr>`;
+    tableBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--accent-rose);">Error loading catalog: ${err.message}</td></tr>`;
   }
 }
 
@@ -154,13 +154,12 @@ async function createNewItem(event) {
   const title = document.getElementById('item-title').value;
   const description = document.getElementById('item-desc').value;
   const category = document.getElementById('item-category').value;
-  const odoo_ref_id = document.getElementById('item-odoo-ref').value ? parseInt(document.getElementById('item-odoo-ref').value) : null;
 
   try {
     const res = await fetch(`${API_BASE_URL}/items`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title, description, category, is_active: true, odoo_ref_id })
+      body: JSON.stringify({ title, description, category, is_active: true })
     });
 
     if (res.ok) {
@@ -168,7 +167,7 @@ async function createNewItem(event) {
       loadItems();
       checkHealth();
     } else {
-      alert('Failed to create item');
+      alert('Failed to create product');
     }
   } catch (err) {
     alert('Error connecting to backend: ' + err.message);
@@ -176,13 +175,13 @@ async function createNewItem(event) {
 }
 
 async function deleteItemById(id) {
-  if (!confirm(`Are you sure you want to delete item #${id}?`)) return;
+  if (!confirm(`Are you sure you want to delete product #${id}?`)) return;
   try {
     const res = await fetch(`${API_BASE_URL}/items/${id}`, { method: 'DELETE' });
     if (res.ok) {
       loadItems();
     } else {
-      alert('Failed to delete item');
+      alert('Failed to delete product');
     }
   } catch (err) {
     alert('Error: ' + err.message);

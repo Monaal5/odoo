@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Odoo Hackathon Boilerplate Developer Suite</title>
+  <title>StockSense Developer Suite & Operations Control Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -15,10 +15,10 @@
     <!-- Header -->
     <header>
       <div class="logo-group">
-        <div class="logo-badge">O</div>
+        <div class="logo-badge">S</div>
         <div class="title-area">
-          <h1>Odoo Hackathon Developer Suite</h1>
-          <p>Full-Stack Boilerplate • FastAPI • SQLite/PostgreSQL • Odoo XML-RPC</p>
+          <h1>StockSense Developer Suite</h1>
+          <p>Real-Time Inventory Management System (IMS) • FastAPI • PostgreSQL / SQLite</p>
         </div>
       </div>
       <div class="status-pills">
@@ -27,8 +27,8 @@
           <span id="api-status-text">FastAPI: Checking...</span>
         </div>
         <div class="pill">
-          <span id="odoo-status-dot" class="dot offline"></span>
-          <span id="odoo-status-text">Odoo: Checking...</span>
+          <span id="db-status-dot" class="dot offline"></span>
+          <span id="db-status-text">Database: Checking...</span>
         </div>
       </div>
     </header>
@@ -36,8 +36,8 @@
     <!-- Tabs Navigation -->
     <nav class="tabs-nav">
       <button class="tab-btn active" data-tab="tab-tester">⚡ API Quick Tester</button>
-      <button class="tab-btn" data-tab="tab-items">📦 Items CRUD Workspace</button>
-      <button class="tab-btn" data-tab="tab-odoo">🔌 Odoo ERP Integration</button>
+      <button class="tab-btn" data-tab="tab-items">📦 Product Catalog Workspace</button>
+      <button class="tab-btn" data-tab="tab-ops">📋 Operations & Ledger</button>
       <button class="tab-btn" data-tab="tab-schema">📐 Architecture & Schema</button>
     </nav>
 
@@ -54,31 +54,36 @@
               <span class="ep-title">/health</span>
             </button>
 
+            <button class="ep-btn" onclick="runApiCall('/dashboard/kpis')">
+              <span class="ep-badge get">GET</span>
+              <span class="ep-title">/dashboard/kpis</span>
+            </button>
+
             <button class="ep-btn" onclick="runApiCall('/items')">
               <span class="ep-badge get">GET</span>
               <span class="ep-title">/items</span>
             </button>
 
-            <button class="ep-btn" onclick="runApiCall('/items', 'POST', {title:'Hackathon Smart Item', category:'AI', description:'Created from frontend suite'})">
-              <span class="ep-badge post">POST</span>
-              <span class="ep-title">/items (Create)</span>
+            <button class="ep-btn" onclick="runApiCall('/receipts')">
+              <span class="ep-badge get">GET</span>
+              <span class="ep-title">/receipts</span>
             </button>
 
-            <button class="ep-btn" onclick="runApiCall('/odoo/status')">
+            <button class="ep-btn" onclick="runApiCall('/deliveries')">
               <span class="ep-badge get">GET</span>
-              <span class="ep-title">/odoo/status</span>
+              <span class="ep-title">/deliveries</span>
             </button>
 
-            <button class="ep-btn" onclick="runApiCall('/odoo/fetch-partners?limit=5')">
+            <button class="ep-btn" onclick="runApiCall('/ledger/history')">
               <span class="ep-badge get">GET</span>
-              <span class="ep-title">/odoo/fetch-partners</span>
+              <span class="ep-title">/ledger/history</span>
             </button>
           </div>
 
           <div style="margin-top: 1rem; padding: 1rem; background: rgba(15, 23, 42, 0.6); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">💡 Hackathon Quick Tip</h4>
+            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; color: var(--accent-cyan);">💡 Interactive Documentation</h4>
             <p style="font-size: 0.8rem; color: var(--text-muted);">
-              Backend documentation is interactive! Open <a href="http://localhost:8000/docs" target="_blank" style="color: var(--primary);">http://localhost:8000/docs</a> to test directly using Swagger UI.
+              Backend OpenAPI docs are live! Open <a href="http://localhost:8000/docs" target="_blank" style="color: var(--primary);">http://localhost:8000/docs</a> to test directly using Swagger UI.
             </p>
           </div>
         </div>
@@ -101,12 +106,12 @@
       </div>
     </div>
 
-    <!-- TAB 2: Items CRUD Workspace -->
+    <!-- TAB 2: Product Catalog Workspace -->
     <div id="tab-items" class="tab-content" style="display: none;">
       <div class="card">
         <div class="card-title">
-          <span>Database Items Manager</span>
-          <button class="btn" onclick="openModal()">+ Add New Item</button>
+          <span>Product Catalog Manager</span>
+          <button class="btn" onclick="openModal()">+ Add New Product</button>
         </div>
 
         <div class="table-responsive">
@@ -114,53 +119,48 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Title</th>
+                <th>Title / SKU</th>
                 <th>Description</th>
                 <th>Category</th>
-                <th>Odoo Ref</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody id="items-table-body">
-              <tr><td colspan="6" style="text-align: center;">Loading database items...</td></tr>
+              <tr><td colspan="6" style="text-align: center;">Loading catalog items...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </div>
 
-    <!-- TAB 3: Odoo ERP Hub -->
-    <div id="tab-odoo" class="tab-content" style="display: none;">
+    <!-- TAB 3: Operations & Ledger -->
+    <div id="tab-ops" class="tab-content" style="display: none;">
       <div class="dashboard-grid">
         
         <div class="card">
-          <div class="card-title">Odoo Connection Configuration</div>
+          <div class="card-title">Inventory Operations</div>
           <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-            These credentials are loaded automatically from the backend <code>.env</code> file.
+            Trigger operational workflows (Receipts, Deliveries, Transfers, Adjustments).
           </p>
-          <div class="form-group">
-            <label>Odoo Instance URL</label>
-            <input type="text" class="form-control" value="http://localhost:8069" readonly>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button class="btn" onclick="runApiCall('/receipts')">View All Incoming Receipts</button>
+            <button class="btn btn-secondary" onclick="runApiCall('/deliveries')">View All Outgoing Deliveries</button>
+            <button class="btn btn-secondary" onclick="runApiCall('/ledger/history')">View Full Stock Ledger Audit Log</button>
           </div>
-          <div class="form-group">
-            <label>Database Name</label>
-            <input type="text" class="form-control" value="odoo_db" readonly>
-          </div>
-          <div class="form-group">
-            <label>RPC Protocol</label>
-            <input type="text" class="form-control" value="XML-RPC (common / object services)" readonly>
-          </div>
-          <button class="btn" onclick="runApiCall('/odoo/status')">Check Connection Status</button>
         </div>
 
         <div class="card">
-          <div class="card-title">Odoo Partner Explorer (res.partner)</div>
-          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-            Test reading Odoo ORM models directly into your custom hackathon solution.
+          <div class="card-title">Stock Ledger Principles</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            • <strong>Append-Only</strong>: The stock ledger is immutable. Every stock movement is logged as an event.
           </p>
-          <button class="btn btn-secondary" onclick="runApiCall('/odoo/fetch-partners?limit=10')">
-            Fetch Odoo Contacts via XML-RPC
-          </button>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            • <strong>Derived Stock</strong>: Current stock per product per location is a calculated sum, never directly edited.
+          </p>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            • <strong>Reversible</strong>: Document cancellations issue compensating inverse ledger entries.
+          </p>
         </div>
 
       </div>
@@ -169,26 +169,33 @@
     <!-- TAB 4: Architecture & Schema -->
     <div id="tab-schema" class="tab-content" style="display: none;">
       <div class="card">
-        <div class="card-title">Database Schema Architecture</div>
+        <div class="card-title">StockSense Data Model Architecture</div>
         
         <div class="schema-box">
           <div class="schema-title">Table: items</div>
           <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • title (VARCHAR) • description (TEXT) • category (VARCHAR) • is_active (BOOLEAN) • odoo_ref_id (INTEGER FK) • created_at (TIMESTAMP)
+            id (INTEGER PK) • title (VARCHAR) • description (TEXT) • category (VARCHAR) • is_active (BOOLEAN) • created_at (TIMESTAMP)
           </p>
         </div>
 
         <div class="schema-box">
-          <div class="schema-title">Table: hackathon_teams</div>
+          <div class="schema-title">Table: stock_ledger</div>
           <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • team_name (VARCHAR) • track (VARCHAR) • project_title (VARCHAR) • odoo_partner_id (INTEGER)
+            id (INTEGER PK) • product_id (INT) • location_id (INT) • qty_delta (INT) • source_doc_type (VARCHAR) • source_doc_id (INT) • timestamp
           </p>
         </div>
 
         <div class="schema-box">
-          <div class="schema-title">Table: odoo_sync_logs</div>
+          <div class="schema-title">Table: stock_levels</div>
           <p style="font-size: 0.85rem; color: var(--text-muted);">
-            id (INTEGER PK) • sync_action (VARCHAR) • status (VARCHAR) • records_processed (INT) • details (TEXT)
+            id (INTEGER PK) • product_id (INT) • location_id (INT) • quantity (INT) • updated_at (TIMESTAMP)
+          </p>
+        </div>
+
+        <div class="schema-box">
+          <div class="schema-title">Tables: receipts & receipt_items / deliveries & delivery_items</div>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">
+            Header & Line Item operational documents driving stock ledger movements.
           </p>
         </div>
       </div>
@@ -200,35 +207,30 @@
   <div id="item-modal" class="modal-overlay">
     <div class="modal">
       <div class="modal-header">
-        <h3 style="color: var(--text-main);">Create Hackathon Item</h3>
+        <h3 style="color: var(--text-main);">Create Catalog Product</h3>
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <form id="create-item-form">
         <div class="form-group">
-          <label>Title</label>
-          <input type="text" id="item-title" class="form-control" placeholder="e.g. Smart Order Processor" required>
+          <label>Title / Name</label>
+          <input type="text" id="item-title" class="form-control" placeholder="e.g. Fresh Fuji Apples" required>
         </div>
         <div class="form-group">
           <label>Description</label>
-          <textarea id="item-desc" class="form-control" rows="3" placeholder="Brief project item description"></textarea>
+          <textarea id="item-desc" class="form-control" rows="3" placeholder="Brief product description"></textarea>
         </div>
         <div class="form-group">
           <label>Category</label>
           <select id="item-category" class="form-control">
-            <option value="Integration">Integration</option>
-            <option value="AI / ML">AI / ML</option>
-            <option value="Frontend">Frontend</option>
-            <option value="Automation">Automation</option>
+            <option value="Produce">Produce</option>
+            <option value="Raw Materials">Raw Materials</option>
+            <option value="Hardware">Hardware</option>
             <option value="General">General</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Odoo Reference ID (Optional)</label>
-          <input type="number" id="item-odoo-ref" class="form-control" placeholder="e.g. 1001">
-        </div>
         <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
           <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn">Save Item</button>
+          <button type="submit" class="btn">Save Product</button>
         </div>
       </form>
     </div>
