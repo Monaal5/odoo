@@ -1,4 +1,5 @@
 import logging
+import sqlite3
 import psycopg2
 import psycopg2.extras
 from sqlalchemy import create_engine
@@ -8,7 +9,8 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# ─── Raw PostgreSQL Connection (psycopg2 for Dev 1) ──────────
+
+# ─── Raw Database Connection (psycopg2 / sqlite3 for Dev 1) ──
 
 def get_connection():
     """Create and return a DB connection with autocommit enabled, falling back to SQLite if PostgreSQL is unreachable."""
@@ -19,20 +21,19 @@ def get_connection():
             dbname=settings.DB_NAME,
             user=settings.DB_USER,
             password=settings.DB_PASSWORD,
-            connect_timeout=3
+            connect_timeout=3,
         )
         conn.autocommit = True
         return conn
     except Exception as e:
         logger.warning(f"PostgreSQL raw connection failed ({e}); falling back to local SQLite database.")
-        import sqlite3
         conn = sqlite3.connect("./hackathon.db", check_same_thread=False)
         conn.isolation_level = None
         return conn
 
 
-def get_raw_db():
-    """FastAPI dependency: yields a raw DB connection with autocommit enabled."""
+def get_db():
+    """FastAPI dependency: yields a raw DB connection with autocommit enabled for Dev 1 routes."""
     conn = get_connection()
     try:
         yield conn
@@ -40,12 +41,31 @@ def get_raw_db():
         conn.close()
 
 
+def get_raw_db():
+    """Alias for get_db."""
+    return get_db()
+
+
 def dict_cursor(conn):
-    """Return a cursor that produces rows as dicts for both psycopg2 and sqlite3."""
+    """
+    Return a cursor that produces dict-like rows for psycopg2, sqlite3, or SQLAlchemy Session objects.
+    """
+    # If a SQLAlchemy Session was passed instead of a raw connection, unwrap the DBAPI connection
+    if hasattr(conn, "connection"):
+        try:
+            raw_conn = conn.connection().dbapi_connection
+            if raw_conn is not None:
+                conn = raw_conn
+        except Exception:
+            pass
+
     if hasattr(conn, "cursor_factory"):
         return conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    import sqlite3
-    conn.row_factory = sqlite3.Row
+
+    if hasattr(conn, "row_factory"):
+        conn.row_factory = sqlite3.Row
+        return conn.cursor()
+
     return conn.cursor()
 
 
@@ -54,6 +74,7 @@ def dict_cursor(conn):
 db_url = settings.DATABASE_URL
 if db_url.startswith("postgresql://"):
     db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+
 
 def get_engine(url: str):
     engine_kwargs = {}
@@ -81,16 +102,10 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-def get_db():
-    """Dependency generator to yield SQLAlchemy database sessions per request."""
+def get_sqlalchemy_db():
+    """Dependency generator to yield SQLAlchemy database sessions per request (for Dev 2 routes)."""
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
-
-
-def get_sqlalchemy_db():
-    """Alias for get_db."""
-    return get_db()
-
