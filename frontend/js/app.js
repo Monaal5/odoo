@@ -286,7 +286,8 @@ function updateKpiCardValues() {
       revSub.textContent = 'This month vs last';
     } else {
       revTitle.textContent = 'Total stock units';
-      revEl.textContent = kpis ? `${kpis.total_units_in_stock.toLocaleString()} units` : '45.600 units';
+      const units = kpis ? (kpis.total_units_in_stock ?? 45600) : 45600;
+      revEl.textContent = `${units.toLocaleString()} units`;
       revSub.textContent = 'Live count from Ledger';
     }
   }
@@ -295,7 +296,7 @@ function updateKpiCardValues() {
   const ordersEl = document.getElementById('kpi-total-orders');
   const ordersSub = document.getElementById('kpi-orders-sub');
   if (ordersEl) {
-    const pendingDels = kpis ? kpis.pending_deliveries : 35;
+    const pendingDels = kpis ? (kpis.pending_deliveries ?? 35) : 35;
     ordersEl.textContent = pendingDels > 0 ? String(pendingDels) : '35';
     if (ordersSub) ordersSub.textContent = 'This month vs last';
   }
@@ -305,13 +306,15 @@ function updateKpiCardValues() {
   const visitorsBadge = document.getElementById('kpi-visitors-badge');
   const visitorsSub = document.getElementById('kpi-visitors-sub');
   if (visitorsEl) {
-    visitorsEl.textContent = kpis ? kpis.total_units_in_stock.toLocaleString() : '45.600';
-    if (kpis && kpis.low_stock_count > 0) {
+    const units = kpis ? (kpis.total_units_in_stock ?? 45600) : 45600;
+    const lowCount = kpis ? (kpis.low_stock ?? kpis.low_stock_count ?? 0) : 0;
+    visitorsEl.textContent = units.toLocaleString('de-DE');
+    if (lowCount > 0) {
       if (visitorsBadge) {
         visitorsBadge.className = 'stat-badge red';
-        visitorsBadge.textContent = `⚠️ ${kpis.low_stock_count} Low`;
+        visitorsBadge.textContent = `⚠️ ${lowCount} Low`;
       }
-      if (visitorsSub) visitorsSub.textContent = `${kpis.low_stock_count} items need reordering`;
+      if (visitorsSub) visitorsSub.textContent = `${lowCount} items need reordering`;
     } else {
       if (visitorsBadge) {
         visitorsBadge.className = 'stat-badge red';
@@ -326,7 +329,8 @@ function updateKpiCardValues() {
   const profitSub = document.getElementById('kpi-profit-sub');
   if (profitEl) {
     profitEl.textContent = '$ 60.450';
-    if (profitSub) profitSub.textContent = kpis ? `${kpis.total_products_in_stock || 5} active products` : 'This month vs last';
+    const prods = kpis ? (kpis.total_products ?? kpis.total_products_in_stock ?? 5) : 5;
+    if (profitSub) profitSub.textContent = `${prods} active products`;
   }
 
   // Bottom Status Cards
@@ -334,7 +338,7 @@ function updateKpiCardValues() {
   const statusOrdersSub = document.getElementById('status-orders-sub');
   if (statusOrdersNum) statusOrdersNum.textContent = '98';
   if (statusOrdersSub) {
-    const pendingCount = kpis ? kpis.pending_deliveries : 12;
+    const pendingCount = kpis ? (kpis.pending_deliveries ?? 12) : 12;
     statusOrdersSub.textContent = `${pendingCount} orders`;
   }
 
@@ -342,7 +346,7 @@ function updateKpiCardValues() {
   const statusCustSub = document.getElementById('status-customers-sub');
   if (statusCustNum) statusCustNum.textContent = '17';
   if (statusCustSub) {
-    const pendingReceipts = kpis ? kpis.pending_receipts : 17;
+    const pendingReceipts = kpis ? (kpis.pending_receipts ?? 17) : 17;
     statusCustSub.textContent = `${pendingReceipts} customers`;
   }
 }
@@ -550,7 +554,7 @@ function renderDynamicDonutChart() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* RECENT LIVE STOCK MOVEMENTS WIDGET (from /ledger/history)                  */
+/* RECENT LIVE STOCK MOVEMENTS WIDGET (from /dashboard/activity or /ledger)    */
 /* -------------------------------------------------------------------------- */
 async function loadRecentMovements() {
   const container = document.getElementById('dashboard-recent-movements-grid');
@@ -559,9 +563,29 @@ async function loadRecentMovements() {
   let movements = [];
   if (isBackendOnline) {
     try {
-      const res = await fetch(`${API_BASE_URL}/ledger/history?limit=4`, { headers: getAuthHeaders() });
-      if (res.ok) {
-        movements = await res.json();
+      // First try the new /dashboard/activity endpoint
+      const actRes = await fetch(`${API_BASE_URL}/dashboard/activity?limit=4`, { headers: getAuthHeaders() });
+      if (actRes.ok) {
+        const actData = await actRes.json();
+        const items = actData.items || actData;
+        if (Array.isArray(items) && items.length > 0) {
+          movements = items.map(item => ({
+            id: item.id,
+            source_doc_type: item.source_document_type || 'MOVEMENT',
+            product_id: item.product_name || item.product_id,
+            location_id: item.warehouse_name || item.warehouse_id || 'WH01',
+            qty_delta: item.qty_delta,
+            timestamp: item.created_at ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'
+          }));
+        }
+      }
+
+      // Fallback to /ledger/history if empty
+      if (movements.length === 0) {
+        const res = await fetch(`${API_BASE_URL}/ledger/history?limit=4`, { headers: getAuthHeaders() });
+        if (res.ok) {
+          movements = await res.json();
+        }
       }
     } catch (e) {}
   }
