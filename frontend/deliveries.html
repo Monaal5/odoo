@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outbound Deliveries — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <!-- Design & Stylesheets -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar-container" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar-container" id="topbar-container"></header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                
+                <!-- Section Header -->
+                <div class="section-header-bar">
+                    <div>
+                        <h2 class="section-title">Outbound Deliveries</h2>
+                        <p class="section-subtitle">Fulfill sales orders & dispatch goods to deduct inventory</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-delivery">
+                        <span>📤 Create Delivery</span>
+                    </button>
+                </div>
+
+                <!-- Table Search & Filter -->
+                <div class="table-toolbar">
+                    <div class="table-search-group">
+                        <div class="search-input-wrap">
+                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input type="text" id="delivery-search-input" class="search-input" placeholder="Search by delivery number or customer name...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deliveries Table -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Delivery #</th>
+                                <th>Customer / Recipient</th>
+                                <th>Items Summary</th>
+                                <th style="width: 130px;">Date Created</th>
+                                <th style="width: 120px;">Status</th>
+                                <th style="width: 130px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="deliveries-table-body">
+                            <!-- Populated dynamically via deliveries.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- CREATE DELIVERY MODAL -->
+    <div class="modal-overlay" id="modal-delivery">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Outbound Delivery Order</h3>
+                <button type="button" class="modal-close" data-close-modal="modal-delivery">&times;</button>
+            </div>
+
+            <form id="delivery-form">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="delivery-customer">Customer / Client *</label>
+                            <input type="text" id="delivery-customer" class="form-input" placeholder="e.g. Matrix Infrastructure Ltd" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="delivery-warehouse">Dispatching Warehouse</label>
+                            <select id="delivery-warehouse" class="form-select"></select>
+                        </div>
+                    </div>
+
+                    <!-- Line Item Builder Box -->
+                    <div style="background:#F1F5F9; border-radius:var(--radius-md); padding:16px; margin:16px 0; border:1px solid var(--border-color);">
+                        <h4 style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--text-main);">Add Items to Delivery Order</h4>
+                        
+                        <div class="form-row" style="align-items:flex-end;">
+                            <div class="form-group" style="flex:2; margin-bottom:0;">
+                                <label class="form-label" for="delivery-product-select">Product SKU / Title</label>
+                                <select id="delivery-product-select" class="form-select"></select>
+                            </div>
+                            <div class="form-group" style="flex:1; margin-bottom:0;">
+                                <label class="form-label" for="delivery-item-qty">Quantity</label>
+                                <input type="number" id="delivery-item-qty" class="form-input" placeholder="e.g. 10" min="1" step="any">
+                            </div>
+                            <button type="button" class="btn btn-outline" id="btn-add-line-item" style="height:44px;">
+                                ➕ Add Item
+                            </button>
+                        </div>
+
+                        <!-- Draft Items Preview -->
+                        <div style="margin-top:14px;">
+                            <label class="form-label" style="font-size:12px;">Staged Outgoing Items:</label>
+                            <div id="draft-items-list">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-delivery">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-delivery">Create Delivery Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/deliveries.js"></script>
+</body>
+</html>

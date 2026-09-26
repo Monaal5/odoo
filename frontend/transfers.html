@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internal Transfers — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <!-- Design & Stylesheets -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar-container" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar-container" id="topbar-container"></header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                
+                <!-- Section Header -->
+                <div class="section-header-bar">
+                    <div>
+                        <h2 class="section-title">Internal Stock Transfers</h2>
+                        <p class="section-subtitle">Move materials between storage bins, bays, and warehouses</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-new-transfer">
+                        <span>🔄 New Transfer</span>
+                    </button>
+                </div>
+
+                <!-- Transfers Table -->
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">Transfer #</th>
+                                <th>Product Item</th>
+                                <th>Source Warehouse</th>
+                                <th>Destination</th>
+                                <th style="width: 110px;">Quantity</th>
+                                <th style="width: 120px;">Status</th>
+                                <th style="width: 130px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transfers-table-body">
+                            <!-- Populated dynamically via transfers.js -->
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- NEW TRANSFER MODAL -->
+    <div class="modal-overlay" id="modal-transfer">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Create Internal Transfer</h3>
+                <button type="button" class="modal-close" data-close-modal="modal-transfer">&times;</button>
+            </div>
+
+            <form id="transfer-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label" for="transfer-product">Product to Move *</label>
+                        <select id="transfer-product" class="form-select" required></select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="transfer-from-wh">From Warehouse *</label>
+                            <select id="transfer-from-wh" class="form-select" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="transfer-to-wh">To Warehouse *</label>
+                            <select id="transfer-to-wh" class="form-select" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="transfer-qty">Quantity to Move *</label>
+                        <input type="number" id="transfer-qty" class="form-input" placeholder="e.g. 25" min="1" step="any" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-close-modal="modal-transfer">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-transfer">Initiate Transfer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/transfers.js"></script>
+</body>
+</html>

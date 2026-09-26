@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <defs>
+    <linearGradient id="ssGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5E35B1" />
+      <stop offset="100%" stop-color="#7E57C2" />
+    </linearGradient>
+  </defs>
+  <!-- Cube Icon -->
+  <g transform="translate(4, 4)">
+    <rect width="40" height="40" rx="10" fill="url(#ssGrad)"/>
+    <path d="M20 10 L30 15.5 L20 21 L10 15.5 Z" fill="#FFFFFF" fill-opacity="0.95"/>
+    <path d="M10 17 L20 22.5 V33 L10 27.5 Z" fill="#FFFFFF" fill-opacity="0.75"/>
+    <path d="M30 17 L20 22.5 V33 L30 27.5 Z" fill="#FFFFFF" fill-opacity="0.85"/>
+  </g>
+  <!-- Brand Text -->
+  <text x="56" y="27" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="20" font-weight="800" fill="#1E1B4B" letter-spacing="-0.5">Stock<tspan fill="#5E35B1">Sense</tspan></text>
+  <text x="57" y="38" font-family="'Plus Jakarta Sans', 'Inter', -apple-system, sans-serif" font-size="9" font-weight="600" fill="#64748B" letter-spacing="1.2">INVENTORY INTELLIGENCE</text>
+</svg>

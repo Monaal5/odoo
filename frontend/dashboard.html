@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <!-- Design & Stylesheets -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/mobile.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar-container" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar-container" id="topbar-container"></header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                
+                <!-- Section Header -->
+                <div class="section-header-bar">
+                    <div>
+                        <h2 class="section-title">Warehouse Inventory Overview</h2>
+                        <p class="section-subtitle">Real-time telemetry and supply chain activities</p>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <a href="receipts.html" class="btn btn-outline btn-sm">📥 Inbound</a>
+                        <a href="deliveries.html" class="btn btn-primary btn-sm">📤 Outbound</a>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Cards (1 Row on Desktop, 2 on Tablet, Stacked on Mobile) -->
+                <div class="kpi-grid">
+                    <!-- KPI 1: Total Products -->
+                    <div class="kpi-card kpi-purple">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Total Products</span>
+                            <div class="kpi-icon-wrapper">📦</div>
+                        </div>
+                        <div class="kpi-value-row">
+                            <span class="kpi-value" id="kpi-total-products">248</span>
+                            <span class="kpi-unit">Items</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span>Catalog SKUs across all bins</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Low Stock -->
+                    <div class="kpi-card kpi-danger">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Low Stock</span>
+                            <div class="kpi-icon-wrapper">⚠️</div>
+                        </div>
+                        <div class="kpi-value-row">
+                            <span class="kpi-value" id="kpi-low-stock">12</span>
+                            <span class="kpi-unit">Alerts</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span style="color:var(--danger); font-weight:600;">Requires replenishment</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Pending Receipts -->
+                    <div class="kpi-card kpi-warning">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Pending Receipts</span>
+                            <div class="kpi-icon-wrapper">📥</div>
+                        </div>
+                        <div class="kpi-value-row">
+                            <span class="kpi-value" id="kpi-pending-receipts">4</span>
+                            <span class="kpi-unit">Waiting</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span>Awaiting dock intake validation</span>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Pending Deliveries -->
+                    <div class="kpi-card kpi-success">
+                        <div class="kpi-header">
+                            <span class="kpi-title">Pending Deliveries</span>
+                            <div class="kpi-icon-wrapper">📤</div>
+                        </div>
+                        <div class="kpi-value-row">
+                            <span class="kpi-value" id="kpi-pending-deliveries">7</span>
+                            <span class="kpi-unit">Ready</span>
+                        </div>
+                        <div class="kpi-footer">
+                            <span>Packed & ready for dispatch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Two Column Dashboard Layout -->
+                <div class="dashboard-columns">
+                    <!-- Left: Recent Activity Feed Table -->
+                    <div class="content-card">
+                        <div class="content-card-header">
+                            <div class="content-card-title">
+                                <span>⚡</span> Recent Stock Activity
+                            </div>
+                            <a href="ledger.html" class="btn btn-outline btn-sm">Full Ledger →</a>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 100px;">Time</th>
+                                        <th>Action & Location</th>
+                                        <th style="width: 110px;">Qty Delta</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activity-table-body">
+                                    <!-- Populated dynamically via dashboard.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Quick Ops & Alerts -->
+                    <div>
+                        <!-- Quick Actions Grid -->
+                        <div class="content-card">
+                            <div class="content-card-header">
+                                <div class="content-card-title">
+                                    <span>⚙️</span> Operations Hub
+                                </div>
+                            </div>
+                            <div class="quick-ops-grid">
+                                <a href="receipts.html" class="quick-op-btn">
+                                    <span class="quick-op-icon">📥</span>
+                                    <span>New Receipt</span>
+                                </a>
+                                <a href="deliveries.html" class="quick-op-btn">
+                                    <span class="quick-op-icon">📤</span>
+                                    <span>New Delivery</span>
+                                </a>
+                                <a href="transfers.html" class="quick-op-btn">
+                                    <span class="quick-op-icon">🔄</span>
+                                    <span>Internal Transfer</span>
+                                </a>
+                                <a href="adjustments.html" class="quick-op-btn">
+                                    <span class="quick-op-icon">⚖️</span>
+                                    <span>Stock Count</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Low Stock Warnings -->
+                        <div class="content-card">
+                            <div class="content-card-header">
+                                <div class="content-card-title">
+                                    <span>🔔</span> Stock Threshold Alerts
+                                </div>
+                            </div>
+                            <div class="alerts-list" id="alerts-container">
+                                <!-- Populated dynamically via dashboard.js -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
