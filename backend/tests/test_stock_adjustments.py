@@ -4,14 +4,27 @@ from app.main import app
 from app.db.database import engine, Base
 from app.core.config import settings
 
+from app.api.deps import get_current_user, require_manager
+
 client = TestClient(app)
 
 @pytest.fixture(autouse=True)
 def setup_database():
-    """Reset database tables before running stock adjustment tests."""
+    """Reset database tables and override auth dependencies before running tests."""
+    mock_user = {
+        "id": "1",
+        "name": "Test Manager",
+        "email": "manager@example.com",
+        "role": "inventory_manager",
+        "is_active": True,
+    }
+    app.dependency_overrides[get_current_user] = lambda: mock_user
+    app.dependency_overrides[require_manager] = lambda: mock_user
+
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     yield
+    app.dependency_overrides.clear()
 
 def test_stock_adjustment_delta_computation_and_ledger_entry():
     """

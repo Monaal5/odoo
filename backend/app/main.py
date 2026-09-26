@@ -13,7 +13,7 @@ from app.api.profile import router as profile_router
 from app.api.reports import router as reports_router
 from app.api.search import router as search_router
 
-# Developer 2 Routers (Stock Operations & Intelligence)
+# Developer 2 Routers (Stock Operations & Intelligence & Audit/Mobile)
 from app.api.endpoints import router as system_router
 from app.api.receipts import router as receipts_router
 from app.api.deliveries import router as deliveries_router
@@ -22,6 +22,8 @@ from app.api.adjustments import router as adjustments_router
 from app.api.ledger import router as ledger_router
 from app.api.dashboard import router as dashboard_router
 from app.api.alerts import router as alerts_router
+from app.api.audit import router as audit_router
+from app.api.mobile import router as mobile_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -53,6 +55,11 @@ app.include_router(warehouses_router, prefix=PREFIX)
 app.include_router(profile_router,    prefix=PREFIX)
 app.include_router(reports_router,    prefix=PREFIX)
 app.include_router(search_router,     prefix=PREFIX)
+
+# Audit Trail & Mobile APIs
+app.include_router(audit_router,      prefix=PREFIX)
+app.include_router(mobile_router)
+app.include_router(mobile_router,     prefix=PREFIX)
 
 # Stock Operations & Intelligence
 app.include_router(system_router,      prefix=PREFIX)

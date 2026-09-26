@@ -1,7 +1,7 @@
 from typing import List, Optional
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from app.db.database import get_db
+from app.db.database import get_sqlalchemy_db as get_db
 from app.schemas.ledger import LedgerEntryResponse
 from app.services.ledger_service import LedgerService
 

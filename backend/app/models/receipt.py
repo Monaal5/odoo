@@ -10,11 +10,16 @@ class Receipt(Base):
     id = Column(Integer, primary_key=True, index=True)
     receipt_number = Column(String(100), unique=True, nullable=False, index=True)
     supplier_name = Column(String(255), nullable=False)
+    warehouse_id = Column(String(100), nullable=True)
     status = Column(String(50), nullable=False, default="Draft")  # Draft, Waiting, Ready, Done, Canceled
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     items = relationship("ReceiptItem", back_populates="receipt", cascade="all, delete-orphan")
+
+    @property
+    def supplier(self):
+        return self.supplier_name
 
 
 class ReceiptItem(Base):

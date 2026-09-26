@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
-from app.db.database import get_db
+from app.db.database import get_sqlalchemy_db as get_db
 from app.schemas.adjustment import AdjustmentCreate, AdjustmentResponse
 from app.services.inventory_service import InventoryService
 

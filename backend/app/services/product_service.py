@@ -19,15 +19,16 @@ class ProductService:
 
     @staticmethod
     def create_category(conn, name: str, description: Optional[str]) -> dict:
+        cat_id = str(uuid.uuid4())
         with dict_cursor(conn) as cur:
             cur.execute("SELECT id FROM categories WHERE name = %s", (name,))
             if cur.fetchone():
                 raise ValueError(f"Category '{name}' already exists")
             cur.execute(
-                """INSERT INTO categories (name, description)
-                   VALUES (%s, %s)
+                """INSERT INTO categories (id, name, description)
+                   VALUES (%s, %s, %s)
                    RETURNING id, name, description, created_at, updated_at""",
-                (name, description),
+                (cat_id, name, description),
             )
             return dict(cur.fetchone())
 
@@ -77,6 +78,7 @@ class ProductService:
 
     @staticmethod
     def create_product(conn, data: dict) -> dict:
+        prod_id = clean_uuid(data.get("id")) or str(uuid.uuid4())
         category_id = clean_uuid(data.get("category_id"))
         with dict_cursor(conn) as cur:
             cur.execute("SELECT id FROM products WHERE sku = %s", (data["sku"],))
@@ -84,13 +86,13 @@ class ProductService:
                 raise ValueError(f"SKU '{data['sku']}' already exists")
             cur.execute(
                 """INSERT INTO products
-                       (name, sku, category_id, unit_of_measure, reorder_min, reorder_max, description)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s)
+                       (id, name, sku, category_id, unit_of_measure, reorder_min, reorder_max, description)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                    RETURNING id, name, sku, category_id, unit_of_measure,
                              reorder_min, reorder_max, description, is_active,
                              created_at, updated_at""",
                 (
-                    data["name"], data["sku"], category_id,
+                    prod_id, data["name"], data["sku"], category_id,
                     data.get("unit_of_measure", "units"),
                     data.get("reorder_min", 0), data.get("reorder_max", 0),
                     data.get("description"),
@@ -173,16 +175,17 @@ class ProductService:
 
     @staticmethod
     def create_warehouse(conn, data: dict) -> dict:
+        wh_id = clean_uuid(data.get("id")) or str(uuid.uuid4())
         parent_id = clean_uuid(data.get("parent_id"))
         with dict_cursor(conn) as cur:
             cur.execute("SELECT id FROM warehouses WHERE code = %s", (data["code"],))
             if cur.fetchone():
                 raise ValueError(f"Warehouse code '{data['code']}' already exists")
             cur.execute(
-                """INSERT INTO warehouses (name, code, address, parent_id)
-                   VALUES (%s, %s, %s, %s)
+                """INSERT INTO warehouses (id, name, code, address, parent_id)
+                   VALUES (%s, %s, %s, %s, %s)
                    RETURNING id, name, code, address, parent_id, is_active, created_at, updated_at""",
-                (data["name"], data["code"], data.get("address"), parent_id),
+                (wh_id, data["name"], data["code"], data.get("address"), parent_id),
             )
             return dict(cur.fetchone())
 

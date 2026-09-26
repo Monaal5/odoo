@@ -25,20 +25,20 @@ class ReportService:
             cur.execute(
                 """
                 SELECT
-                    p.sku                   AS "SKU",
-                    p.name                  AS "Product",
+                    COALESCE(p.sku, 'ITM-' || CAST(i.id AS VARCHAR)) AS "SKU",
+                    COALESCE(p.name, i.title) AS "Product",
                     COALESCE(w.name, 'Default Main Warehouse') AS "Warehouse",
                     COALESCE(SUM(sle.qty_delta), 0) AS "Qty",
-                    p.reorder_min           AS "ReorderMin"
-                FROM products p
-                LEFT JOIN stock_ledger_entries sle ON sle.product_id = p.id
-                LEFT JOIN warehouses w ON w.id = sle.warehouse_id
-                WHERE p.is_active = TRUE
-                GROUP BY p.id, p.sku, p.name, w.id, w.name, p.reorder_min
-                ORDER BY p.name, "Warehouse"
+                    0 AS "ReorderMin"
+                FROM items i
+                LEFT JOIN products p ON CAST(p.id AS VARCHAR) = CAST(i.id AS VARCHAR)
+                LEFT JOIN stock_ledger sle ON CAST(sle.product_id AS VARCHAR) = CAST(i.id AS VARCHAR)
+                LEFT JOIN warehouses w ON CAST(w.id AS VARCHAR) = CAST(sle.location_id AS VARCHAR)
+                GROUP BY i.id, i.title, p.id, p.sku, p.name, w.id, w.name
                 """
             )
             rows = [dict(r) for r in cur.fetchall()]
+
 
             # Convert numeric types to float/int for safety
             for row in rows:

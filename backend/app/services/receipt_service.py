@@ -13,22 +13,24 @@ class ReceiptService:
 
         with dict_cursor(conn) as cur:
             cur.execute(
-                """INSERT INTO receipts (receipt_number, supplier, warehouse_id, status)
-                   VALUES (%s, %s, %s, 'Draft')
-                   RETURNING id, receipt_number, supplier, warehouse_id, status, created_at, updated_at""",
-                (receipt_no, supplier, wh_id),
+                """INSERT INTO receipts (receipt_number, supplier_name, status)
+                   VALUES (%s, %s, 'Draft')
+                   RETURNING id, receipt_number, supplier_name AS supplier, status, created_at, updated_at""",
+                (receipt_no, supplier),
             )
             receipt = dict(cur.fetchone())
+            receipt["warehouse_id"] = wh_id
 
             item_responses = []
             for item in items:
-                prod_id = clean_uuid(item.get("product_id"))
+                prod_id = str(item.get("product_id"))
+                loc_id = int(item.get("location_id") or item.get("warehouse_id") or 1)
                 qty = float(item["quantity"])
                 cur.execute(
-                    """INSERT INTO receipt_items (receipt_id, product_id, quantity)
-                       VALUES (%s, %s, %s)
-                       RETURNING id, receipt_id, product_id, quantity""",
-                    (receipt["id"], prod_id, qty),
+                    """INSERT INTO receipt_items (receipt_id, product_id, location_id, quantity)
+                       VALUES (%s, %s, %s, %s)
+                       RETURNING id, receipt_id, product_id, location_id, quantity""",
+                    (receipt["id"], prod_id, loc_id, qty),
                 )
                 item_responses.append(dict(cur.fetchone()))
 
@@ -39,7 +41,7 @@ class ReceiptService:
     def list_receipts(conn, skip: int = 0, limit: int = 100) -> list:
         with dict_cursor(conn) as cur:
             cur.execute(
-                """SELECT id, receipt_number, supplier, warehouse_id, status, created_at, updated_at
+                """SELECT id, receipt_number, supplier_name AS supplier, status, created_at, updated_at
                    FROM receipts
                    ORDER BY created_at DESC
                    LIMIT %s OFFSET %s""",
@@ -49,7 +51,7 @@ class ReceiptService:
 
             for rec in receipts:
                 cur.execute(
-                    """SELECT id, receipt_id, product_id, quantity
+                    """SELECT id, receipt_id, product_id, location_id, quantity
                        FROM receipt_items WHERE receipt_id = %s""",
                     (rec["id"],),
                 )
@@ -61,7 +63,7 @@ class ReceiptService:
     def get_receipt(conn, receipt_id: str) -> Optional[dict]:
         with dict_cursor(conn) as cur:
             cur.execute(
-                """SELECT id, receipt_number, supplier, warehouse_id, status, created_at, updated_at
+                """SELECT id, receipt_number, supplier_name AS supplier, status, created_at, updated_at
                    FROM receipts WHERE id = %s""",
                 (receipt_id,),
             )
@@ -69,8 +71,9 @@ class ReceiptService:
             if not row:
                 return None
             receipt = dict(row)
+            receipt["warehouse_id"] = None
             cur.execute(
-                """SELECT id, receipt_id, product_id, quantity
+                """SELECT id, receipt_id, product_id, location_id, quantity
                    FROM receipt_items WHERE receipt_id = %s""",
                 (receipt["id"],),
             )
@@ -91,7 +94,7 @@ class ReceiptService:
                 """UPDATE receipts
                    SET status = 'Done', updated_at = NOW()
                    WHERE id = %s
-                   RETURNING id, receipt_number, supplier, warehouse_id, status, created_at, updated_at""",
+                   RETURNING id, receipt_number, supplier_name AS supplier, status, created_at, updated_at""",
                 (receipt_id,),
             )
             updated_receipt = dict(cur.fetchone())
@@ -99,29 +102,23 @@ class ReceiptService:
             # 2. Write Stock Ledger Entries (+qty) and update Stock Levels
             for item in receipt["items"]:
                 prod_id = item["product_id"]
-                wh_id = receipt["warehouse_id"]
+                loc_id = int(item.get("location_id") or 1)
                 qty = float(item["quantity"])
 
-                # Insert immutable ledger entry
+                # Insert immutable ledger entry in stock_ledger
                 cur.execute(
-                    """INSERT INTO stock_ledger_entries
-                           (product_id, warehouse_id, qty_delta, source_document_type, source_document_id)
+                    """INSERT INTO stock_ledger
+                           (product_id, location_id, qty_delta, source_doc_type, source_doc_id)
                        VALUES (%s, %s, %s, 'RECEIPT', %s)""",
-                    (prod_id, wh_id, qty, receipt_id),
+                    (prod_id, loc_id, qty, receipt_id),
                 )
 
                 # Upsert stock level
                 cur.execute(
-                    """INSERT INTO stock_levels (product_id, warehouse_id, quantity)
+                    """INSERT INTO stock_levels (product_id, location_id, quantity)
                        VALUES (%s, %s, %s)
-                       ON CONFLICT DO NOTHING""",
-                    (prod_id, wh_id, qty),
-                )
-                cur.execute(
-                    """UPDATE stock_levels
-                       SET quantity = quantity + %s
-                       WHERE product_id = %s AND (warehouse_id = %s OR (%s IS NULL AND warehouse_id IS NULL))""",
-                    (qty, prod_id, wh_id, wh_id),
+                       ON CONFLICT(product_id, location_id) DO UPDATE SET quantity = quantity + EXCLUDED.quantity""",
+                    (prod_id, loc_id, qty),
                 )
 
             updated_receipt["items"] = receipt["items"]

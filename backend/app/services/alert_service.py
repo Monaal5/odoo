@@ -57,6 +57,69 @@ class AlertService:
         return db.query(Alert).filter(Alert.status == "ACTIVE").order_by(Alert.id.desc()).offset(skip).limit(limit).all()
 
     @staticmethod
+    def get_current_stock(conn, product_id: int, location_id: int) -> float:
+        from app.db.database import dict_cursor
+        with dict_cursor(conn) as cur:
+            cur.execute(
+                """SELECT quantity FROM stock_levels
+                   WHERE product_id = %s AND location_id = %s""",
+                (product_id, location_id),
+            )
+            row = cur.fetchone()
+            return float(row["quantity"]) if row else 0.0
+
+    @staticmethod
+    def evaluate_reorder_alert(conn, product_id: int, location_id: int) -> None:
+        """Re-check stock for (product_id, location_id) against its reorder rule."""
+        from app.db.database import dict_cursor
+        product_id = int(product_id)
+        location_id = int(location_id)
+
+        with dict_cursor(conn) as cur:
+            cur.execute(
+                """SELECT min_qty FROM reorder_rules
+                   WHERE product_id = %s AND location_id = %s""",
+                (product_id, location_id),
+            )
+            rule = cur.fetchone()
+            if not rule:
+                return
+
+            min_qty = float(rule["min_qty"])
+            current_stock = AlertService.get_current_stock(conn, product_id, location_id)
+
+            cur.execute(
+                """SELECT id FROM alerts
+                   WHERE product_id = %s AND location_id = %s AND status = 'ACTIVE'""",
+                (product_id, location_id),
+            )
+            existing_alert = cur.fetchone()
+
+            if current_stock < min_qty:
+                if existing_alert:
+                    cur.execute(
+                        """UPDATE alerts
+                           SET current_stock = %s, min_stock = %s, updated_at = NOW()
+                           WHERE id = %s""",
+                        (current_stock, min_qty, existing_alert["id"]),
+                    )
+                else:
+                    cur.execute(
+                        """INSERT INTO alerts
+                               (product_id, location_id, current_stock, min_stock, status)
+                           VALUES (%s, %s, %s, %s, 'ACTIVE')""",
+                        (product_id, location_id, current_stock, min_qty),
+                    )
+            else:
+                if existing_alert:
+                    cur.execute(
+                        """UPDATE alerts
+                           SET status = 'RESOLVED', current_stock = %s, updated_at = NOW()
+                           WHERE id = %s""",
+                        (current_stock, existing_alert["id"]),
+                    )
+
+    @staticmethod
     def dismiss_alert(db: Session, alert_id: int) -> Optional[Alert]:
         alert = db.query(Alert).filter(Alert.id == alert_id).first()
         if alert:
@@ -64,3 +127,5 @@ class AlertService:
             db.commit()
             db.refresh(alert)
         return alert
+
+
