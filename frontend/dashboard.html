@@ -31,7 +31,11 @@
                         <h2 class="section-title">Warehouse Inventory Overview</h2>
                         <p class="section-subtitle">Real-time telemetry and supply chain activities</p>
                     </div>
-                    <div style="display:flex; gap:10px;">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <input type="file" id="dashboard-ocr-input" accept="image/*,.pdf,.txt" style="display:none;">
+                        <button class="btn btn-outline btn-sm" id="btn-dashboard-ocr" title="Scan invoice or packing slip to auto-create receipt">
+                            <span>📄 Scan Invoice (OCR)</span>
+                        </button>
                         <a href="receipts.html" class="btn btn-outline btn-sm">📥 Inbound</a>
                         <a href="deliveries.html" class="btn btn-primary btn-sm">📤 Outbound</a>
                     </div>
@@ -100,6 +104,59 @@
                     </div>
                 </div>
 
+                <!-- AI Copilot Console & Demand Forecasting Grid -->
+                <div class="dashboard-ai-grid">
+                    <!-- Left: AI Assistant Terminal -->
+                    <div class="dashboard-ai-console">
+                        <div class="dashboard-ai-header">
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <span style="font-size:22px;">✨</span>
+                                <div>
+                                    <h3 style="margin:0; font-size:16px; font-weight:700;">StockSense AI Copilot</h3>
+                                    <p style="margin:2px 0 0; font-size:12px; color:rgba(255,255,255,0.7);">Natural language warehouse telemetry &amp; automated procurement</p>
+                                </div>
+                            </div>
+                            <span class="dashboard-ai-pill">Live Copilot</span>
+                        </div>
+
+                        <div class="dashboard-ai-response-box" id="dashboard-ai-response">
+                            Ask StockSense AI anything about stock velocity, replenishment recommendations, or bay locations...
+                        </div>
+
+                        <div>
+                            <div class="dashboard-ai-input-group">
+                                <input type="text" id="dashboard-ai-input" class="dashboard-ai-input" placeholder="e.g. How much steel is in WH-01? or What needs reordering?" autocomplete="off" />
+                                <button type="button" id="btn-dashboard-ai-send" class="dashboard-ai-send-btn">
+                                    <span>Ask AI</span> ➔
+                                </button>
+                            </div>
+                            <div class="dashboard-ai-chips">
+                                <button type="button" class="dashboard-ai-chip" data-query="How much steel is in WH-01?">🔍 Check Steel Inventory</button>
+                                <button type="button" class="dashboard-ai-chip" data-query="What items need replenishment?">⚠️ Low Stock &amp; Reorders</button>
+                                <button type="button" class="dashboard-ai-chip" data-query="Draft purchase order for Steel Rods">📝 Draft Purchase Order</button>
+                                <button type="button" class="dashboard-ai-chip" data-query="Where are Hex Bolts stored?">📍 Locate Hex Bolts</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: AI Demand Forecasting & Stockout Horizon -->
+                    <div class="dashboard-forecast-card">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:18px;">📈</span>
+                                <h3 style="margin:0; font-size:15px; font-weight:700; color:var(--text-main);">AI Demand Forecast</h3>
+                            </div>
+                            <a href="reports.html" style="font-size:12px; font-weight:600; color:var(--primary); text-decoration:none;">View Full Model →</a>
+                        </div>
+                        <p style="font-size:12px; color:var(--text-muted); margin-top:0; margin-bottom:12px;">Predictive consumption modeling &amp; stockout horizon alerts</p>
+                        
+                        <div id="dashboard-forecast-list" style="display:flex; flex-direction:column; gap:4px; flex:1;">
+                            <!-- Populated dynamically via dashboard.js loadDashboardForecast() -->
+                            <div style="font-size:13px; color:var(--text-muted); padding:10px 0;">Loading predictive telemetry...</div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Two Column Dashboard Layout -->
                 <div class="dashboard-columns">
                     <!-- Left: Recent Activity Feed Table -->
@@ -152,6 +209,14 @@
                                 <a href="adjustments.html" class="quick-op-btn">
                                     <span class="quick-op-icon">⚖️</span>
                                     <span>Stock Count</span>
+                                </a>
+                                <button type="button" class="quick-op-btn" id="btn-quick-ocr" style="border:1px solid #C084FC; background:rgba(192,132,252,0.06); cursor:pointer;">
+                                    <span class="quick-op-icon">📄</span>
+                                    <span style="color:var(--primary);">Scan Invoice OCR</span>
+                                </button>
+                                <a href="reports.html" class="quick-op-btn" style="border:1px solid #60A5FA; background:rgba(96,165,250,0.06);">
+                                    <span class="quick-op-icon">🔮</span>
+                                    <span style="color:#2563EB;">AI Forecast</span>
                                 </a>
                             </div>
                         </div>

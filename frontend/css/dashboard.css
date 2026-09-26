@@ -222,3 +222,157 @@
 .quick-op-icon {
   font-size: 24px;
 }
+
+/* ── Dashboard AI Copilot Console & Forecast Intelligence ── */
+.dashboard-ai-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.dashboard-ai-console {
+  background: linear-gradient(135deg, #1E1B4B 0%, #2E1065 100%);
+  color: #FFFFFF;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: 0 10px 25px -5px rgba(30, 27, 75, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dashboard-ai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.dashboard-ai-pill {
+  background: rgba(168, 85, 247, 0.2);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #D8B4FE;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.dashboard-ai-response-box {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #F1F5F9;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+}
+
+.dashboard-ai-input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.dashboard-ai-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  color: #FFFFFF;
+  font-size: 13.5px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.dashboard-ai-input:focus {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: #A855F7;
+}
+
+.dashboard-ai-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dashboard-ai-send-btn {
+  background: linear-gradient(135deg, #7E57C2 0%, #5E35B1 100%);
+  border: none;
+  color: #FFFFFF;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.dashboard-ai-send-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.dashboard-ai-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.dashboard-ai-chip {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #E2E8F0;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-ai-chip:hover {
+  background: rgba(168, 85, 247, 0.25);
+  border-color: #A855F7;
+  color: #FFFFFF;
+}
+
+/* Forecast Card on Dashboard */
+.dashboard-forecast-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: 20px 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.forecast-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.forecast-item-row:last-child {
+  border-bottom: none;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-ai-grid {
+    grid-template-columns: 1fr;
+  }
+}
