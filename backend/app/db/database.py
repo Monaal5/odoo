@@ -40,6 +40,8 @@ def dict_cursor(conn):
 # ─── SQLAlchemy Setup (for Dev 2 compatibility) ──────────────
 
 db_url = settings.DATABASE_URL
+if db_url.startswith("postgresql://"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg2://", 1)
 
 def get_engine(url: str):
     engine_kwargs = {}
