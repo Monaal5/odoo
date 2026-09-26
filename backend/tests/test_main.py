@@ -22,7 +22,6 @@ def test_health_check():
     data = response.json()
     assert data["status"] == "OK"
     assert "database" in data
-    assert "odoo_connection" in data
 
 def test_item_crud_flow():
     # 1. Create Item

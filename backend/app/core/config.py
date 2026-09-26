@@ -12,7 +12,6 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "super-secret-stocksense-key-change-in-production"
     
     # Database Configuration (PostgreSQL URL as Primary Default)
-    # Format: postgresql://<username>:<password>@<host>:<port>/<database_name>
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres"
     POSTGRES_HOST: str = "localhost"
@@ -20,12 +19,6 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = "stocksense_db"
     
     DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/stocksense_db"
-    
-    # Odoo XML-RPC / JSON-RPC Connection Settings
-    ODOO_URL: Optional[str] = "http://localhost:8069"
-    ODOO_DB: Optional[str] = "odoo_db"
-    ODOO_USER: Optional[str] = "admin"
-    ODOO_PASSWORD: Optional[str] = "admin"
     
     model_config = SettingsConfigDict(
         env_file=".env",

@@ -6,5 +6,4 @@ class HealthCheck(BaseModel):
     app_name: str
     version: str
     database: str
-    odoo_connection: str
     timestamp: str
