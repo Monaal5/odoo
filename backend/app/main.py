@@ -9,6 +9,8 @@ from app.api.users import router as users_router
 from app.api.products import router as products_router
 from app.api.categories import router as categories_router
 from app.api.warehouses import router as warehouses_router
+from app.api.profile import router as profile_router
+from app.api.reports import router as reports_router
 
 # Developer 2 Routers (Stock Operations & Intelligence)
 from app.api.endpoints import router as system_router
@@ -47,6 +49,8 @@ app.include_router(users_router,      prefix=PREFIX)
 app.include_router(products_router,   prefix=PREFIX)
 app.include_router(categories_router, prefix=PREFIX)
 app.include_router(warehouses_router, prefix=PREFIX)
+app.include_router(profile_router,    prefix=PREFIX)
+app.include_router(reports_router,    prefix=PREFIX)
 
 # Stock Operations & Intelligence
 app.include_router(system_router,      prefix=PREFIX)

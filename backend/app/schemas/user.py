@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field
 
 
 class UserResponse(BaseModel):
@@ -11,3 +11,7 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+
+
+class RoleUpdate(BaseModel):
+    role: str = Field(..., description="Role must be 'inventory_manager' or 'warehouse_staff'")
