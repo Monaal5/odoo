@@ -299,6 +299,60 @@ body {
   cursor: default;
 }
 
+.backend-sync-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-pill);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.backend-sync-pill .sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.backend-sync-pill.online {
+  color: #16a34a;
+}
+.backend-sync-pill.online .sync-dot {
+  background: #16a34a;
+  box-shadow: 0 0 8px rgba(22, 163, 74, 0.4);
+}
+
+.backend-sync-pill.offline {
+  color: #ea580c;
+}
+.backend-sync-pill.offline .sync-dot {
+  background: #ea580c;
+  box-shadow: 0 0 8px rgba(234, 88, 12, 0.4);
+}
+
+.delta-badge {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+.delta-badge.positive {
+  background: #dcfce7;
+  color: #15803d;
+}
+.delta-badge.negative {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
 .header-right {
   display: flex;
   align-items: center;
