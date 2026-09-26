@@ -21,7 +21,7 @@ class DashboardService:
         """
         with dict_cursor(conn) as cur:
 
-            # Total distinct active products that have ever had stock
+            # Total distinct active products
             cur.execute(
                 """
                 SELECT COUNT(DISTINCT p.id) AS cnt
@@ -59,19 +59,19 @@ class DashboardService:
 
             # Pending receipts (not Done, not Cancelled)
             cur.execute(
-                "SELECT COUNT(*) AS cnt FROM receipts WHERE status NOT IN ('Done', 'Cancelled')"
+                "SELECT COUNT(*) AS cnt FROM receipts WHERE status NOT IN ('Done', 'Cancelled', 'Canceled')"
             )
             pending_receipts = (cur.fetchone() or {}).get("cnt", 0) or 0
 
             # Pending deliveries
             cur.execute(
-                "SELECT COUNT(*) AS cnt FROM deliveries WHERE status NOT IN ('Done', 'Cancelled')"
+                "SELECT COUNT(*) AS cnt FROM deliveries WHERE status NOT IN ('Done', 'Cancelled', 'Canceled')"
             )
             pending_deliveries = (cur.fetchone() or {}).get("cnt", 0) or 0
 
             # Pending transfers
             cur.execute(
-                "SELECT COUNT(*) AS cnt FROM transfers WHERE status NOT IN ('Done', 'Cancelled')"
+                "SELECT COUNT(*) AS cnt FROM transfers WHERE status NOT IN ('Done', 'Cancelled', 'Canceled')"
             )
             pending_transfers = (cur.fetchone() or {}).get("cnt", 0) or 0
 
@@ -88,7 +88,13 @@ class DashboardService:
 
     @staticmethod
     def get_activity(conn, limit: int = 20, skip: int = 0) -> dict:
-                        SELECT
+        """
+        Most-recent stock ledger entries enriched with product and warehouse names.
+        """
+        with dict_cursor(conn) as cur:
+            cur.execute(
+                """
+                SELECT
                     sle.id,
                     sle.product_id,
                     p.name  AS product_name,
@@ -151,19 +157,9 @@ class DashboardService:
 
         where_clause = " AND ".join(conditions)
 
-        # Status filtering: receipts/deliveries/transfers have a status column;
-        # we resolve the status from the source document table.
-        # We union across tables rather than a complex join for simplicity.
-        status_filter = ""
-        if status:
-            status_filter = f"AND doc_status = %s"
-            params_with_status = params + [status.capitalize()]
-        else:
-            params_with_status = params
-
         with dict_cursor(conn) as cur:
             if status:
-                # Subquery that resolves status from source documents
+                params_with_status = params + [status.capitalize()]
                 sql = f"""
                     SELECT
                         sle.id,
@@ -223,10 +219,6 @@ class DashboardService:
                     LEFT JOIN transfers  t ON t.id = sle.source_document_id AND sle.source_document_type IN ('TRANSFER_IN','TRANSFER_OUT')
                     WHERE {where_clause}
                     ORDER BY sle.timestamp DESC
-                    LIMIT %s OFFSET %s
-                """IN transfers  t ON t.id = sle.source_document_id AND sle.source_document_type IN ('TRANSFER_IN','TRANSFER_OUT')
-                    WHERE {where_clause}
-                    ORDER BY sle.created_at DESC
                     LIMIT %s OFFSET %s
                 """
                 cur.execute(sql, params + [limit, skip])
