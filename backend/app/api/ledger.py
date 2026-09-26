@@ -7,6 +7,7 @@ from app.services.ledger_service import LedgerService
 
 router = APIRouter(prefix="/ledger", tags=["Stock Ledger"])
 
+@router.get("", response_model=List[LedgerEntryResponse])
 @router.get("/history", response_model=List[LedgerEntryResponse])
 def get_ledger_history(
     product_id: Optional[int] = Query(None, description="Filter by product ID"),
