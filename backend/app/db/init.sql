@@ -74,3 +74,72 @@ CREATE TABLE IF NOT EXISTS products (
 
 CREATE INDEX IF NOT EXISTS idx_products_sku      ON products(sku);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
+
+-- ---------------------
+-- RECEIPTS & RECEIPT ITEMS
+-- ---------------------
+CREATE TABLE IF NOT EXISTS receipts (
+    id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    receipt_number VARCHAR(50) NOT NULL UNIQUE,
+    supplier       VARCHAR(255) NOT NULL,
+    warehouse_id   UUID REFERENCES warehouses(id) ON DELETE SET NULL,
+    status         VARCHAR(50) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Waiting', 'Ready', 'Done', 'Canceled')),
+    created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS receipt_items (
+    id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    receipt_id UUID NOT NULL REFERENCES receipts(id) ON DELETE CASCADE,
+    product_id UUID NOT NULL REFERENCES products(id),
+    quantity   NUMERIC(12,3) NOT NULL CHECK (quantity > 0)
+);
+
+-- ---------------------
+-- DELIVERIES & DELIVERY ITEMS
+-- ---------------------
+CREATE TABLE IF NOT EXISTS deliveries (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    delivery_number VARCHAR(50) NOT NULL UNIQUE,
+    customer        VARCHAR(255) NOT NULL,
+    warehouse_id    UUID REFERENCES warehouses(id) ON DELETE SET NULL,
+    status          VARCHAR(50) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Waiting', 'Ready', 'Done', 'Canceled')),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS delivery_items (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    delivery_id UUID NOT NULL REFERENCES deliveries(id) ON DELETE CASCADE,
+    product_id  UUID NOT NULL REFERENCES products(id),
+    quantity    NUMERIC(12,3) NOT NULL CHECK (quantity > 0)
+);
+
+-- ---------------------
+-- STOCK LEDGER (Append-Only Source of Truth)
+-- ---------------------
+CREATE TABLE IF NOT EXISTS stock_ledger_entries (
+    id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id           UUID NOT NULL REFERENCES products(id),
+    warehouse_id         UUID REFERENCES warehouses(id),
+    qty_delta            NUMERIC(12,3) NOT NULL,
+    source_document_type VARCHAR(50) NOT NULL,
+    source_document_id   UUID NOT NULL,
+    timestamp            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    user_id              UUID REFERENCES users(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_stock_ledger_product   ON stock_ledger_entries(product_id);
+CREATE INDEX IF NOT EXISTS idx_stock_ledger_warehouse ON stock_ledger_entries(warehouse_id);
+
+-- ---------------------
+-- STOCK LEVELS (Derived / Cached)
+-- ---------------------
+CREATE TABLE IF NOT EXISTS stock_levels (
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id   UUID NOT NULL REFERENCES products(id),
+    warehouse_id UUID REFERENCES warehouses(id),
+    quantity     NUMERIC(12,3) NOT NULL DEFAULT 0,
+    CONSTRAINT unq_product_warehouse UNIQUE (product_id, warehouse_id)
+);
+

@@ -1,29 +1,35 @@
-from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from typing import List, Optional
+from pydantic import BaseModel, Field
+
 
 class ReceiptItemCreate(BaseModel):
-    product_id: int
-    location_id: int = 1
-    quantity: int
+    product_id: str
+    quantity: float = Field(..., gt=0, description="Quantity received")
 
-class ReceiptItemResponse(ReceiptItemCreate):
-    id: int
-    receipt_id: int
 
-    model_config = ConfigDict(from_attributes=True)
+class ReceiptItemResponse(BaseModel):
+    id: str
+    receipt_id: str
+    product_id: str
+    quantity: float
+
 
 class ReceiptCreate(BaseModel):
-    supplier_name: str
+    supplier: str = Field(..., alias="supplier_name", description="Supplier name")
+    warehouse_id: Optional[str] = None
     items: List[ReceiptItemCreate]
 
+    class Config:
+        populate_by_name = True
+
+
 class ReceiptResponse(BaseModel):
-    id: int
+    id: str
     receipt_number: str
-    supplier_name: str
+    supplier: str
+    warehouse_id: Optional[str] = None
     status: str
     items: List[ReceiptItemResponse]
     created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    model_config = ConfigDict(from_attributes=True)
+    updated_at: datetime

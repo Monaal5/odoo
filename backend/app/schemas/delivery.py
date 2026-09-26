@@ -1,29 +1,35 @@
-from typing import List, Optional
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict
+from typing import List, Optional
+from pydantic import BaseModel, Field
+
 
 class DeliveryItemCreate(BaseModel):
-    product_id: int
-    location_id: int = 1
-    quantity: int
+    product_id: str
+    quantity: float = Field(..., gt=0, description="Quantity delivered")
 
-class DeliveryItemResponse(DeliveryItemCreate):
-    id: int
-    delivery_id: int
 
-    model_config = ConfigDict(from_attributes=True)
+class DeliveryItemResponse(BaseModel):
+    id: str
+    delivery_id: str
+    product_id: str
+    quantity: float
+
 
 class DeliveryCreate(BaseModel):
-    customer_name: str
+    customer: str = Field(..., alias="customer_name", description="Customer name")
+    warehouse_id: Optional[str] = None
     items: List[DeliveryItemCreate]
 
+    class Config:
+        populate_by_name = True
+
+
 class DeliveryResponse(BaseModel):
-    id: int
+    id: str
     delivery_number: str
-    customer_name: str
+    customer: str
+    warehouse_id: Optional[str] = None
     status: str
     items: List[DeliveryItemResponse]
     created_at: datetime
-    updated_at: Optional[datetime] = None
-
-    model_config = ConfigDict(from_attributes=True)
+    updated_at: datetime
