@@ -13,7 +13,7 @@ from app.api.profile import router as profile_router
 from app.api.reports import router as reports_router
 from app.api.search import router as search_router
 
-# Developer 2 Routers (Stock Operations & Intelligence & Audit/Mobile)
+# Developer 2 Routers (Stock Operations & Intelligence & Audit/Mobile/AI)
 from app.api.endpoints import router as system_router
 from app.api.receipts import router as receipts_router
 from app.api.deliveries import router as deliveries_router
@@ -24,6 +24,10 @@ from app.api.dashboard import router as dashboard_router
 from app.api.alerts import router as alerts_router
 from app.api.audit import router as audit_router
 from app.api.mobile import router as mobile_router
+from app.api.ai_chat import router as ai_chat_router
+from app.api.ocr import router as ocr_router
+from app.api.forecast import router as forecast_router
+from app.api.analytics import router as analytics_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -61,7 +65,7 @@ app.include_router(audit_router,      prefix=PREFIX)
 app.include_router(mobile_router)
 app.include_router(mobile_router,     prefix=PREFIX)
 
-# Stock Operations & Intelligence
+# Stock Operations, Intelligence & AI
 app.include_router(system_router,      prefix=PREFIX)
 app.include_router(receipts_router,    prefix=PREFIX)
 app.include_router(deliveries_router,  prefix=PREFIX)
@@ -70,6 +74,10 @@ app.include_router(adjustments_router, prefix=PREFIX)
 app.include_router(ledger_router,      prefix=PREFIX)
 app.include_router(dashboard_router,   prefix=PREFIX)
 app.include_router(alerts_router,      prefix=PREFIX)
+app.include_router(ai_chat_router,     prefix=PREFIX)
+app.include_router(ocr_router,         prefix=PREFIX)
+app.include_router(forecast_router,    prefix=PREFIX)
+app.include_router(analytics_router,   prefix=PREFIX)
 
 
 @app.get("/", tags=["System"])

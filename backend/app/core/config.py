@@ -1,5 +1,9 @@
 from typing import Optional
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Load environment variables from .env file into os.environ
+load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -12,6 +16,10 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "super-secret-stocksense-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
+
+    # AI API Keys
+    GEMINI_API_KEY: Optional[str] = None
+    GOOGLE_API_KEY: Optional[str] = None
 
     # PostgreSQL — raw connection params (used by psycopg2)
     DB_HOST: str = "localhost"
