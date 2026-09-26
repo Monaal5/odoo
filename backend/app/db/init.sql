@@ -143,3 +143,21 @@ CREATE TABLE IF NOT EXISTS stock_levels (
     CONSTRAINT unq_product_warehouse UNIQUE (product_id, warehouse_id)
 );
 
+-- ---------------------
+-- INTERNAL TRANSFERS
+-- ---------------------
+CREATE TABLE IF NOT EXISTS transfers (
+    id                UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    transfer_number   VARCHAR(50) NOT NULL UNIQUE,
+    product_id        UUID NOT NULL REFERENCES products(id),
+    from_warehouse_id UUID REFERENCES warehouses(id) ON DELETE SET NULL,
+    to_warehouse_id   UUID REFERENCES warehouses(id) ON DELETE SET NULL,
+    quantity          NUMERIC(12,3) NOT NULL CHECK (quantity > 0),
+    status            VARCHAR(50) NOT NULL DEFAULT 'Draft' CHECK (status IN ('Draft', 'Waiting', 'Ready', 'Done', 'Canceled')),
+    created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_transfers_product ON transfers(product_id);
+
+
