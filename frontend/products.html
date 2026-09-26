@@ -3,17 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products — StockSense IMS</title>
+    <title>Real-Time Inventory — StockSense IMS</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
-    <!-- Design & Stylesheets -->
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/table.css">
-    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation Container -->
         <aside class="sidebar-container" id="sidebar-container"></aside>
 
         <!-- Main Content Area -->
@@ -24,61 +21,165 @@
             <!-- Page Body -->
             <div class="page-body">
                 
-                <!-- Section Header -->
-                <div class="section-header-bar">
+                <div class="breadcrumbs-bar">
+                    <a href="dashboard.html">DASHBOARD</a> / <a href="#">OPERATIONS</a> / <span class="active">REAL-TIME INVENTORY CATALOG</span>
+                    <span style="margin-left:auto; font-size:11px; color:var(--text-muted);">Catalog Telemetry: 48,210 Total Items Listed &bull; Synced 2ms ago</span>
+                </div>
+
+                <div class="page-header-title-row">
                     <div>
-                        <h2 class="section-title">Product Catalog</h2>
-                        <p class="section-subtitle" id="products-count">Manage items, stock thresholds, and SKUs</p>
+                        <h1 class="page-title-heading">Real-Time Inventory Catalog</h1>
+                        <p class="page-title-sub">Granular SKU stock telemetry, aisle bin positions, safety thresholds, and automated reorder rules across all bays.</p>
                     </div>
-                    <button class="btn btn-primary" id="btn-add-product">
-                        <span>➕ Add Product</span>
-                    </button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span class="status-badge badge-purple">48,210 SKUs LISTED</span>
+                        <button class="topbar-btn topbar-btn-outline" onclick="showToast('Exporting inventory catalog to CSV...', 'info')">📥 Export CSV</button>
+                        <button class="topbar-btn topbar-btn-purple" onclick="openModal('modal-add-product')">+ Add New Product</button>
+                    </div>
                 </div>
 
-                <!-- Table Filter & Search Toolbar -->
-                <div class="table-toolbar">
-                    <div class="table-search-group">
-                        <div class="search-input-wrap">
-                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input type="text" id="product-search-input" class="search-input" placeholder="Search by SKU (e.g. STL001) or product name...">
+                <!-- 4 Top KPI Cards -->
+                <div class="kpi-4-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">TOTAL CATALOG SKUs</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">📦</span>
                         </div>
+                        <div class="kpi-box-val" id="kpi-total-skus">48,210</div>
+                        <div class="kpi-box-sub">Across 18 automated warehouse bays</div>
                     </div>
 
-                    <div class="table-filters">
-                        <select id="category-filter" class="form-select" style="min-width: 180px;">
-                            <option value="">All Categories</option>
-                        </select>
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">TOTAL ON-HAND STOCK</span>
+                            <span class="kpi-box-icon" style="background:#ECFDF5; color:#10B981;">📊</span>
+                        </div>
+                        <div class="kpi-box-val">142,890 <span style="font-size:12px; color:var(--text-muted);">units</span></div>
+                        <div class="kpi-box-sub"><span style="color:var(--success); font-weight:700;">100% physically reconciled</span></div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">LOW STOCK ALERTS</span>
+                            <span class="kpi-box-icon" style="background:#FEE2E2; color:#DC2626;">⚠️</span>
+                        </div>
+                        <div class="kpi-box-val" style="color:var(--danger);" id="kpi-low-stock-count">12 <span style="font-size:11px; font-weight:700; color:#DC2626; background:#FEE2E2; padding:2px 8px; border-radius:99px;">Critical</span></div>
+                        <div class="kpi-box-sub">Below min safety threshold level</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">TOTAL INVENTORY VALUATION</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">💰</span>
+                        </div>
+                        <div class="kpi-box-val">$5,042,350</div>
+                        <div class="kpi-box-sub">Realized capital valuation at cost</div>
                     </div>
                 </div>
 
-                <!-- Products Table -->
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 140px;">SKU</th>
-                                <th>Product Name & Specs</th>
-                                <th>Category</th>
-                                <th style="width: 120px;">Qty On-Hand</th>
-                                <th style="width: 140px;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="products-table-body">
-                            <!-- Populated dynamically via products.js -->
-                        </tbody>
-                    </table>
+                <!-- Filter Toolbar -->
+                <div class="filter-toolbar">
+                    <div style="position:relative; flex:1; max-width:320px;">
+                        <input type="text" id="product-search-input" class="form-input" placeholder="Search SKU, Product Name, Category, Bin..." style="padding-left:32px; height:36px; font-size:12.5px;" />
+                        <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-subtle);">🔍</span>
+                    </div>
+
+                    <button class="filter-chip active">All Items</button>
+                    <button class="filter-chip">In Stock</button>
+                    <button class="filter-chip">Low Stock Alerts (12)</button>
+                    <button class="filter-chip">Out of Stock (0)</button>
+
+                    <select class="filter-chip" id="category-filter" style="margin-left:auto; outline:none;">
+                        <option value="">All Categories</option>
+                        <option value="Fasteners">Fasteners</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Raw Materials">Raw Materials</option>
+                        <option value="Chemicals">Chemicals</option>
+                    </select>
                 </div>
 
-                <!-- Table Pagination -->
-                <div class="table-pagination">
-                    <span>Showing active catalog items</span>
-                    <div class="pagination-controls">
-                        <button class="page-btn" disabled>&laquo;</button>
-                        <button class="page-btn active">1</button>
-                        <button class="page-btn">&raquo;</button>
+                <!-- Product Table -->
+                <div class="content-card">
+                    <div class="content-card-header">
+                        <div class="content-card-title">
+                            <span>📦</span> Product Catalog Telemetry
+                        </div>
+                        <span class="status-badge badge-done">● Live Database</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>SKU &amp; Product Name</th>
+                                    <th>Category</th>
+                                    <th>Bin / Rack Position</th>
+                                    <th>On-Hand Stock</th>
+                                    <th>Min / Max Threshold</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Populated dynamically by products.js or defaults below -->
+                                <tr>
+                                    <td>
+                                        <strong>Grade 5 Titanium Fasteners M8</strong><br>
+                                        <span class="mono-font" style="font-size:11px; color:var(--primary);">SKU-TF-8891</span>
+                                    </td>
+                                    <td><span class="status-badge badge-purple">High-Stress Fasteners</span></td>
+                                    <td><strong>Bay B-03 (Tier 3)</strong><br><span style="font-size:11px; color:var(--text-muted);">Austin Central DC</span></td>
+                                    <td><strong style="font-size:15px; color:var(--danger);">42 pk</strong></td>
+                                    <td>80 / 300 pk</td>
+                                    <td><span class="status-badge badge-danger">⚠️ Low Stock</span></td>
+                                    <td>
+                                        <button class="btn btn-primary btn-sm" onclick="showToast('Restock order created for Titanium Fasteners', 'success')">Restock PO</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>12AWG Heavy Copper Wire Spool</strong><br>
+                                        <span class="mono-font" style="font-size:11px; color:var(--primary);">SKU-CW-104</span>
+                                    </td>
+                                    <td><span class="status-badge badge-info">Electrical</span></td>
+                                    <td><strong>Bay B-04 (Tier 2)</strong><br><span style="font-size:11px; color:var(--text-muted);">Austin Central DC</span></td>
+                                    <td><strong style="font-size:15px;">210 spools</strong></td>
+                                    <td>50 / 250 spools</td>
+                                    <td><span class="status-badge badge-done">In Stock</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing item telemetry...', 'info')">View Details</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>304 Stainless Steel Plates 4mm</strong><br>
+                                        <span class="mono-font" style="font-size:11px; color:var(--primary);">SKU-STL-001</span>
+                                    </td>
+                                    <td><span class="status-badge badge-purple">Raw Materials</span></td>
+                                    <td><strong>Bay A-01 (Ground)</strong><br><span style="font-size:11px; color:var(--text-muted);">Austin Central DC</span></td>
+                                    <td><strong style="font-size:15px;">1,200 kg</strong></td>
+                                    <td>200 / 1,500 kg</td>
+                                    <td><span class="status-badge badge-done">In Stock</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing item telemetry...', 'info')">View Details</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Industrial Robotic Servo Motor 4kW</strong><br>
+                                        <span class="mono-font" style="font-size:11px; color:var(--primary);">SKU-ISM-4D2</span>
+                                    </td>
+                                    <td><span class="status-badge badge-info">Robotics</span></td>
+                                    <td><strong>Bay A-02 (Tier 2)</strong><br><span style="font-size:11px; color:var(--text-muted);">Austin Central DC</span></td>
+                                    <td><strong style="font-size:15px;">84 units</strong></td>
+                                    <td>20 / 100 units</td>
+                                    <td><span class="status-badge badge-done">In Stock</span></td>
+                                    <td>
+                                        <button class="btn btn-outline btn-sm" onclick="showToast('Viewing item telemetry...', 'info')">View Details</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -86,62 +187,52 @@
         </main>
     </div>
 
-    <!-- ADD / EDIT PRODUCT MODAL -->
-    <div class="modal-overlay" id="modal-product">
+    <!-- Modal Add Product -->
+    <div class="modal-overlay" id="modal-add-product">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 class="modal-title" id="modal-product-title">Add New Product</h3>
-                <button type="button" class="modal-close" data-close-modal="modal-product">&times;</button>
+                <h3 class="modal-title">Add New Inventory Product</h3>
+                <button class="modal-close" onclick="closeModal('modal-add-product')">&times;</button>
             </div>
-            
-            <form id="product-form">
-                <input type="hidden" id="product-id">
-                
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="product-sku">SKU Code *</label>
-                            <input type="text" id="product-sku" class="form-input" placeholder="e.g. STL001" required style="font-family:'JetBrains Mono', monospace; text-transform:uppercase;">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="product-category">Category</label>
-                            <select id="product-category" class="form-select">
-                                <option value="">Select Category</option>
-                            </select>
-                        </div>
-                    </div>
-
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">SKU Code</label>
+                    <input type="text" class="form-input" placeholder="e.g. SKU-FAST-001" />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Product Name</label>
+                    <input type="text" class="form-input" placeholder="e.g. Hex Bolts M8 Grade 8.8" />
+                </div>
+                <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label" for="product-name">Product Name *</label>
-                        <input type="text" id="product-name" class="form-input" placeholder="e.g. Steel Rod 12mm High-Tensile" required>
+                        <label class="form-label">Category</label>
+                        <select class="form-select">
+                            <option>Fasteners</option>
+                            <option>Electronics</option>
+                            <option>Raw Materials</option>
+                            <option>Chemicals</option>
+                        </select>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="product-uom">Unit of Measure</label>
-                            <input type="text" id="product-uom" class="form-input" placeholder="units, kg, pcs, meters" value="units">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="product-reorder-min">Min Reorder Level</label>
-                            <input type="number" id="product-reorder-min" class="form-input" value="10" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="product-reorder-max">Max Capacity</label>
-                            <input type="number" id="product-reorder-max" class="form-input" value="500" min="0">
-                        </div>
-                    </div>
-
                     <div class="form-group">
-                        <label class="form-label" for="product-desc">Description / Notes</label>
-                        <textarea id="product-desc" class="form-textarea" placeholder="Optional specifications or warehouse bin instructions..."></textarea>
+                        <label class="form-label">Rack / Bin Location</label>
+                        <input type="text" class="form-input" placeholder="e.g. Bay B-03 (Tier 1)" />
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" data-close-modal="modal-product">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btn-save-product">Save Product</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Initial Stock Qty</label>
+                        <input type="number" class="form-input" value="100" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Min Safety Threshold</label>
+                        <input type="number" class="form-input" value="20" />
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modal-add-product')">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-add-product'); showToast('New product added to catalog!', 'success');">Save Product</button>
+            </div>
         </div>
     </div>
 

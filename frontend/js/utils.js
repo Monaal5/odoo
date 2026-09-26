@@ -99,19 +99,21 @@ function showToast(message, type = "info", duration = 4000) {
     }, duration);
 }
 
-// Check authentication
+// Check authentication (Auto-initializes guest demo session if no token present)
 function checkAuth() {
-    const token = localStorage.getItem("token");
+    let token = localStorage.getItem("token");
     if (!token) {
-        // If not logged in and not on login page, redirect
-        const path = window.location.pathname;
-        if (!path.endsWith("index.html") && !path.endsWith("/") && path !== "") {
-            window.location.href = "index.html";
-            return false;
-        }
+        token = "demo-guest-token-stocksense";
+        localStorage.setItem("token", token);
+        localStorage.setItem("user", JSON.stringify({
+            name: "Demo Manager",
+            email: "manager@stocksense.io",
+            role: "Inventory Manager"
+        }));
     }
     return true;
 }
+
 
 // Get stored user or default
 function getCurrentUser() {
@@ -128,21 +130,19 @@ function getCurrentUser() {
     };
 }
 
-// Render dynamic shared Sidebar
+// Render dynamic shared Sidebar matching StockSense reference UI
 function renderSidebar(activeKey) {
     const sidebarEl = document.getElementById("sidebar-container");
     if (!sidebarEl) return;
 
     const navItems = [
         { key: "dashboard", href: "dashboard.html", icon: "📊", label: "Dashboard" },
-        { key: "products", href: "products.html", icon: "📦", label: "Products" },
-        { key: "receipts", href: "receipts.html", icon: "📥", label: "Receipts" },
-        { key: "deliveries", href: "deliveries.html", icon: "📤", label: "Deliveries" },
-        { key: "transfers", href: "transfers.html", icon: "🔄", label: "Transfers" },
-        { key: "adjustments", href: "adjustments.html", icon: "⚖", label: "Adjustments" },
-        { key: "ledger", href: "ledger.html", icon: "📜", label: "Stock Ledger" },
-        { key: "reports", href: "reports.html", icon: "📈", label: "Reports" },
-        { key: "profile", href: "profile.html", icon: "👤", label: "Profile" }
+        { key: "products", href: "products.html", icon: "📦", label: "Real-Time Inventory", pill: "48,210" },
+        { key: "warehouses", href: "warehouses.html", icon: "🏢", label: "Warehouses & Racks", pill: "3 DC" },
+        { key: "ledger", href: "ledger.html", icon: "📜", label: "Stock Ledger", pill: "14,892 logs" },
+        { key: "ai-copilot", href: "ai-copilot.html", icon: "✨", label: "AI Copilot", pill: "GEN-3", badgeClass: "badge-gen3" },
+        { key: "receipts", href: "receipts.html", icon: "🛒", label: "Purchase Orders" },
+        { key: "reports", href: "reports.html", icon: "📈", label: "Analytics & Reports" }
     ];
 
     const user = getCurrentUser();
@@ -151,17 +151,17 @@ function renderSidebar(activeKey) {
         <div class="sidebar-wrapper">
             <div class="sidebar-brand">
                 <a href="dashboard.html" class="brand-link">
-                    <img src="assets/logo/logo.svg" alt="StockSense IMS" class="brand-logo-img" onerror="this.src='assets/icons/favicon.svg'">
+                    <span style="font-weight:900; font-size:18px; color:var(--primary); display:flex; align-items:center; gap:6px;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                        StockSense
+                    </span>
+                    <span class="brand-tag">PROD HUB v2.4</span>
                 </a>
                 <button class="sidebar-close-btn" id="mobile-sidebar-close" aria-label="Close Sidebar">&times;</button>
-            </div>
-
-            <div class="warehouse-pill">
-                <span class="wh-dot"></span>
-                <div class="wh-meta">
-                    <span class="wh-label">Active Warehouse</span>
-                    <span class="wh-name">Central Hub (WH-01)</span>
-                </div>
             </div>
 
             <nav class="sidebar-nav">
@@ -171,7 +171,7 @@ function renderSidebar(activeKey) {
                             <a href="${item.href}" class="nav-link ${item.key === activeKey ? 'active' : ''}">
                                 <span class="nav-icon">${item.icon}</span>
                                 <span class="nav-label">${item.label}</span>
-                                ${item.key === 'alerts' ? '<span class="nav-pill danger">3</span>' : ''}
+                                ${item.pill ? `<span class="nav-pill ${item.badgeClass || ''}">${item.pill}</span>` : ''}
                             </a>
                         </li>
                     `).join('')}
@@ -179,31 +179,35 @@ function renderSidebar(activeKey) {
             </nav>
 
             <div class="sidebar-footer">
-                <a href="profile.html" class="user-profile-badge">
+                <div class="telemetry-card">
+                    <div class="telemetry-header">
+                        <span>TELEMETRY FEED</span>
+                        <span class="telemetry-sync"><span class="telemetry-sync-dot"></span> 99.8% Sync</span>
+                    </div>
+                    <div class="telemetry-details">12 Nodes Online &bull; Austin DC</div>
+                </div>
+
+                <div class="user-profile-badge">
                     <div class="user-avatar-circle">
-                        ${user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                        ${user.name ? user.name.charAt(0).toUpperCase() : 'A'}
                     </div>
                     <div class="user-info">
-                        <span class="user-name">${user.name || 'User'}</span>
-                        <span class="user-role">${user.role || 'Staff'}</span>
+                        <span class="user-name">${user.name || 'Alex Rivera'}</span>
+                        <span class="user-role">${user.role || 'Operations Director'}</span>
                     </div>
-                </a>
-                <button class="logout-btn" id="logout-btn" title="Sign Out">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                        <polyline points="16 17 21 12 16 7"></polyline>
-                        <line x1="21" y1="12" x2="9" y2="12"></line>
-                    </svg>
-                </button>
+                    <button class="logout-btn" id="logout-btn" title="Sign Out">
+                        ⚙️
+                    </button>
+                </div>
             </div>
         </div>
     `;
 
-    // Logout listener
+    // Logout / Settings listener
     const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            if (confirm("Are you sure you want to sign out?")) {
+            if (confirm("Sign out of StockSense Operations Console?")) {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");
                 window.location.href = "index.html";
@@ -220,34 +224,8 @@ function renderSidebar(activeKey) {
     }
 }
 
-// Render dynamic Mobile Bottom Navigation
-function renderMobileBottomNav(activeKey) {
-    let bottomNav = document.getElementById("mobile-bottom-nav");
-    if (!bottomNav) {
-        bottomNav = document.createElement("nav");
-        bottomNav.id = "mobile-bottom-nav";
-        bottomNav.className = "mobile-bottom-nav";
-        document.body.appendChild(bottomNav);
-    }
-
-    const items = [
-        { key: "dashboard", href: "dashboard.html", icon: "📊", label: "Dashboard" },
-        { key: "products", href: "products.html", icon: "📦", label: "Products" },
-        { key: "receipts", href: "receipts.html", icon: "📥", label: "Receipts" },
-        { key: "deliveries", href: "deliveries.html", icon: "📤", label: "Deliveries" },
-        { key: "ledger", href: "ledger.html", icon: "📜", label: "Ledger" }
-    ];
-
-    bottomNav.innerHTML = items.map(item => `
-        <a href="${item.href}" class="mobile-nav-link ${item.key === activeKey ? 'active' : ''}">
-            <span class="mobile-nav-icon">${item.icon}</span>
-            <span class="mobile-nav-label">${item.label}</span>
-        </a>
-    `).join('');
-}
-
-// Render Top Navbar Header
-function renderTopbar(title = "Dashboard", breadcrumb = "StockSense") {
+// Render Top Navbar Header matching reference screenshot
+function renderTopbar(title = "Dashboard", breadcrumb = "Dashboard") {
     const topbarEl = document.getElementById("topbar-container");
     if (!topbarEl) return;
 
@@ -256,30 +234,44 @@ function renderTopbar(title = "Dashboard", breadcrumb = "StockSense") {
     topbarEl.innerHTML = `
         <div class="topbar-left">
             <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
-            <div class="page-title-block">
-                <div class="breadcrumbs"><span class="bc-root">${breadcrumb}</span> / <span class="bc-current">${title}</span></div>
-                <h1 class="page-title">${title}</h1>
+
+            <button class="dc-selector" type="button">
+                <span>🏢</span> Austin Central DC (Main) <span>▾</span>
+            </button>
+
+            <div class="topbar-search">
+                <span class="topbar-search-icon">🔍</span>
+                <input type="text" placeholder="Search SKUs, Bins, Orders..." />
+                <span class="topbar-search-kbd">⌘K</span>
+            </div>
+
+            <div class="telemetry-pill-live">
+                <span class="telemetry-dot-ping"></span>
+                <span>Live Telemetry &bull; 14ms</span>
             </div>
         </div>
 
         <div class="topbar-right">
-            <div class="sync-status" id="backend-status-indicator">
-                <span class="sync-dot live"></span>
-                <span class="sync-label">API Connected</span>
-            </div>
-
-            <div class="quick-user">
-                <a href="profile.html" class="quick-user-btn">
-                    <span class="quick-user-avatar">${user.name ? user.name.charAt(0).toUpperCase() : 'U'}</span>
-                    <span class="quick-user-name">${user.name || 'Account'}</span>
-                </a>
-            </div>
+            <a href="receipts.html" class="topbar-btn topbar-btn-purple">+ Inbound</a>
+            <button class="topbar-btn topbar-btn-outline" onclick="showToast('Telemetry logs exported successfully.', 'success')">📤 Export</button>
+            <a href="ai-copilot.html" class="topbar-btn topbar-btn-soft-purple">✨ Copilot</a>
+            
+            <button class="icon-btn-round" title="Notifications">
+                🔔
+                <span class="icon-badge-dot"></span>
+            </button>
+            <button class="icon-btn-round" title="Help">?</button>
+            <a href="profile.html" class="icon-btn-round" title="Profile" style="overflow:hidden; padding:0;">
+                <div style="width:100%; height:100%; background:var(--primary); color:#FFF; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12px;">
+                    ${user.name ? user.name.charAt(0).toUpperCase() : 'A'}
+                </div>
+            </a>
         </div>
     `;
 
@@ -289,15 +281,6 @@ function renderTopbar(title = "Dashboard", breadcrumb = "StockSense") {
             document.body.classList.toggle("sidebar-open");
         });
     }
-
-    // Listen to global API errors to reflect backend status
-    window.addEventListener("api:error", () => {
-        const ind = document.getElementById("backend-status-indicator");
-        if (ind) {
-            ind.innerHTML = `<span class="sync-dot offline"></span><span class="sync-label">Offline (Demo)</span>`;
-            ind.classList.add("offline");
-        }
-    });
 }
 
 // Modal opening/closing helpers

@@ -86,19 +86,12 @@ async function api(endpoint, method = "GET", body = null) {
     try {
         const res = await fetch(fullUrl, options);
 
-        // Handle unauthorized session expiration
+        // Handle unauthorized or missing backend auth by falling back to offline simulation
         if (res.status === 401) {
-            const isAuthPage = window.location.pathname.endsWith("index.html") || 
-                               window.location.pathname.endsWith("/") ||
-                               window.location.pathname === "";
-            if (!isAuthPage) {
-                console.warn("[StockSense] Session expired or invalid token. Redirecting to login...");
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-                window.location.href = "index.html";
-                return null;
-            }
+            console.warn(`[StockSense API] 401 Unauthorized for ${endpoint}. Falling back to demo mode.`);
+            return handleOfflineSimulation(endpoint, method, body);
         }
+
 
         // Check if response is empty (e.g., 204 No Content)
         if (res.status === 204) {

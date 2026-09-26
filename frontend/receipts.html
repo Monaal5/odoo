@@ -3,17 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inbound Receipts — StockSense IMS</title>
+    <title>Purchase Orders &amp; Vendors — StockSense IMS</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
-    <!-- Design & Stylesheets -->
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/table.css">
-    <link rel="stylesheet" href="css/mobile.css">
+    <style>
+        .po-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 20px;
+        }
+
+        .inspector-card {
+            background: #FFFFFF;
+            border: 1.5px solid var(--primary-light);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .timeline-track {
+            border-left: 2px stroke var(--primary);
+            padding-left: 16px;
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .timeline-step {
+            position: relative;
+            margin-bottom: 14px;
+            font-size: 12px;
+        }
+
+        .timeline-step::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        @media (max-width: 1100px) {
+            .po-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Sidebar Navigation -->
+        <!-- Sidebar Navigation Container -->
         <aside class="sidebar-container" id="sidebar-container"></aside>
 
         <!-- Main Content Area -->
@@ -24,119 +66,316 @@
             <!-- Page Body -->
             <div class="page-body">
                 
-                <!-- Section Header -->
-                <div class="section-header-bar">
+                <div class="breadcrumbs-bar">
+                    <a href="dashboard.html">DASHBOARD</a> / <a href="#">PROCUREMENT &amp; LOGISTICS</a> / <span class="active">PURCHASE ORDERS &amp; VENDORS</span>
+                </div>
+
+                <div class="page-header-title-row">
                     <div>
-                        <h2 class="section-title">Inbound Receipts</h2>
-                        <p class="section-subtitle">Receive purchase orders & validate intake to increase stock</p>
+                        <h1 class="page-title-heading">Purchase Orders &amp; Vendor Operations</h1>
+                        <p class="page-title-sub">Automated replenishments, supplier lead-time compliance, RFQs, and inbound shipment telemetry across high-velocity fulfillment clusters.</p>
                     </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <input type="file" id="ocr-file-input" accept="image/*,.pdf,.txt" style="display:none;">
-                        <button class="btn btn-outline" id="btn-ocr-scan" style="display:inline-flex; align-items:center; gap:8px; font-weight:700;">
-                            <span>📄 Scan Invoice (OCR)</span>
-                        </button>
-                        <button class="btn btn-primary" id="btn-new-receipt">
-                            <span>📥 Create Receipt</span>
-                        </button>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span class="status-badge badge-purple">12 ACTIVE ORDERS</span>
+                        <span class="status-badge badge-done">✨ AI Auto-Replenish (Ready)</span>
+                        <button class="topbar-btn topbar-btn-purple" onclick="openModal('modal-new-po')">+ Create PO</button>
                     </div>
                 </div>
 
-                <!-- Table Search & Filter -->
-                <div class="table-toolbar">
-                    <div class="table-search-group">
-                        <div class="search-input-wrap">
-                            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input type="text" id="receipt-search-input" class="search-input" placeholder="Search by receipt number or supplier name...">
+                <!-- 4 Top KPI Cards -->
+                <div class="kpi-4-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">OPEN PO COMMITMENT</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">🛒</span>
+                        </div>
+                        <div class="kpi-box-val">$842,500</div>
+                        <div class="kpi-box-sub"><span style="color:var(--success); font-weight:700;">+$142,200 this week</span> &bull; 12 active orders</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">AI COPILOT DRAFTS</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">✨</span>
+                        </div>
+                        <div class="kpi-box-val" style="color:var(--primary);">8 Batches</div>
+                        <div class="kpi-box-sub">94% accepted clean &bull; $198.4k volume</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">ON-TIME SLA DELIVERY</span>
+                            <span class="kpi-box-icon" style="background:#ECFDF5; color:#10B981;">📈</span>
+                        </div>
+                        <div class="kpi-box-val">97.2%</div>
+                        <div class="kpi-box-sub"><span style="color:var(--success); font-weight:700;">+1.8% vs last month</span> &bull; Goal: 95.0%</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">STOCKOUT RISK REPLENISHMENTS</span>
+                            <span class="kpi-box-icon" style="background:#FEE2E2; color:#DC2626;">🚨</span>
+                        </div>
+                        <div class="kpi-box-val" style="color:var(--danger);">3 High-Priority</div>
+                        <div class="kpi-box-sub" style="color:var(--danger-text); font-weight:700;">Arriving &lt; 24h Austin DC Docks 01-05</div>
+                    </div>
+                </div>
+
+                <!-- Filter & Tabs -->
+                <div class="filter-toolbar">
+                    <div style="position:relative; width:220px;">
+                        <input type="text" class="form-input" placeholder="Search PO #, Supplier, Dock..." style="padding-left:32px; height:34px; font-size:12px;" />
+                        <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:12px; color:var(--text-subtle);">🔍</span>
+                    </div>
+
+                    <button class="filter-chip active">ALL (12)</button>
+                    <button class="filter-chip">Drafts (3)</button>
+                    <button class="filter-chip">Pending (2)</button>
+                    <button class="filter-chip">In Transit (4)</button>
+                    <button class="filter-chip">Received (3)</button>
+
+                    <select class="filter-chip" style="margin-left:auto; outline:none;">
+                        <option>Austin Central DC</option>
+                        <option>Houston Hub</option>
+                    </select>
+                </div>
+
+                <!-- Main Grid Layout -->
+                <div class="po-grid">
+                    <!-- Table -->
+                    <div class="content-card" style="margin-bottom:0;">
+                        <div class="content-card-header">
+                            <div class="content-card-title">
+                                <span>🛒</span> Active Purchase Requisitions
+                            </div>
+                            <span class="status-badge badge-done">Live Ledger</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>PO Number</th>
+                                        <th>Supplier / Vendor</th>
+                                        <th>Destination Dock</th>
+                                        <th>Commitment / Qty</th>
+                                        <th>Expected ETA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="background:#F3E8FF; cursor:pointer;" onclick="showToast('Selected #PO-9024 in Inspector', 'info')">
+                                        <td><span class="mono-font" style="font-weight:800; color:var(--primary);">#PO-9024</span></td>
+                                        <td>
+                                            <strong>TitanFast Aerospace</strong><br>
+                                            <span style="font-size:11px; color:var(--text-muted);">Tier 1 &bull; 99.4% SLA</span>
+                                        </td>
+                                        <td>Austin Central DC<br><span style="font-size:11px; color:var(--text-muted);">Bay 04 - Day Fasteners</span></td>
+                                        <td><strong>$142,800.00</strong><br><span style="font-size:11px; color:var(--text-muted);">12,600 units</span></td>
+                                        <td><span class="status-badge badge-waiting">Tomorrow 09:30 AM</span><br><span style="font-size:10px; color:var(--success);">On Schedule - Transit</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="mono-font" style="font-weight:800; color:var(--text-main);">#PO-9025</span></td>
+                                        <td>
+                                            <strong>Nippon Precision Motion</strong><br>
+                                            <span style="font-size:11px; color:var(--text-muted);">Tier 1 &bull; 98.1% SLA</span>
+                                        </td>
+                                        <td>Austin Central DC<br><span style="font-size:11px; color:var(--text-muted);">Bay 02 - Clean Room Ingest</span></td>
+                                        <td><strong>$284,500.00</strong><br><span style="font-size:11px; color:var(--text-muted);">420 units (Servo)</span></td>
+                                        <td><span class="status-badge badge-done">Oct 29 - 14:00</span><br><span style="font-size:10px; color:var(--text-muted);">Ocean Freight Port Cleared</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="mono-font" style="font-weight:800; color:var(--primary);">#PO-9028-CP</span></td>
+                                        <td>
+                                            <strong>PolyChem International</strong><br>
+                                            <span style="font-size:11px; color:var(--text-muted);">AI Replenishment Rule #14</span>
+                                        </td>
+                                        <td>Austin Central DC<br><span style="font-size:11px; color:var(--text-muted);">Silo H-02 Inflow</span></td>
+                                        <td><strong>$58,400.00</strong><br><span style="font-size:11px; color:var(--text-muted);">40,000 kg Resin</span></td>
+                                        <td><span class="status-badge badge-info">Auto-Trigger</span><br><span style="font-size:10px; color:var(--text-muted);">Safety Stock &lt; 10%</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="mono-font" style="font-weight:800; color:var(--text-main);">#PO-9029</span></td>
+                                        <td>
+                                            <strong>Apex Copper &amp; Wire Ltd</strong><br>
+                                            <span style="font-size:11px; color:var(--text-muted);">Tier 2 &bull; 94.8% SLA</span>
+                                        </td>
+                                        <td>Dallas Sub-Hub<br><span style="font-size:11px; color:var(--text-muted);">Heavy Storage Rack 11</span></td>
+                                        <td><strong>$116,200.00</strong><br><span style="font-size:11px; color:var(--text-muted);">80 Spools (12 AWG)</span></td>
+                                        <td><span class="status-badge badge-done">Today - 15:30</span><br><span style="font-size:10px; color:var(--success);">Truck at Gate 02</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="mono-font" style="font-weight:800; color:var(--text-main);">#PO-9034</span></td>
+                                        <td>
+                                            <strong>Vanguard Semi Systems</strong><br>
+                                            <span style="font-size:11px; color:var(--text-muted);">Tier 1 &bull; 99.9% SLA</span>
+                                        </td>
+                                        <td>Austin Central DC<br><span style="font-size:11px; color:var(--text-muted);">Secure Cage - Zone S-4</span></td>
+                                        <td><strong>$240,600.00</strong><br><span style="font-size:11px; color:var(--text-muted);">1,200 Micro-Inverters</span></td>
+                                        <td><span class="status-badge badge-waiting">Nov 02 - 11:00</span><br><span style="font-size:10px; color:var(--text-muted);">Air Freight Cargo #QR-812</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Right Inspector -->
+                    <div class="inspector-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <span class="status-badge badge-purple">FOCUSED INSPECTOR &bull; EDI 850 / ASN-9982</span>
+                            <button style="background:none; border:none; font-size:16px; cursor:pointer;">✕</button>
+                        </div>
+
+                        <h2 style="font-size:22px; font-weight:900; color:var(--text-main);" class="mono-font">Order #PO-9024</h2>
+                        <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px;">Requisitioned by AI Copilot (Trigger: Demand Spike in EV Battery Housings)</div>
+
+                        <div style="display:flex; justify-content:space-between; padding:10px 0; border-y:1px solid var(--border-color); font-size:12px;">
+                            <div>Total Commitment: <strong style="font-size:14px; color:var(--text-main);">$142,800.00</strong></div>
+                            <div>Target Destination: <strong>Austin DC &bull; Dock 04</strong></div>
+                        </div>
+
+                        <!-- 3-Way Reconciliation Match -->
+                        <div style="margin-top:14px;">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">3-Way Reconciliation Match (3 of 3 Verified)</div>
+                            <div style="font-size:12px; display:flex; flex-direction:column; gap:4px;">
+                                <div style="color:var(--success); font-weight:700;">✓ Purchase Order Approved (Matched OEM)</div>
+                                <div style="color:var(--success); font-weight:700;">✓ Inbound ASN Electronic Match (SMS 24h Match)</div>
+                                <div style="color:var(--warning-text); font-weight:700;">⏳ Physical Dock Scale Verification (Pending Arrival)</div>
+                            </div>
+                        </div>
+
+                        <!-- Manifest Items Table -->
+                        <div style="margin-top:16px;">
+                            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">MANIFEST LINE ITEMS (3) &bull; Weight: 6,120 kg</div>
+                            <div class="table-responsive">
+                                <table class="data-table" style="font-size:11.5px;">
+                                    <thead>
+                                        <tr>
+                                            <th>SKU &amp; Description</th>
+                                            <th>Qty</th>
+                                            <th>Cost</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><strong>SKU-TF-004</strong><br>M8 Titanium Aero Fastener</td>
+                                            <td>10,000</td>
+                                            <td>$8.40</td>
+                                            <td><strong>$84,000</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SKU-TF-012</strong><br>High-Tensile Flange Bolt</td>
+                                            <td>2,000</td>
+                                            <td>$22.50</td>
+                                            <td><strong>$45,000</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>SKU-TF-001</strong><br>Anti-Vibration Bushing</td>
+                                            <td>500</td>
+                                            <td>$27.60</td>
+                                            <td><strong>$13,800</strong></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Route Telemetry -->
+                        <div style="margin-top:16px;">
+                            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--text-muted);">
+                                <span>LIVE ROUTE TELEMETRY</span>
+                                <span style="color:var(--success);">● GPS Active</span>
+                            </div>
+
+                            <div style="background:#F8FAFC; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px; margin-top:6px; font-size:11.5px;">
+                                <div style="color:var(--text-muted);">Yesterday 18:40 &bull; Departed TitanFast Facility (Dallas Hub)</div>
+                                <div style="color:var(--primary); font-weight:800; margin:4px 0;">Active - In Transit (I-35 Southbound) &bull; Mile Marker 248 - Georgetown TX</div>
+                                <div style="color:var(--text-muted);">Target: Tomorrow 09:30 AM Austin DC Dock Bay 04</div>
+                            </div>
+                        </div>
+
+                        <!-- Vendor Scorecard -->
+                        <div style="margin-top:16px; background:#F8FAFC; border:1px solid var(--border-color); border-radius:var(--radius-md); padding:10px; display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <strong>TitanFast Vendor Scorecard</strong><br>
+                                <span style="font-size:11px; color:var(--text-muted);">99.4% Quality SLA &bull; 0.0% Price Var &bull; 2.8d Lead Time</span>
+                            </div>
+                            <span class="status-badge badge-done" style="font-size:13px;">Score: 98.6 / 100</span>
+                        </div>
+
+                        <div style="display:flex; gap:8px; margin-top:16px;">
+                            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="showToast('Expedited Dock 04 intake priority!', 'success')">⚡ Expedite Dock 04</button>
+                            <button class="btn btn-outline btn-sm" style="flex:1;" onclick="showToast('Messaging TitanFast representative...', 'info')">💬 Message Rep</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Receipts Table -->
-                <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 140px;">Receipt #</th>
-                                <th>Supplier</th>
-                                <th>Items Summary</th>
-                                <th style="width: 130px;">Date Created</th>
-                                <th style="width: 120px;">Status</th>
-                                <th style="width: 130px;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="receipts-table-body">
-                            <!-- Populated dynamically via receipts.js -->
-                        </tbody>
-                    </table>
+                <!-- Copilot Optimization Banner -->
+                <div style="background:#F3E8FF; border:1px solid #C084FC; border-radius:var(--radius-lg); padding:16px 20px; margin-top:20px; display:flex; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:20px;">✨</span>
+                        <div>
+                            <strong style="color:#4C1D95; font-size:14px;">Copilot Supplier Optimization</strong><br>
+                            <span style="font-size:12.5px; color:#5B21B6;">By bundling order #PO-9024 with next week's anticipated fasteners requisition for the San Antonio hub, you can unlock a 4.5% volume discount ($6,426 net savings).</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="showToast('Combined next cycle POs with TitanFast!', 'success')">Combine Next Cycle</button>
                 </div>
 
             </div>
         </main>
     </div>
 
-    <!-- CREATE RECEIPT MODAL -->
-    <div class="modal-overlay" id="modal-receipt">
-        <div class="modal-card modal-lg">
+    <!-- Modal New PO -->
+    <div class="modal-overlay" id="modal-new-po">
+        <div class="modal-card">
             <div class="modal-header">
-                <h3 class="modal-title">Create Inbound Stock Receipt</h3>
-                <button type="button" class="modal-close" data-close-modal="modal-receipt">&times;</button>
+                <h3 class="modal-title">Create New Purchase Order</h3>
+                <button class="modal-close" onclick="closeModal('modal-new-po')">&times;</button>
             </div>
-
-            <form id="receipt-form">
-                <div class="modal-body">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="receipt-supplier">Supplier / Vendor *</label>
-                            <input type="text" id="receipt-supplier" class="form-input" placeholder="e.g. Apex Industrial Steel Corp" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="receipt-warehouse">Receiving Warehouse</label>
-                            <select id="receipt-warehouse" class="form-select"></select>
-                        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Vendor / Supplier</label>
+                    <select class="form-select">
+                        <option>TitanFast Aerospace</option>
+                        <option>Nippon Precision Motion</option>
+                        <option>Phelps Copper Global</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Destination Dock</label>
+                    <select class="form-select">
+                        <option>Austin Central DC - Dock 04</option>
+                        <option>Austin Central DC - Dock 02</option>
+                        <option>Houston Logistics Hub</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Order Commitment ($)</label>
+                        <input type="number" class="form-input" value="45000" />
                     </div>
-
-                    <!-- Line Item Builder Box -->
-                    <div style="background:#F1F5F9; border-radius:var(--radius-md); padding:16px; margin:16px 0; border:1px solid var(--border-color);">
-                        <h4 style="font-size:13px; font-weight:700; margin-bottom:12px; color:var(--text-main);">Add Items to Intake Order</h4>
-                        
-                        <div class="form-row" style="align-items:flex-end;">
-                            <div class="form-group" style="flex:2; margin-bottom:0;">
-                                <label class="form-label" for="receipt-product-select">Product SKU / Title</label>
-                                <select id="receipt-product-select" class="form-select"></select>
-                            </div>
-                            <div class="form-group" style="flex:1; margin-bottom:0;">
-                                <label class="form-label" for="receipt-item-qty">Quantity</label>
-                                <input type="number" id="receipt-item-qty" class="form-input" placeholder="e.g. 50" min="1" step="any">
-                            </div>
-                            <button type="button" class="btn btn-outline" id="btn-add-line-item" style="height:44px;">
-                                ➕ Add Item
-                            </button>
-                        </div>
-
-                        <!-- Draft Items Preview -->
-                        <div style="margin-top:14px;">
-                            <label class="form-label" style="font-size:12px;">Staged Line Items:</label>
-                            <div id="draft-items-list">
-                                <!-- Populated dynamically -->
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Expected Delivery Date</label>
+                        <input type="date" class="form-input" value="2026-09-28" />
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline" data-close-modal="modal-receipt">Cancel</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit-receipt">Create Receipt Order</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeModal('modal-new-po')">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-new-po'); showToast('New PO created successfully!', 'success');">Create Purchase Order</button>
+            </div>
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="js/api.js"></script>
     <script src="js/utils.js"></script>
-    <script src="js/receipts.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSidebar("receipts");
+            renderTopbar("Purchase Orders & Vendors", "Procurement & Logistics");
+        });
+    </script>
 </body>
 </html>

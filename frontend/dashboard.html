@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard — StockSense IMS</title>
     <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
-    <!-- Design & Stylesheets -->
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/dashboard.css">
-    <link rel="stylesheet" href="css/table.css">
-    <link rel="stylesheet" href="css/mobile.css">
 </head>
 <body>
 
@@ -25,140 +22,100 @@
             <!-- Page Body -->
             <div class="page-body">
                 
-                <!-- Section Header -->
-                <div class="section-header-bar">
+                <div class="breadcrumbs-bar">
+                    <a href="dashboard.html">DASHBOARD</a> / <span class="active">OVERVIEW</span>
+                    <span style="margin-left:auto; font-size:11px; color:var(--text-muted);">Austin Central DC &bull; Multi-Node Autonomous Mesh active</span>
+                </div>
+
+                <div class="page-header-title-row">
                     <div>
-                        <h2 class="section-title">Warehouse Inventory Overview</h2>
-                        <p class="section-subtitle">Real-time telemetry and supply chain activities</p>
+                        <h1 class="page-title-heading">Warehouse Inventory Overview</h1>
+                        <p class="page-title-sub">Real-time telemetry, autonomous replenishment copilot, and supply chain activity feeds</p>
                     </div>
                     <div style="display:flex; gap:10px; align-items:center;">
                         <input type="file" id="dashboard-ocr-input" accept="image/*,.pdf,.txt" style="display:none;">
-                        <button class="btn btn-outline btn-sm" id="btn-dashboard-ocr" title="Scan invoice or packing slip to auto-create receipt">
+                        <button class="topbar-btn topbar-btn-outline" id="btn-dashboard-ocr" title="Scan invoice or packing slip to auto-create receipt">
                             <span>📄 Scan Invoice (OCR)</span>
                         </button>
-                        <a href="receipts.html" class="btn btn-outline btn-sm">📥 Inbound</a>
-                        <a href="deliveries.html" class="btn btn-primary btn-sm">📤 Outbound</a>
+                        <a href="receipts.html" class="topbar-btn topbar-btn-outline">📥 Inbound</a>
+                        <a href="receipts.html" class="topbar-btn topbar-btn-purple">📤 Outbound</a>
                     </div>
                 </div>
 
-                <!-- 4 KPI Cards (1 Row on Desktop, 2 on Tablet, Stacked on Mobile) -->
-                <div class="kpi-grid">
-                    <!-- KPI 1: Total Products -->
-                    <div class="kpi-card kpi-purple">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Total Products</span>
-                            <div class="kpi-icon-wrapper">📦</div>
+                <!-- 4 Top KPI Cards -->
+                <div class="kpi-4-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Total Products</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">📦</span>
                         </div>
-                        <div class="kpi-value-row">
-                            <span class="kpi-value" id="kpi-total-products">248</span>
-                            <span class="kpi-unit">Items</span>
-                        </div>
-                        <div class="kpi-footer">
-                            <span>Catalog SKUs across all bins</span>
-                        </div>
+                        <div class="kpi-box-val" id="kpi-total-products">48,210</div>
+                        <div class="kpi-box-sub">Catalog SKUs across all 18 bins</div>
                     </div>
 
-                    <!-- KPI 2: Low Stock -->
-                    <div class="kpi-card kpi-danger">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Low Stock</span>
-                            <div class="kpi-icon-wrapper">⚠️</div>
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Low Stock Alerts</span>
+                            <span class="kpi-box-icon" style="background:#FEE2E2; color:#DC2626;">⚠️</span>
                         </div>
-                        <div class="kpi-value-row">
-                            <span class="kpi-value" id="kpi-low-stock">12</span>
-                            <span class="kpi-unit">Alerts</span>
-                        </div>
-                        <div class="kpi-footer">
-                            <span style="color:var(--danger); font-weight:600;">Requires replenishment</span>
-                        </div>
+                        <div class="kpi-box-val" style="color:var(--danger);" id="kpi-low-stock">12</div>
+                        <div class="kpi-box-sub" style="color:var(--danger-text); font-weight:700;">Requires replenishment</div>
                     </div>
 
-                    <!-- KPI 3: Pending Receipts -->
-                    <div class="kpi-card kpi-warning">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Pending Receipts</span>
-                            <div class="kpi-icon-wrapper">📥</div>
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Pending Receipts</span>
+                            <span class="kpi-box-icon" style="background:#FEF3C7; color:#B45309;">📥</span>
                         </div>
-                        <div class="kpi-value-row">
-                            <span class="kpi-value" id="kpi-pending-receipts">4</span>
-                            <span class="kpi-unit">Waiting</span>
-                        </div>
-                        <div class="kpi-footer">
-                            <span>Awaiting dock intake validation</span>
-                        </div>
+                        <div class="kpi-box-val" id="kpi-pending-receipts">4</div>
+                        <div class="kpi-box-sub">Awaiting dock intake validation</div>
                     </div>
 
-                    <!-- KPI 4: Pending Deliveries -->
-                    <div class="kpi-card kpi-success">
-                        <div class="kpi-header">
-                            <span class="kpi-title">Pending Deliveries</span>
-                            <div class="kpi-icon-wrapper">📤</div>
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Pending Deliveries</span>
+                            <span class="kpi-box-icon" style="background:#ECFDF5; color:#10B981;">📤</span>
                         </div>
-                        <div class="kpi-value-row">
-                            <span class="kpi-value" id="kpi-pending-deliveries">7</span>
-                            <span class="kpi-unit">Ready</span>
-                        </div>
-                        <div class="kpi-footer">
-                            <span>Packed & ready for dispatch</span>
-                        </div>
+                        <div class="kpi-box-val" id="kpi-pending-deliveries">7</div>
+                        <div class="kpi-box-sub">Packed &amp; ready for dispatch</div>
                     </div>
                 </div>
 
-                <!-- AI Copilot Console & Demand Forecasting Grid -->
-                <div class="dashboard-ai-grid">
-                    <!-- Left: AI Assistant Terminal -->
-                    <div class="dashboard-ai-console">
-                        <div class="dashboard-ai-header">
-                            <div style="display:flex; align-items:center; gap:10px;">
-                                <span style="font-size:22px;">✨</span>
-                                <div>
-                                    <h3 style="margin:0; font-size:16px; font-weight:700;">StockSense AI Copilot</h3>
-                                    <p style="margin:2px 0 0; font-size:12px; color:rgba(255,255,255,0.7);">Natural language warehouse telemetry &amp; automated procurement</p>
-                                </div>
-                            </div>
-                            <span class="dashboard-ai-pill">Live Copilot</span>
-                        </div>
-
-                        <div class="dashboard-ai-response-box" id="dashboard-ai-response">
-                            Ask StockSense AI anything about stock velocity, replenishment recommendations, or bay locations...
-                        </div>
-
-                        <div>
-                            <div class="dashboard-ai-input-group">
-                                <input type="text" id="dashboard-ai-input" class="dashboard-ai-input" placeholder="e.g. How much steel is in WH-01? or What needs reordering?" autocomplete="off" />
-                                <button type="button" id="btn-dashboard-ai-send" class="dashboard-ai-send-btn">
-                                    <span>Ask AI</span> ➔
-                                </button>
-                            </div>
-                            <div class="dashboard-ai-chips">
-                                <button type="button" class="dashboard-ai-chip" data-query="How much steel is in WH-01?">🔍 Check Steel Inventory</button>
-                                <button type="button" class="dashboard-ai-chip" data-query="What items need replenishment?">⚠️ Low Stock &amp; Reorders</button>
-                                <button type="button" class="dashboard-ai-chip" data-query="Draft purchase order for Steel Rods">📝 Draft Purchase Order</button>
-                                <button type="button" class="dashboard-ai-chip" data-query="Where are Hex Bolts stored?">📍 Locate Hex Bolts</button>
-                            </div>
-                        </div>
+                <!-- Operations Navigation Hub Banner -->
+                <div style="background:#FFFFFF; border:1px solid var(--border-color); border-radius:var(--radius-lg); padding:20px; box-shadow:var(--shadow-card); margin-bottom:20px;">
+                    <div style="font-size:16px; font-weight:800; color:var(--text-main); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                        <span>🚀</span> StockSense Operational Workspaces &amp; Digital Twin Tools
                     </div>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+                        <a href="ai-copilot.html" style="background:#F3E8FF; border:1px solid #C084FC; padding:14px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:4px;">
+                            <span style="font-size:16px; font-weight:800; color:#4C1D95;">✨ AI Copilot Studio</span>
+                            <span style="font-size:11.5px; color:#6D28D9;">Agentic reasoning, PO drafts &amp; policies</span>
+                        </a>
 
-                    <!-- Right: AI Demand Forecasting & Stockout Horizon -->
-                    <div class="dashboard-forecast-card">
-                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-                            <div style="display:flex; align-items:center; gap:8px;">
-                                <span style="font-size:18px;">📈</span>
-                                <h3 style="margin:0; font-size:15px; font-weight:700; color:var(--text-main);">AI Demand Forecast</h3>
-                            </div>
-                            <a href="reports.html" style="font-size:12px; font-weight:600; color:var(--primary); text-decoration:none;">View Full Model →</a>
-                        </div>
-                        <p style="font-size:12px; color:var(--text-muted); margin-top:0; margin-bottom:12px;">Predictive consumption modeling &amp; stockout horizon alerts</p>
-                        
-                        <div id="dashboard-forecast-list" style="display:flex; flex-direction:column; gap:4px; flex:1;">
-                            <!-- Populated dynamically via dashboard.js loadDashboardForecast() -->
-                            <div style="font-size:13px; color:var(--text-muted); padding:10px 0;">Loading predictive telemetry...</div>
-                        </div>
+                        <a href="warehouses.html" style="background:#ECFDF5; border:1px solid #6EE7B7; padding:14px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:4px;">
+                            <span style="font-size:16px; font-weight:800; color:#065F46;">🏢 Warehouses &amp; Racks</span>
+                            <span style="font-size:11.5px; color:#047857;">3D Spatial visual twin &amp; AGV telemetry</span>
+                        </a>
+
+                        <a href="ledger.html" style="background:#EFF6FF; border:1px solid #93C5FD; padding:14px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:4px;">
+                            <span style="font-size:16px; font-weight:800; color:#1E40AF;">📜 Stock Ledger &amp; Audit</span>
+                            <span style="font-size:11.5px; color:#1D4ED8;">Cryptographic Merkle log &amp; SOC2 proof</span>
+                        </a>
+
+                        <a href="receipts.html" style="background:#FFFBEB; border:1px solid #FDE68A; padding:14px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:4px;">
+                            <span style="font-size:16px; font-weight:800; color:#92400E;">🛒 Purchase Orders</span>
+                            <span style="font-size:11.5px; color:#B45309;">Vendor SLAs, ASN match &amp; ETA route</span>
+                        </a>
+
+                        <a href="reports.html" style="background:#F8FAFC; border:1px solid #E2E8F0; padding:14px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:4px;">
+                            <span style="font-size:16px; font-weight:800; color:var(--text-main);">📈 Analytics &amp; Reports</span>
+                            <span style="font-size:11.5px; color:var(--text-muted);">Valuation depletion wave &amp; ABC matrix</span>
+                        </a>
                     </div>
                 </div>
 
                 <!-- Two Column Dashboard Layout -->
-                <div class="dashboard-columns">
+                <div class="dashboard-columns" style="display:grid; grid-template-columns:1fr 360px; gap:20px;">
                     <!-- Left: Recent Activity Feed Table -->
                     <div class="content-card">
                         <div class="content-card-header">
@@ -173,7 +130,7 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 100px;">Time</th>
-                                        <th>Action & Location</th>
+                                        <th>Action &amp; Location</th>
                                         <th style="width: 110px;">Qty Delta</th>
                                     </tr>
                                 </thead>
@@ -184,43 +141,8 @@
                         </div>
                     </div>
 
-                    <!-- Right Column: Quick Ops & Alerts -->
+                    <!-- Right Column: AI Forecast & Low Stock -->
                     <div>
-                        <!-- Quick Actions Grid -->
-                        <div class="content-card">
-                            <div class="content-card-header">
-                                <div class="content-card-title">
-                                    <span>⚙️</span> Operations Hub
-                                </div>
-                            </div>
-                            <div class="quick-ops-grid">
-                                <a href="receipts.html" class="quick-op-btn">
-                                    <span class="quick-op-icon">📥</span>
-                                    <span>New Receipt</span>
-                                </a>
-                                <a href="deliveries.html" class="quick-op-btn">
-                                    <span class="quick-op-icon">📤</span>
-                                    <span>New Delivery</span>
-                                </a>
-                                <a href="transfers.html" class="quick-op-btn">
-                                    <span class="quick-op-icon">🔄</span>
-                                    <span>Internal Transfer</span>
-                                </a>
-                                <a href="adjustments.html" class="quick-op-btn">
-                                    <span class="quick-op-icon">⚖️</span>
-                                    <span>Stock Count</span>
-                                </a>
-                                <button type="button" class="quick-op-btn" id="btn-quick-ocr" style="border:1px solid #C084FC; background:rgba(192,132,252,0.06); cursor:pointer;">
-                                    <span class="quick-op-icon">📄</span>
-                                    <span style="color:var(--primary);">Scan Invoice OCR</span>
-                                </button>
-                                <a href="reports.html" class="quick-op-btn" style="border:1px solid #60A5FA; background:rgba(96,165,250,0.06);">
-                                    <span class="quick-op-icon">🔮</span>
-                                    <span style="color:#2563EB;">AI Forecast</span>
-                                </a>
-                            </div>
-                        </div>
-
                         <!-- Low Stock Warnings -->
                         <div class="content-card">
                             <div class="content-card-header">
@@ -229,6 +151,19 @@
                                 </div>
                             </div>
                             <div class="alerts-list" id="alerts-container">
+                                <!-- Populated dynamically via dashboard.js -->
+                            </div>
+                        </div>
+
+                        <!-- Demand Forecast -->
+                        <div class="content-card">
+                            <div class="content-card-header">
+                                <div class="content-card-title">
+                                    <span>📈</span> Demand Forecast Horizon
+                                </div>
+                                <a href="reports.html" style="font-size:12px; font-weight:700; color:var(--primary);">Model →</a>
+                            </div>
+                            <div id="dashboard-forecast-list" style="display:flex; flex-direction:column; gap:8px;">
                                 <!-- Populated dynamically via dashboard.js -->
                             </div>
                         </div>

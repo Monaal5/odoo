@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Copilot Studio — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .copilot-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+        }
+
+        .tab-bar-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pill-tab {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        .pill-tab.active {
+            background: var(--primary);
+            color: #FFFFFF;
+            border-color: var(--primary);
+        }
+
+        /* Chat / Reasoning Stream */
+        .reasoning-card {
+            background: var(--card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+        }
+
+        .user-prompt-box {
+            background: #4C1D95;
+            color: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .user-prompt-meta {
+            font-size: 11px;
+            color: #C4B5FD;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .agent-stream-box {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-md);
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+
+        .agent-stream-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .cot-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 12.5px;
+            color: var(--text-main);
+            padding: 6px 0;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .cot-icon {
+            color: var(--success);
+            font-weight: 800;
+        }
+
+        /* Draft PO Box */
+        .draft-po-card {
+            background: #F3E8FF;
+            border: 1.5px solid #C084FC;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .po-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .po-title {
+            font-size: 18px;
+            font-weight: 900;
+            color: #4C1D95;
+        }
+
+        .po-total {
+            font-size: 22px;
+            font-weight: 900;
+            color: #4C1D95;
+            text-align: right;
+        }
+
+        .policy-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #F1F5F9;
+            font-size: 12.5px;
+        }
+
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 99px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 16px;
+            height: 16px;
+            background: #FFF;
+            border-radius: 50%;
+        }
+
+        .kb-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #F8FAFC;
+            border-radius: var(--radius-md);
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .bottom-copilot-input-bar {
+            position: sticky;
+            bottom: 20px;
+            background: #FFFFFF;
+            border: 1.5px solid var(--primary);
+            box-shadow: 0 10px 30px rgba(109, 40, 217, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .copilot-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 1100px) {
+            .copilot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar-container" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar-container" id="topbar-container"></header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                
+                <div class="breadcrumbs-bar">
+                    <a href="dashboard.html">DASHBOARD</a> / <span>AUTONOMOUS OPS</span> / <span class="active">AI COPILOT STUDIO</span> / <span class="mono-font" style="color:var(--primary);">V3.8-ORCHESTRATOR</span>
+                </div>
+
+                <div class="page-header-title-row">
+                    <div>
+                        <h1 class="page-title-heading">StockSense AI Copilot Studio</h1>
+                        <p class="page-title-sub">Autonomous inventory agent reasoning, predictive replenishment simulations, and natural language multi-DC orchestration</p>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="topbar-btn topbar-btn-outline">📥 Export Reasoning Logs</button>
+                        <button class="topbar-btn topbar-btn-soft-purple">🎛️ Autonomous Policies (Active: 8)</button>
+                        <button class="topbar-btn topbar-btn-purple">+ New Session</button>
+                    </div>
+                </div>
+
+                <!-- Top 4 KPI Cards -->
+                <div class="kpi-4-grid">
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Autonomous Action Accuracy</span>
+                            <span class="kpi-box-icon" style="background:#ECFDF5; color:#10B981;">🛡️</span>
+                        </div>
+                        <div class="kpi-box-val">99.4% <span style="font-size:12px; color:#10B981;">↑ +0.3%</span></div>
+                        <div class="kpi-box-sub">vs human operator audit baseline (last 30d)</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Predicted Stockouts Prevented</span>
+                            <span class="kpi-box-icon" style="background:#ECFDF5; color:#10B981;">✳️</span>
+                        </div>
+                        <div class="kpi-box-val">142 <span style="font-size:11px; font-weight:700; color:var(--text-muted);">NTO</span></div>
+                        <div class="kpi-box-sub">$380,450 estimated capital &amp; SLA preserved</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Pending Copilot Decisions</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">📋</span>
+                        </div>
+                        <div class="kpi-box-val" style="color:var(--primary);">3 <span style="font-size:11px; font-weight:700; color:#B45309; background:#FEF3C7; padding:2px 8px; border-radius:99px;">Awaiting Signoff</span></div>
+                        <div class="kpi-box-sub">2 Purchase Orders &bull; 1 Inter-DC Routing</div>
+                    </div>
+
+                    <div class="kpi-box">
+                        <div class="kpi-box-top">
+                            <span class="kpi-box-title">Agentic Latency &amp; Stack</span>
+                            <span class="kpi-box-icon" style="background:#ECE9FE; color:#6D28D9;">⚡</span>
+                        </div>
+                        <div class="kpi-box-val">84ms <span style="font-size:11px; color:var(--text-muted);">p95 inference</span></div>
+                        <div class="kpi-box-sub">Claude 3.5 + StockSense Rebalance v3</div>
+                    </div>
+                </div>
+
+                <!-- Session Pills -->
+                <div class="tab-bar-pill">
+                    <button class="pill-tab active">● Active: Austin DC Rebalance &amp; PO Drafts (Live)</button>
+                    <button class="pill-tab">Cold Storage Temp Drift</button>
+                    <button class="pill-tab">Q1 Volume Surge</button>
+                </div>
+
+                <!-- Main Layout -->
+                <div class="copilot-grid">
+                    <!-- Left Reasoning Stream -->
+                    <div>
+                        <div class="reasoning-card">
+                            <div class="user-prompt-box">
+                                <div class="user-prompt-meta">
+                                    <span>Alex Rivera &bull; Today at 10:42 AM</span>
+                                    <span>👤</span>
+                                </div>
+                                Analyze stockout risks for Fast-Moving SKUs across Austin and Houston for next week's anticipated surge, and generate optimized purchase orders.
+                                <div style="font-size:11px; color:#DDD6FE; margin-top:6px;">Targets: Austin Central DC &amp; Houston Logistics Hub &bull; Horizon: 14 Days</div>
+                            </div>
+
+                            <div class="agent-stream-box">
+                                <div class="agent-stream-header">
+                                    <span>🤖 StockSense Reasoning Agent &bull; Autonomous Run #9829</span>
+                                    <span style="font-size:11px; color:var(--text-muted);">Execution completed in 43ms</span>
+                                </div>
+
+                                <div class="cot-step">
+                                    <span class="cot-icon">✓</span>
+                                    <div><strong>Chain of Thought: Multi-Echelon Stockout Synthesis</strong> — Ingested 14-day velocity and lead time curves for 48,210 SKUs. Aggregated POS telemetry and OEM demand spikes across central Texas nodes.</div>
+                                </div>
+                                <div class="cot-step">
+                                    <span class="cot-icon">✓</span>
+                                    <div><strong>Cross-referenced freight route disruptions on I-35 Corridor</strong> — Texas DOT logistics alert indicates +3.5hr carrier delay between San Antonio and Austin. Adjusted buffer stocks by +1.5 days.</div>
+                                </div>
+                                <div class="cot-step">
+                                    <span class="cot-icon">✓</span>
+                                    <div><strong>Identified critical depletion risks for SKU-TF-8891 &amp; SKU-CW-104</strong> — Runway depleted to 2.4 days on Titanium Fasteners (Austin DC) and 3.1 days on Copper Wire Spools (Houston Bay 4).</div>
+                                </div>
+                                <div class="cot-step">
+                                    <span class="cot-icon">✓</span>
+                                    <div><strong>Computed optimal Economic Order Quantities (EOQ) &amp; Carrier Grouping</strong> — Consolidated orders via TitanFast Aerospace and Phelps Copper to qualify for Tier-1 expedited freight discount (-8%).</div>
+                                </div>
+                            </div>
+
+                            <div style="font-size:13.5px; line-height:1.6; color:var(--text-main);">
+                                I have simulated demand across all 48,210 items. Without immediate replenishment, <strong style="color:var(--danger);">Austin DC will experience a stockout in Titanium Fasteners within 58 hours</strong>, causing a downstream assembly delay for three automotive tier-1 accounts. Below is the verified automated replenishment package ready for your instant release:
+                            </div>
+
+                            <!-- Draft PO Component -->
+                            <div class="draft-po-card">
+                                <div class="po-header-row">
+                                    <div>
+                                        <div class="po-title">📝 Draft Purchase Order #PO-9025</div>
+                                        <div style="font-size:12px; color:#6D28D9; font-weight:600;">Multi-Vendor Consolidated Replenishment &bull; Austin DC Dock 3 Receiving</div>
+                                    </div>
+                                    <div>
+                                        <span class="status-badge badge-done" style="margin-bottom:4px; display:inline-block;">98.4% Confidence</span>
+                                        <div class="po-total">$48,200.00 USD</div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="data-table" style="background:#FFF; border-radius:var(--radius-md);">
+                                        <thead>
+                                            <tr>
+                                                <th>SKU / Item Description</th>
+                                                <th>Primary Vendor</th>
+                                                <th>Quantity</th>
+                                                <th>Unit Price</th>
+                                                <th>Lead Time</th>
+                                                <th>Subtotal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <strong>SKU-TF-8891</strong><br>
+                                                    <span style="font-size:11px; color:var(--danger-text); font-weight:700;">Grade 5 Titanium Fasteners (Critical stockout 2.4 days)</span>
+                                                </td>
+                                                <td>TitanFast Aerospace</td>
+                                                <td><strong>1,200 pk</strong></td>
+                                                <td>$26.50</td>
+                                                <td><span class="status-badge badge-waiting">3 Days</span></td>
+                                                <td><strong>$31,800.00</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <strong>SKU-CW-104</strong><br>
+                                                    <span style="font-size:11px; color:var(--warning-text); font-weight:700;">12AWG Heavy Copper Wire Spool (Depletion 3.1 days)</span>
+                                                </td>
+                                                <td>Phelps Copper Global</td>
+                                                <td><strong>200 spools</strong></td>
+                                                <td>$82.00</td>
+                                                <td><span class="status-badge badge-waiting">2 Days</span></td>
+                                                <td><strong>$16,400.00</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; font-size:12px; color:var(--text-muted);">
+                                    <div>Expedited Freight Savings: <strong style="color:var(--success);">-$2,140.00 (Bundle)</strong></div>
+                                    <div>Forecasted Service Level: <strong style="color:var(--text-main);">99.8% (Target met)</strong></div>
+                                    <div>Dock Slot Reservation: <strong style="color:var(--primary);">Bay 03 - Thursday 08:00</strong></div>
+                                </div>
+
+                                <div style="display:flex; gap:12px; margin-top:16px;">
+                                    <button class="btn btn-primary" style="flex:1;" onclick="showToast('PO #PO-9025 Approved & Transmitted to TitanFast & Phelps!', 'success')">
+                                        ⚡ Approve &amp; Transmit PO #PO-9025 ($48,200)
+                                    </button>
+                                    <button class="btn btn-outline" style="flex:1;" onclick="showToast('Simulating delay impact curve...', 'info')">
+                                        📊 Simulate Delay Impact
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Prompt Bar -->
+                        <div class="bottom-copilot-input-bar">
+                            <span style="font-size:18px;">✨</span>
+                            <input type="text" class="copilot-input" id="copilot-prompt-input" placeholder="Ask StockSense Copilot to simulate scenarios, generate POs, rebalance racks, or trigger..." />
+                            <button class="btn btn-primary btn-sm" id="btn-copilot-submit">Reason ↑</button>
+                        </div>
+                    </div>
+
+                    <!-- Right Inspector / Policy Sidebars -->
+                    <div>
+                        <!-- Policy Rules Engine -->
+                        <div class="content-card">
+                            <div class="content-card-header">
+                                <div class="content-card-title">
+                                    <span>⚙️</span> Policy Rules Engine
+                                </div>
+                                <span class="status-badge badge-done">8 Active</span>
+                            </div>
+                            <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">Autonomous execution thresholds governed by supervisory parameters.</p>
+
+                            <div class="policy-toggle-row">
+                                <div>
+                                    <strong>Auto-Draft PO when safety stock &lt; 5 days</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">Triggers PO generation with verified vendors</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </div>
+
+                            <div class="policy-toggle-row">
+                                <div>
+                                    <strong>Inter-DC Transfer Auto-Routing</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">Austin vs Houston corridor load balancing</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </div>
+
+                            <div class="policy-toggle-row">
+                                <div>
+                                    <strong>Auto-Quarantine Optical Variance &gt; 1.5%</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">Locks bin location upon LiDAR mismatch</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </div>
+
+                            <div class="policy-toggle-row">
+                                <div>
+                                    <strong>Strict Human Approval for PO &gt; $50k</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">Enforces operator signoff for high capital spend</span>
+                                </div>
+                                <div class="toggle-switch"></div>
+                            </div>
+
+                            <button class="btn btn-outline btn-sm" style="width:100%; margin-top:12px;">+ Configure Policy Rules</button>
+                        </div>
+
+                        <!-- Live Knowledge Graph -->
+                        <div class="content-card">
+                            <div class="content-card-header">
+                                <div class="content-card-title">
+                                    <span>🌐</span> Live Knowledge Graph
+                                </div>
+                                <span style="font-size:11px; color:var(--success); font-weight:700;">● Synchronized</span>
+                            </div>
+
+                            <div class="kb-item">
+                                <span>SAP S/4HANA ERP</span>
+                                <span class="status-badge badge-done">LIVE &bull; 12ms</span>
+                            </div>
+                            <div class="kb-item">
+                                <span>Dock Scale &amp; RFID IoT</span>
+                                <span class="status-badge badge-info">STREAMING</span>
+                            </div>
+                            <div class="kb-item">
+                                <span>EDI 850 Vendor Feed</span>
+                                <span class="status-badge badge-done">CONNECTED</span>
+                            </div>
+                            <div class="kb-item">
+                                <span>Texas DOT &amp; NOAA Feed</span>
+                                <span class="status-badge badge-done">SYNCED</span>
+                            </div>
+                        </div>
+
+                        <!-- Suggested Blueprints -->
+                        <div class="content-card">
+                            <div class="content-card-title" style="margin-bottom:12px;">
+                                <span>💡</span> Suggested Blueprints
+                            </div>
+                            <div style="font-size:12.5px; line-height:1.5; color:var(--text-main); display:flex; flex-direction:column; gap:10px;">
+                                <div style="padding:10px; background:#F8FAFC; border-radius:var(--radius-md); border:1px solid var(--border-color); cursor:pointer;" onclick="showToast('Loaded Supplier Freight Surcharge Audit blueprint', 'info')">
+                                    <strong>Supplier Freight Surcharge Audit</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">Detect unnegotiated fuel tariff spikes across Q3 invoices</span>
+                                </div>
+                                <div style="padding:10px; background:#F8FAFC; border-radius:var(--radius-md); border:1px solid var(--border-color); cursor:pointer;" onclick="showToast('Loaded Cold Chain Expiry Re-balancing blueprint', 'info')">
+                                    <strong>Cold Chain Expiry Re-balancing</strong><br>
+                                    <span style="font-size:11px; color:var(--text-muted);">FEFO optimization to reduce perishability waste</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSidebar("ai-copilot");
+            renderTopbar("AI Copilot Studio", "Autonomous Ops");
+
+            const input = document.getElementById("copilot-prompt-input");
+            const btn = document.getElementById("btn-copilot-submit");
+            if (btn && input) {
+                btn.addEventListener("click", () => {
+                    const q = input.value.trim();
+                    if (q) {
+                        showToast(`Copilot processing: "${q}"`, "info");
+                        input.value = "";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

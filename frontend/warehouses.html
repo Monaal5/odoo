@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouses & Racks — StockSense IMS</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        .spatial-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+        }
+
+        /* 3D Canvas Box */
+        .spatial-canvas-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 580px;
+        }
+
+        .spatial-canvas-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .spatial-viewport {
+            flex: 1;
+            background: linear-gradient(180deg, #F8FAFC 0%, #EFF6FF 100%);
+            border: 1px solid #E2E8F0;
+            border-radius: var(--radius-md);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .spatial-legend-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 14px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* Bay Elevation Diagram */
+        .shelf-tier {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: #F8FAFC;
+        }
+
+        .shelf-tier.active-critical {
+            background: #4C1D95;
+            color: #FFFFFF;
+            border-color: #6D28D9;
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .telemetry-trio {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 14px;
+            background: #F8FAFC;
+            padding: 10px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .telemetry-trio-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .telemetry-trio-val {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .telemetry-trio-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        /* Bottom Telemetry Metrics Strip */
+        .rack-telemetry-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .rack-telemetry-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rack-telemetry-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .rack-telemetry-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .rack-telemetry-sub {
+            font-size: 11px;
+            color: var(--text-subtle);
+        }
+
+        @media (max-width: 1100px) {
+            .spatial-grid {
+                grid-template-columns: 1fr;
+            }
+            .rack-telemetry-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation Container -->
+        <aside class="sidebar-container" id="sidebar-container"></aside>
+
+        <!-- Main Content Area -->
+        <main class="main-wrapper">
+            <!-- Topbar Header -->
+            <header class="topbar-container" id="topbar-container"></header>
+
+            <!-- Page Body -->
+            <div class="page-body">
+                
+                <div class="breadcrumbs-bar">
+                    <a href="dashboard.html">DASHBOARD</a> / <a href="#">WAREHOUSE OPS</a> / <span>AUSTIN CENTRAL DC</span> / <span class="active">SPATIAL RACK MAP</span>
+                    <span style="margin-left:auto; font-size:11px; color:var(--text-muted);">LiDAR Floor Mesh: Synced 8s ago &bull; Grid Latency: 12ms</span>
+                </div>
+
+                <div class="page-header-title-row">
+                    <div>
+                        <h1 class="page-title-heading">Warehouse Visual Spatial Map</h1>
+                        <p class="page-title-sub">High-precision digital twin of Austin Central DC — Physical Bay Telemetry, 3D Structural Shelving &amp; Fleet Routing</p>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="topbar-btn topbar-btn-purple">Isometric 3D</button>
+                        <button class="topbar-btn topbar-btn-outline">2D Plan</button>
+                        <button class="topbar-btn topbar-btn-outline">🤖 Simulate AGV Route</button>
+                        <button class="topbar-btn topbar-btn-soft-purple">+ Reassign Bay</button>
+                    </div>
+                </div>
+
+                <!-- Zone Filter Chips -->
+                <div class="filter-toolbar">
+                    <button class="filter-chip active">All Zones (4)</button>
+                    <button class="filter-chip">Zone A - Fast-Moving</button>
+                    <select class="filter-chip" style="outline:none;">
+                        <option>Heatmap: Volumetric Fill</option>
+                        <option>Heatmap: Velocity</option>
+                    </select>
+                    <button class="filter-chip">T1 Ground</button>
+                    <button class="filter-chip">T2 Mid</button>
+                    <button class="filter-chip">T3 High-Bay</button>
+                    <span class="status-badge badge-purple" style="margin-left:auto;">B-03-02 Active Selection</span>
+                </div>
+
+                <!-- Main Layout -->
+                <div class="spatial-grid">
+                    <!-- 3D Canvas Visual Twin -->
+                    <div class="spatial-canvas-card">
+                        <div class="spatial-canvas-header">
+                            <div style="display:flex; align-items:center; gap:12px; font-size:12px; font-weight:700;">
+                                <span class="status-badge badge-done">● Austin Main Shed #1 (1,840 m²)</span>
+                                <span class="status-badge badge-purple">🤖 4 AGVs en route</span>
+                            </div>
+                            <span class="status-badge badge-draft">N 38° SE</span>
+                        </div>
+
+                        <!-- SVG Isometric Rendering -->
+                        <div class="spatial-viewport">
+                            <svg width="100%" height="100%" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet">
+                                <!-- Grid Lines -->
+                                <pattern id="iso-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 20 L 40 40 L 80 20 Z" fill="none" stroke="#E2E8F0" stroke-width="0.8"/>
+                                </pattern>
+                                <rect width="100%" height="100%" fill="url(#iso-grid)" />
+
+                                <!-- Dock Doors Top -->
+                                <text x="350" y="35" font-size="11" font-weight="700" fill="#94A3B8">DOCK DOORS 01 - 04 (INBOUND/OUTBOUND)</text>
+                                
+                                <!-- Aisle Labels -->
+                                <text x="180" y="90" font-size="12" font-weight="800" fill="#64748B">AISLE 01</text>
+                                <text x="560" y="90" font-size="12" font-weight="800" fill="#64748B">AISLE 02</text>
+
+                                <!-- Bay Blocks Isometric Projection -->
+                                <!-- Bay A-01 Nominal Green -->
+                                <g transform="translate(180, 140)">
+                                    <polygon points="0,0 60,-30 120,0 60,30" fill="#10B981" opacity="0.85"/>
+                                    <polygon points="0,0 60,30 60,70 0,40" fill="#059669"/>
+                                    <polygon points="120,0 60,30 60,70 120,40" fill="#047857"/>
+                                    <text x="35" y="15" font-size="10" font-weight="700" fill="#FFF">A-01 - 65%</text>
+                                </g>
+
+                                <!-- Bay A-02 Cyan Optimal -->
+                                <g transform="translate(260, 180)">
+                                    <polygon points="0,0 60,-30 120,0 60,30" fill="#3B82F6" opacity="0.85"/>
+                                    <polygon points="0,0 60,30 60,70 0,40" fill="#2563EB"/>
+                                    <polygon points="120,0 60,30 60,70 120,40" fill="#1D4ED8"/>
+                                    <text x="35" y="15" font-size="10" font-weight="700" fill="#FFF">A-02 - 78%</text>
+                                </g>
+
+                                <!-- Selected Bay B-03 OVERLOAD RED (Active Highlighted) -->
+                                <g transform="translate(220, 260)" style="cursor:pointer;" onclick="showToast('Inspecting Bay B-03 Telemetry...', 'info')">
+                                    <polygon points="0,0 70,-35 140,0 70,35" fill="#EF4444" opacity="0.95"/>
+                                    <polygon points="0,0 70,35 70,80 0,45" fill="#DC2626"/>
+                                    <polygon points="140,0 70,35 70,80 140,45" fill="#B91C1C"/>
+                                    <text x="35" y="20" font-size="11" font-weight="800" fill="#FFF">BAY B-03 - 94%</text>
+                                    <!-- Selection Ring Pulse -->
+                                    <polygon points="0,-10 70,-45 140,-10 70,25" fill="none" stroke="#6D28D9" stroke-width="3" stroke-dasharray="4,4"/>
+                                </g>
+
+                                <!-- Bay C-01 Purple Saturation -->
+                                <g transform="translate(520, 160)">
+                                    <polygon points="0,0 60,-30 120,0 60,30" fill="#8B5CF6" opacity="0.85"/>
+                                    <polygon points="0,0 60,30 60,70 0,40" fill="#7C3AED"/>
+                                    <polygon points="120,0 60,30 60,70 120,40" fill="#6D28D9"/>
+                                    <text x="35" y="15" font-size="10" font-weight="700" fill="#FFF">C-01 - 89%</text>
+                                </g>
+
+                                <!-- AGV Robotic Vehicle Indicator -->
+                                <g transform="translate(420, 230)">
+                                    <rect x="-15" y="-10" width="30" height="20" rx="4" fill="#6D28D9"/>
+                                    <circle cx="0" cy="0" r="4" fill="#10B981"/>
+                                    <text x="-25" y="-15" font-size="10" font-weight="800" fill="#6D28D9">AGV-02 (En Route)</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <div class="spatial-legend-bar">
+                            <span>Fill Legend:</span>
+                            <div class="legend-item"><span class="legend-dot" style="background:#10B981;"></span> 0-70% Nominal</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#3B82F6;"></span> 71-85% Optimal</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#8B5CF6;"></span> 86-95% Saturation</div>
+                            <div class="legend-item"><span class="legend-dot" style="background:#EF4444;"></span> &gt;95% Overload / Alert</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Bay Inspector -->
+                    <div class="content-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:space-between;">
+                        <div>
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+                                <div>
+                                    <span style="font-size:11px; color:var(--text-muted); font-weight:700;">Row 02 &bull; Tier 3 &bull; Coord: 30.26N</span>
+                                    <h2 style="font-size:20px; font-weight:900; color:var(--text-main); margin-top:2px;">Bay B-03 Inspection</h2>
+                                </div>
+                                <span class="status-badge badge-danger">Critical 14%</span>
+                            </div>
+
+                            <!-- Camera Feed Node -->
+                            <div style="background:#0F172A; color:#FFF; padding:10px 14px; border-radius:var(--radius-md); font-size:11.5px; margin-bottom:16px;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-weight:700;">
+                                    <span>📹 Camera Node #CAM-B03-TOP</span>
+                                    <span style="color:#10B981;">LIVE</span>
+                                </div>
+                                <div style="color:#94A3B8;">Optical Barcode Confirmation &bull; Auto-calibrated at 10:42 AM</div>
+                            </div>
+
+                            <!-- Vertical Shelf Elevation (4 Tiers) -->
+                            <div style="margin-bottom:16px;">
+                                <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:8px;">Vertical Shelf Elevation (Total Height: 8.4m)</div>
+                                
+                                <div class="shelf-tier">
+                                    <div class="tier-header">
+                                        <span>T4 &bull; Pallet Slot #8821</span>
+                                        <span class="status-badge badge-draft">EMPTY</span>
+                                    </div>
+                                    <div style="font-size:12px; color:var(--text-muted);">EUR Pallet - Ready for Putaway</div>
+                                </div>
+
+                                <div class="shelf-tier active-critical">
+                                    <div class="tier-header">
+                                        <span style="color:#E9D5FF;">T3 &bull; SKU-TF-8891</span>
+                                        <span class="status-badge" style="background:#EF4444; color:#FFF;">42 / 300</span>
+                                    </div>
+                                    <div style="font-size:12.5px; font-weight:700;">Titanium Fasteners M8 (Grade 5)</div>
+                                    <div style="font-size:11px; color:#DDD6FE; margin-top:4px;">Threshold: 80 &bull; <strong>Auto-PO Drafted #PO-4912</strong></div>
+                                </div>
+
+                                <div class="shelf-tier">
+                                    <div class="tier-header">
+                                        <span>T2 &bull; SKU-CW-104</span>
+                                        <span class="status-badge badge-done">84% FILL</span>
+                                    </div>
+                                    <div style="font-size:12.5px; font-weight:700;">Industrial Copper Spools - 210/250</div>
+                                </div>
+
+                                <div class="shelf-tier">
+                                    <div class="tier-header">
+                                        <span>T1 &bull; Heavy Casting Blocks</span>
+                                        <span class="status-badge badge-done">92% CAP</span>
+                                    </div>
+                                    <div style="font-size:12.5px; font-weight:700;">Steel Billets - 1,200 kg</div>
+                                </div>
+                            </div>
+
+                            <!-- Telemetry Sensor Trio -->
+                            <div class="telemetry-trio">
+                                <div class="telemetry-trio-item">
+                                    <span class="telemetry-trio-val">184<span style="font-size:11px;">kg</span></span>
+                                    <span class="telemetry-trio-lbl">Load Strain (Max 1,500kg)</span>
+                                </div>
+                                <div class="telemetry-trio-item">
+                                    <span class="telemetry-trio-val">0.02<span style="font-size:11px;">g</span></span>
+                                    <span class="telemetry-trio-lbl">Vibration/Tilt (Stable)</span>
+                                </div>
+                                <div class="telemetry-trio-item">
+                                    <span class="telemetry-trio-val" style="color:var(--success);">100%</span>
+                                    <span class="telemetry-trio-lbl">RFID Telemetry</span>
+                                </div>
+                            </div>
+
+                            <!-- AI Rebalance Box -->
+                            <div style="background:#F3E8FF; border:1px solid #C084FC; border-radius:var(--radius-md); padding:12px; margin-top:16px; font-size:12px; color:#4C1D95;">
+                                <strong>✨ StockSense AI Rebalancing Engine</strong><br>
+                                Restock bay from <strong>Houston Hub overflow (Truck #TX-82 arriving 3:15 PM)</strong> or consolidate Tier 4 with Bay B-01 to immediately recover 2 standard EUR pallet positions.
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
+                            <button class="btn btn-primary" style="width:100%;" onclick="showToast('Initiated Restock PO for 258 Units!', 'success')">
+                                🛒 Initiate Restock PO (258 Units)
+                            </button>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="showToast('Relocate Pallet task dispatched to AGV-02', 'info')">🔄 Relocate Pallet</button>
+                                <button class="btn btn-outline btn-sm" style="flex:1;" onclick="showToast('Printing Bin QR code...', 'info')">🖨️ Print Bin QR</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Telemetry Bar -->
+                <div class="rack-telemetry-bar">
+                    <div class="rack-telemetry-col">
+                        <span class="rack-telemetry-label">TOTAL RACK BAYS</span>
+                        <span class="rack-telemetry-val">128 <span style="font-size:12px; color:var(--text-muted);">Bays</span></span>
+                        <span class="rack-telemetry-sub">100% Online &amp; Instrumented</span>
+                    </div>
+
+                    <div class="rack-telemetry-col">
+                        <span class="rack-telemetry-label">ACTIVE PICK FACES</span>
+                        <span class="rack-telemetry-val">94 <span style="font-size:12px; color:var(--text-muted);">/ 112 Ready</span></span>
+                        <span class="rack-telemetry-sub" style="color:var(--primary); font-weight:700;">83.9% Allocation</span>
+                    </div>
+
+                    <div class="rack-telemetry-col">
+                        <span class="rack-telemetry-label">AGV ROBOTIC FLEET</span>
+                        <span class="rack-telemetry-val" style="color:var(--success);">4 Active <span style="font-size:12px; color:var(--text-muted);">1 Charging</span></span>
+                        <span class="rack-telemetry-sub">Zero Collision Alerts</span>
+                    </div>
+
+                    <div class="rack-telemetry-col">
+                        <span class="rack-telemetry-label">FLOOR VOLUMETRIC FILL</span>
+                        <span class="rack-telemetry-val">86.4% <span style="font-size:12px; color:var(--success);">+2.1% wk</span></span>
+                        <div style="height:4px; background:#E2E8F0; border-radius:99px; margin-top:4px; overflow:hidden;">
+                            <div style="width:86.4%; height:100%; background:var(--primary);"></div>
+                        </div>
+                    </div>
+
+                    <div class="rack-telemetry-col">
+                        <span class="rack-telemetry-label">AVG PICK CYCLE TIME</span>
+                        <span class="rack-telemetry-val">1m 18s</span>
+                        <span class="rack-telemetry-sub" style="color:var(--success); font-weight:700;">-14s vs target &bull; Fast-path enabled</span>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            renderSidebar("warehouses");
+            renderTopbar("Warehouses & Racks", "Austin Central DC");
+        });
+    </script>
+</body>
+</html>
