@@ -13,6 +13,16 @@ const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 let isBackendOnline = false;
 
+// JWT Token helper for authenticated backend calls
+function getAuthHeaders() {
+  const token = localStorage.getItem('stocksense_token');
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 // Default demo dataset matching Screenshot 2
 let localOrders = [
   { id: 'DEL-674839', orderNo: '№674839', customer: 'Kris Payer', phone: '099 758 9092', category: 'Laptops', price: 1302.38, date: '26.07.2024', payment: 'PayPal', status: 'onway', selected: false },
@@ -992,7 +1002,7 @@ async function runApiCall(endpoint, method = 'GET', body = null) {
   try {
     const options = {
       method,
-      headers: { 'Content-Type': 'application/json' }
+      headers: getAuthHeaders()
     };
     if (body) options.body = JSON.stringify(body);
 
