@@ -1,0 +1,10 @@
+{
+  "supplier_name": "Apex Metallurgical Supplies Ltd",
+  "items": [
+    {
+      "product_id": 1,
+      "location_id": 1,
+      "quantity": 100
+    }
+  ]
+}
